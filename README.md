@@ -1,7 +1,12 @@
 # ScrabbleProject
 Assignment Two of COMP90015
-## Specification
 
+##Table of Contents 
+- [Specification](##Sepcification)
+- [Project Management Rule](##Project Management Rule)
+ 
+    
+## Specification
 1. You need to create a 20x20 grid where users on different PCs, min of 2 people, but allowing more if there are more players, will place letters on tiles of this grid to make words in turns.
 2. We ask you to implement a specific version of this game as follows but you are welcome to read about Scrabble game online which is a popular game with numerous versions.
 3. Users will take turns to place a character in a tile of the fixed grid mentioned above.
@@ -17,3 +22,4 @@ Assignment Two of COMP90015
 13. You need to let any player initiate a game and invite others who can then accept this.
 14. You can get creative and implement a more complex game if you agree as a team. 
 
+## Project Management Rule
