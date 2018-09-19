@@ -27,6 +27,7 @@ Assignment Two of COMP90015
 
 ## Project Management Rule
 **参考自饿了么前端开发团队技术[文章](https://zhuanlan.zhihu.com/p/39148914)**
+
 ###名词定义
 1. **fork:** 
 2. **Brunch:**
