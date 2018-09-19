@@ -1,7 +1,8 @@
 # ScrabbleProject
-Assignment Two of COMP90015
 
 ![GitHub](https://img.shields.io/github/license/mashape/apistatus.svg)
+
+Assignment Two of COMP90015
 
 ## Table of Contents 
 - [Specification](#specification)
