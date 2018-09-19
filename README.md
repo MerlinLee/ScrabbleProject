@@ -28,7 +28,7 @@ Assignment Two of COMP90015
 ## Project Management Rule
 **参考自饿了么前端开发团队技术[文章](https://zhuanlan.zhihu.com/p/39148914)**
 
-###名词定义
+### 名词定义
 1. **fork:** 
 2. **Brunch:**
 3. **Pull Request:**
@@ -38,8 +38,8 @@ Assignment Two of COMP90015
 7. **分支同步:** 将upstream上游develop分支的代码同步到本地和远端，以保证自己repo下代码为最新版本
 8. **bugfix:** 为了修复master分支中的缺陷，创建的分支
 
-###出现冲突的解决规则
+### 出现冲突的解决规则
 
-###结对编程
+### 结对编程
 
-###项目开发流程图
+### 项目开发流程图
