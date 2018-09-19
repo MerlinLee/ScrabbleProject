@@ -1,6 +1,8 @@
 # ScrabbleProject
 Assignment Two of COMP90015
 
+![GitHub](https://img.shields.io/github/license/mashape/apistatus.svg)
+
 ## Table of Contents 
 - [Specification](#specification)
 - [Project Management Rule](#project-management-rule)
