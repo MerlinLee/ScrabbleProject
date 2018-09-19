@@ -1,9 +1,9 @@
 # ScrabbleProject
 Assignment Two of COMP90015
 
-##Table of Contents 
-- [Specification](##Sepcification)
-- [Project Management Rule](##Project Management Rule)
+## Table of Contents 
+- [Specification](#Sepcification)
+- [Project Management Rule](#Project Management Rule)
  
     
 ## Specification
