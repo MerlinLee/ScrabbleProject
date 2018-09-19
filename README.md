@@ -2,7 +2,7 @@
 Assignment Two of COMP90015
 
 ## Table of Contents 
-- [Specification](#sepcification)
+- [Specification](#specification)
 - [Project Management Rule](#project-management-rule)
  
     
