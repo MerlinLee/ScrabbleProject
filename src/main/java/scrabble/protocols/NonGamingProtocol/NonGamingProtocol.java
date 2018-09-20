@@ -1,13 +1,17 @@
-package scrabble.protocols;
+package scrabble.protocols.NonGamingProtocol;
+
+import scrabble.protocols.ScrabbleProtocol;
+
 /**
- * Protocols
+ * NonGamingProtocols
  *
  * @author Jethro
  * @date 20/09/2018
  */
-public class NonGamingProtocol extends ScrabbleProtocol{
+public class NonGamingProtocol extends ScrabbleProtocol {
 
     private String command;
+    private String[] userList;
 
     public String getCommand() {
         return command;
@@ -25,5 +29,4 @@ public class NonGamingProtocol extends ScrabbleProtocol{
         this.userList = userList;
     }
 
-    private String[] userList;
 }
