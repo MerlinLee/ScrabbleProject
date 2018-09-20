@@ -48,5 +48,5 @@ Assignment Two of COMP90015
 #### 主动情况
 
 #### 被动情况
---Merlin write it.
+--Merlin write it. version 1.0
 ### 项目开发流程图
