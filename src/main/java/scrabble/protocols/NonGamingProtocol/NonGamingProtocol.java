@@ -9,6 +9,10 @@ import scrabble.protocols.ScrabbleProtocol;
  * @date 20/09/2018
  */
 public class NonGamingProtocol extends ScrabbleProtocol {
+    //start,login, logout, quit, invite
+
+
+
 
     private String command;
     private String[] userList;
