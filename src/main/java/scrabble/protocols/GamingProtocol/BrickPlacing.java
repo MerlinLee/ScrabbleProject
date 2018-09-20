@@ -1,6 +1,6 @@
 package scrabble.protocols.GamingProtocol;
 
-public class chessPlacing {
+public class BrickPlacing {
     private int userID;
 
     public int getUserID() {
