@@ -28,6 +28,8 @@ Assignment Two of COMP90015
 ## Project Management Rule
 **参考自饿了么前端开发团队技术[文章](https://zhuanlan.zhihu.com/p/39148914)**
 
+**[GitFlow](https://datasift.github.io/gitflow/IntroducingGitFlow.html)**
+![alt](https://jeffkreeftmeijer.com/git-flow/git-flow.png)
 ### 名词定义
 1. **fork:** 
 2. **Brunch:**
@@ -37,9 +39,14 @@ Assignment Two of COMP90015
 6. **Create a merge commit:**
 7. **分支同步:** 将upstream上游develop分支的代码同步到本地和远端，以保证自己repo下代码为最新版本
 8. **bugfix:** 为了修复master分支中的缺陷，创建的分支
+9. **删除分支：** 一个分支审查通过并成功提交给上游后，可以被删除。
 
 ### 出现冲突的解决规则
 
 ### 结对编程
+> Pair programming（结对编程）是一种敏捷开发方法，指的是两个程序员在一台计算机上共同工作。输入代码的人称作驾驶员，审查代码的称为观察员。
+#### 主动情况
+
+#### 被动情况
 
 ### 项目开发流程图
