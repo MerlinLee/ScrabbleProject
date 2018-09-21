@@ -4,6 +4,7 @@ public class GamingOperationProtocol {
     private boolean vote;
 
     public BrickPlacing getBrickPlacing() {
+
         return brickPlacing;
     }
 
