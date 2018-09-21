@@ -29,6 +29,7 @@ public class ControlCenter implements Runnable{
 
     public void initialServer(){
         net = Net.getInstance(fromNet,toNet);
+        gameEngine = GameEngine.getInstance(toEngine,fromEngine);
     }
     @Override
     public void run() {
