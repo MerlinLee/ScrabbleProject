@@ -1,6 +1,8 @@
 package scrabble.protocols.GamingProtocol;
 
-public class GamingOperationProtocol {
+import scrabble.protocols.ScrabbleProtocol;
+
+public class GamingOperationProtocol extends ScrabbleProtocol {
     private boolean vote;
 
     public BrickPlacing getBrickPlacing() {
