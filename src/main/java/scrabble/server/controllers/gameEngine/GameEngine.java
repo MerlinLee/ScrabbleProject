@@ -7,14 +7,10 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public class GameEngine implements Runnable{
     private BlockingQueue<ScrabbleProtocol> fromCenter;
-
-    public static BlockingQueue<ScrabbleProtocol> getToCenter() {
-        return new LinkedBlockingQueue<>();
-    }
-
     private BlockingQueue<ScrabbleProtocol> toCenter;
-    public GameEngine(BlockingQueue<ScrabbleProtocol> fromCenter) {
-        this.fromCenter = fromCenter;
+    public GameEngine(BlockingQueue<ScrabbleProtocol> toEngine, BlockingQueue<ScrabbleProtocol> fromEngine) {
+        this.fromCenter = toEngine;
+        this.toCenter = fromEngine;
     }
 
     @Override
