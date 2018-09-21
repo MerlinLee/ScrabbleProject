@@ -20,4 +20,29 @@ public class GameEngine {
             e.printStackTrace();
         }
     }
+
+    private volatile static GameEngine gameEngine;
+    public GameEngine(){}
+    public static GameEngine gameEngine(){
+        if (gameEngine == null ){
+            synchronized (GameEngine.class){
+                if (gameEngine == null){
+                    gameEngine = new GameEngine();
+                }
+            }
+        }
+        return gameEngine;
+    }
+
+    public static GameEngine gameEngine(BlockingQueue<ScrabbleProtocol> toEngine, BlockingQueue<ScrabbleProtocol> fromEngine){
+        if (gameEngine == null ){
+            synchronized (GameEngine.class){
+                if (gameEngine == null){
+                    gameEngine = new GameEngine(toEngine, fromEngine);
+                }
+            }
+        }
+        return gameEngine;
+    }
+
 }
