@@ -11,16 +11,6 @@ public class VotingProtocol {
         this.vote = vote;
     }
 
-    public boolean isPass() {
-        return pass;
-    }
-
-    public void setPass(boolean pass) {
-        this.pass = pass;
-    }
-
-    private boolean pass;
-
     public int[] getStartPosition() {
         return startPosition;
     }
