@@ -23,7 +23,7 @@ public class GameEngine {
 
     private volatile static GameEngine gameEngine;
     public GameEngine(){}
-    public static GameEngine gameEngine(){
+    public static GameEngine getInstance(){
         if (gameEngine == null ){
             synchronized (GameEngine.class){
                 if (gameEngine == null){
@@ -34,7 +34,7 @@ public class GameEngine {
         return gameEngine;
     }
 
-    public static GameEngine gameEngine(BlockingQueue<ScrabbleProtocol> toEngine, BlockingQueue<ScrabbleProtocol> fromEngine){
+    public static GameEngine getInstance(BlockingQueue<ScrabbleProtocol> toEngine, BlockingQueue<ScrabbleProtocol> fromEngine){
         if (gameEngine == null ){
             synchronized (GameEngine.class){
                 if (gameEngine == null){
