@@ -24,8 +24,8 @@ public class GameCore implements Runnable{
             e.printStackTrace();
         }
         if(!message.equals("")){
-            ScrabbleProtocol scrabbleProtocol = JSON.parseObject(message,ScrabbleProtocol.class);
-            System.out.println(scrabbleProtocol.getTAG());
+//            ScrabbleProtocol scrabbleProtocol = JSON.parseObject(message,ScrabbleProtocol.class);
+//            System.out.println(scrabbleProtocol.getTAG());
         }else {
             System.out.println("error");
         }
@@ -46,6 +46,7 @@ public class GameCore implements Runnable{
             if(str.equals("shutdown")){
                 shutDown();
             }
+            System.out.println(str);
         }
     }
 }

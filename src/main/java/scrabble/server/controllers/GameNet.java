@@ -1,5 +1,8 @@
 package scrabble.server.controllers;
 
+import scrabble.server.controllers.game.GameCore;
+import scrabble.server.controllers.net.NetCore;
+
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -23,7 +26,7 @@ public class GameNet {
     //test
     public static void main(String[] args){
         GameNet gameNet = new GameNet();
-        new Thread().start();
-        new Thread().start();
+        new Thread(new NetCore(gameNet.getBlockingQueue())).start();
+        new Thread(new GameCore(gameNet.getBlockingQueue())).start();
     }
 }
