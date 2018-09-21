@@ -1,7 +1,4 @@
-package scrabble.server.controllers.game;
-
-import com.alibaba.fastjson.JSON;
-import scrabble.protocols.ScrabbleProtocol;
+package scrabble.server.controllers.gameEngine;
 
 import java.util.Scanner;
 import java.util.concurrent.BlockingQueue;
