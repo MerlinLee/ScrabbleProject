@@ -19,4 +19,11 @@ public class GameNet {
     public BlockingQueue<String> getBlockingQueue() {
         return blockingQueue;
     }
+
+    //test
+    public static void main(String[] args){
+        GameNet gameNet = new GameNet();
+        new Thread().start();
+        new Thread().start();
+    }
 }

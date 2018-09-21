@@ -3,9 +3,10 @@ package scrabble.server.controllers.game;
 import com.alibaba.fastjson.JSON;
 import scrabble.protocols.ScrabbleProtocol;
 
+import java.util.Scanner;
 import java.util.concurrent.BlockingQueue;
 
-public class GameCore {
+public class GameCore implements Runnable{
     private final BlockingQueue<String> blockingQueue;
     private volatile boolean flag;
     public GameCore(BlockingQueue<String> blockingQueue) {
@@ -14,7 +15,7 @@ public class GameCore {
     }
 
     //test get message from net layer
-    public void getMessageFromNet(){
+    public String getMessageFromNet(){
         String message = "";
         try {
             String packet = blockingQueue.take();
@@ -27,6 +28,24 @@ public class GameCore {
             System.out.println(scrabbleProtocol.getTAG());
         }else {
             System.out.println("error");
+        }
+        return message;
+    }
+
+    public void shutDown(){
+        flag=true;
+    }
+
+    @Override
+    public void run() {
+        Scanner reader = new Scanner(System.in);
+        String str;
+        while (!flag){
+
+            str = getMessageFromNet();
+            if(str.equals("shutdown")){
+                shutDown();
+            }
         }
     }
 }

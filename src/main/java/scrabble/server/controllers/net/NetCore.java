@@ -1,8 +1,9 @@
 package scrabble.server.controllers.net;
 
+import java.util.Scanner;
 import java.util.concurrent.BlockingQueue;
 
-public class NetCore {
+public class NetCore implements Runnable{
     private final BlockingQueue<String> blockingQueue;
     private volatile boolean flag;
 
@@ -18,5 +19,23 @@ public class NetCore {
         }catch (InterruptedException e){
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void run() {
+        Scanner reader = new Scanner(System.in);
+        String str;
+        while (!flag){
+
+            str = reader.nextLine();
+            if(str.equals("shutdown")){
+                shutDown();
+            }
+            netToGame(str);
+        }
+    }
+
+    public void shutDown(){
+        flag=true;
     }
 }
