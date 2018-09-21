@@ -1,7 +1,17 @@
 package scrabble.protocols.GamingProtocol;
 
-public class VotingProtocol {
+public class GamingOperationProtocol {
     private boolean vote;
+
+    public BrickPlacing getBrickPlacing() {
+        return brickPlacing;
+    }
+
+    public void setBrickPlacing(BrickPlacing brickPlacing) {
+        this.brickPlacing = brickPlacing;
+    }
+
+    private BrickPlacing brickPlacing;
 
     public boolean isVote() {
         return vote;
