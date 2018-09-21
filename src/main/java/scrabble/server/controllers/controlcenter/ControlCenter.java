@@ -5,6 +5,7 @@ import scrabble.protocols.GamingProtocol.GamingOperationProtocol;
 import scrabble.protocols.NonGamingProtocol.NonGamingProtocol;
 import scrabble.protocols.ScrabbleProtocol;
 import scrabble.server.controllers.gameEngine.GameEngine;
+import scrabble.server.controllers.net.Net;
 import scrabble.server.controllers.net.NetCore;
 
 import java.util.concurrent.BlockingQueue;
@@ -16,18 +17,18 @@ public class ControlCenter implements Runnable{
     private final BlockingQueue<ScrabbleProtocol> fromEngine;
     private final BlockingQueue<String> toNet;
     private GameEngine gameEngine;
-    private NetCore netCore;
+    private Net net;
 
-    public ControlCenter(BlockingQueue<String> fromNet) {
-        this.fromNet = fromNet;
-        toEngine = new LinkedBlockingQueue<ScrabbleProtocol>();
+    public ControlCenter() {
+        this.fromNet = new LinkedBlockingQueue<>();
+        toEngine = new LinkedBlockingQueue<>();
         fromEngine = new LinkedBlockingQueue<>();
         toNet = new LinkedBlockingQueue<>();
-
+        initialServer();
     }
 
     public void initialServer(){
-
+        net = Net.getInstance(fromNet,toNet);
     }
     @Override
     public void run() {

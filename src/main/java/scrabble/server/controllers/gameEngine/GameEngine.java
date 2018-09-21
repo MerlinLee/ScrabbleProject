@@ -3,19 +3,13 @@ package scrabble.server.controllers.gameEngine;
 import scrabble.protocols.ScrabbleProtocol;
 
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 
-public class GameEngine implements Runnable{
+public class GameEngine {
     private BlockingQueue<ScrabbleProtocol> fromCenter;
     private BlockingQueue<ScrabbleProtocol> toCenter;
     public GameEngine(BlockingQueue<ScrabbleProtocol> toEngine, BlockingQueue<ScrabbleProtocol> fromEngine) {
         this.fromCenter = toEngine;
         this.toCenter = fromEngine;
-    }
-
-    @Override
-    public void run() {
-        switchMessage();
     }
 
     private void switchMessage(){
