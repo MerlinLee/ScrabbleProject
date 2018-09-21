@@ -1,6 +1,6 @@
 package scrabble.server.controllers;
 
-import scrabble.server.controllers.game.GameCore;
+import scrabble.server.controllers.gameEngine.GameCore;
 import scrabble.server.controllers.net.NetCore;
 
 import java.util.concurrent.BlockingQueue;

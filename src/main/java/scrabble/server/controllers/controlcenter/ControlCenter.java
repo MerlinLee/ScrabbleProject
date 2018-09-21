@@ -4,14 +4,20 @@ import com.alibaba.fastjson.JSON;
 import scrabble.protocols.GamingProtocol.GamingOperationProtocol;
 import scrabble.protocols.NonGamingProtocol.NonGamingProtocol;
 import scrabble.protocols.ScrabbleProtocol;
+import scrabble.server.controllers.gameEngine.GameEngine;
 
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class ControlCenter implements Runnable{
     private final BlockingQueue<String> fromNet;
+    private final BlockingQueue<ScrabbleProtocol> toEngine;
+    private final BlockingQueue<ScrabbleProtocol> fromEngine;
 
     public ControlCenter(BlockingQueue<String> fromNet) {
         this.fromNet = fromNet;
+        toEngine = new LinkedBlockingQueue<ScrabbleProtocol>();
+        fromEngine = GameEngine.getToCenter();
     }
 
     @Override
