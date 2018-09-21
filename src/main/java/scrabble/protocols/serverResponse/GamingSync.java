@@ -3,7 +3,7 @@ package scrabble.protocols.serverResponse;
 import scrabble.Models.Users;
 import scrabble.protocols.ScrabbleProtocol;
 
-public class GamingResponse extends ScrabbleProtocol {
+public class GamingSync extends ScrabbleProtocol {
     private int id;
     private String FLAG;
 

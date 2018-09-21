@@ -3,6 +3,7 @@ package scrabble.protocols.serverResponse;
 import scrabble.protocols.ScrabbleProtocol;
 
 public class VoteRequest extends ScrabbleProtocol {
+
     public int[] getStartPosition() {
         return startPosition;
     }
