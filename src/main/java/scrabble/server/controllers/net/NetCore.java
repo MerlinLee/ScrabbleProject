@@ -10,4 +10,13 @@ public class NetCore {
         this.blockingQueue = blockingQueue;
         flag=false;
     }
+
+    //test put string
+    public void netToGame(String message){
+        try {
+            blockingQueue.put(message);
+        }catch (InterruptedException e){
+            e.printStackTrace();
+        }
+    }
 }
