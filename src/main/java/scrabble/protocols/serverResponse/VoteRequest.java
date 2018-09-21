@@ -22,4 +22,14 @@ public class VoteRequest extends ScrabbleProtocol {
 
     private int[] startPosition = new int[2];
     private int[] endPosition = new int[2];
+
+    public int getVoteInitiator() {
+        return voteInitiator;
+    }
+
+    public void setVoteInitiator(int voteInitiator) {
+        this.voteInitiator = voteInitiator;
+    }
+
+    private int voteInitiator;
 }
