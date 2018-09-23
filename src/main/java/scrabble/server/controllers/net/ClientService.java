@@ -14,5 +14,11 @@ public class ClientService implements Runnable{
     @Override
     public void run() {
         NetClientSocketDB.getInstance().setSocketDB(client,clientID);
+        Net.getInstance().messageToCenter(getMessage(client));
+    }
+
+    private static String getMessage(Socket client){
+
+        return "";
     }
 }

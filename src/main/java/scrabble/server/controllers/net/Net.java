@@ -36,6 +36,14 @@ public class Net {
         return net;
     }
 
+    public void messageToCenter(String message){
+        try {
+            toCenter.put(message);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static Net getInstance (BlockingQueue fromNet, BlockingQueue toNet){
         if (net == null){
             synchronized (Net.class){

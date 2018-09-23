@@ -11,8 +11,8 @@ public class NetClientSocketDB {
         socketDB = new ConcurrentHashMap<>();
     }
 
-    public ConcurrentHashMap<Integer, Socket> getSocketDB() {
-        return socketDB;
+    public Socket getSocketDB(int clientId) {
+        return this.socketDB.get(clientId);
     }
 
     public void setSocketDB(Socket client,int clientID) {
