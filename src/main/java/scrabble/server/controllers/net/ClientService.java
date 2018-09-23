@@ -1,5 +1,6 @@
 package scrabble.server.controllers.net;
 
+import java.io.*;
 import java.net.Socket;
 
 public class ClientService implements Runnable{
@@ -18,7 +19,18 @@ public class ClientService implements Runnable{
     }
 
     private static String getMessage(Socket client){
+        //operation here
+        String message="";
+        try (InputStream is=client.getInputStream();
+             InputStreamReader isr = new InputStreamReader(is);
+             BufferedReader br = new BufferedReader(isr);
+             ){
 
-        return "";
+            message = br.readLine();
+
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+        return message;
     }
 }
