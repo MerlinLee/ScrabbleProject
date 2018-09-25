@@ -4,9 +4,10 @@ import scrabble.protocols.ScrabbleProtocol;
 
 import java.util.concurrent.BlockingQueue;
 
-public class GameEngine {
+public class GameEngine implements Runnable{
     private BlockingQueue<ScrabbleProtocol> fromCenter;
     private BlockingQueue<ScrabbleProtocol> toCenter;
+    private boolean flag = true;
     public GameEngine(BlockingQueue<ScrabbleProtocol> toEngine, BlockingQueue<ScrabbleProtocol> fromEngine) {
         this.fromCenter = toEngine;
         this.toCenter = fromEngine;
@@ -45,4 +46,18 @@ public class GameEngine {
         return gameEngine;
     }
 
+    @Override
+    public void run() {
+        while (flag){
+            try {
+                fromCenter.take();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void shutdown(){
+        flag = false;
+    }
 }

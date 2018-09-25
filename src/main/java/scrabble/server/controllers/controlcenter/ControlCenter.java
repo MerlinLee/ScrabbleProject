@@ -1,6 +1,8 @@
 package scrabble.server.controllers.controlcenter;
 
 import com.alibaba.fastjson.JSON;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import org.apache.log4j.Logger;
 import scrabble.protocols.GamingProtocol.GamingOperationProtocol;
 import scrabble.protocols.NonGamingProtocol.NonGamingProtocol;
 import scrabble.protocols.ScrabbleProtocol;
@@ -8,16 +10,20 @@ import scrabble.server.controllers.gameEngine.GameEngine;
 import scrabble.server.controllers.net.Net;
 import scrabble.server.controllers.net.NetCore;
 
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.*;
 
 public class ControlCenter implements Runnable{
+    private String tag = "ControlCenter";
+    private static Logger logger = Logger.getLogger(ControlCenter.class);
     private final BlockingQueue<String> fromNet;
     private final BlockingQueue<ScrabbleProtocol> toEngine;
     private final BlockingQueue<ScrabbleProtocol> fromEngine;
     private final BlockingQueue<String> toNet;
     private GameEngine gameEngine;
     private Net net;
+    private boolean flag = true;
+    private ThreadFactory threadForSocket;
+    private ExecutorService pool;
 
     public ControlCenter() {
         this.fromNet = new LinkedBlockingQueue<>();
@@ -25,11 +31,17 @@ public class ControlCenter implements Runnable{
         fromEngine = new LinkedBlockingQueue<>();
         toNet = new LinkedBlockingQueue<>();
         initialServer();
+        logger.info(tag+" Initial ControlCenter Complete!");
     }
 
     public void initialServer(){
-        net = Net.getInstance(fromNet,toNet);
-        gameEngine = GameEngine.getInstance(toEngine,fromEngine);
+        threadForSocket = new ThreadFactoryBuilder()
+                .setNameFormat("client-pool-%d").build();
+        pool = new ThreadPoolExecutor(3,10,0L,TimeUnit.MILLISECONDS,
+                new LinkedBlockingQueue<Runnable>(1024),threadForSocket,new ThreadPoolExecutor.AbortPolicy());
+        pool.execute(Net.getInstance(fromNet,toNet));
+        pool.execute(GameEngine.getInstance(toEngine,fromEngine));
+        logger.info(tag+" Initial Server Competed");
     }
     @Override
     public void run() {
@@ -40,11 +52,13 @@ public class ControlCenter implements Runnable{
         String message=null;
         try {
             message = fromNet.take();
+            logger.info(tag+" get message from queue!");
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            logger.error(tag+e);
         }
         if(!message.equals("")){
-            ScrabbleProtocol scrabbleProtocol = toObject(message);
+           // ScrabbleProtocol scrabbleProtocol = toObject(message);
+            System.out.println(message);
         }
     }
 
@@ -59,5 +73,8 @@ public class ControlCenter implements Runnable{
                     break;
         }
         return null;
+    }
+    public void shutdown(){
+        flag = false;
     }
 }
