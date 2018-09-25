@@ -84,4 +84,12 @@ public class Net implements Runnable{
     public void run() {
         initialServer(6666);
     }
+
+    public void messageToCenter(String message){
+        try {
+            toCenter.put(message);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 }

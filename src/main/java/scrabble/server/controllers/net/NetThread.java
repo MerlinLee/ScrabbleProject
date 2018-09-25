@@ -31,7 +31,7 @@ public class NetThread implements Runnable {
             inputStream = new BufferedReader(new InputStreamReader(client.getInputStream()));
             while (true){
                 String message = inputStream.readLine();
-                System.out.println(message);
+                Net.getInstance().messageToCenter(message);
             }
 
         }catch (IOException e){
