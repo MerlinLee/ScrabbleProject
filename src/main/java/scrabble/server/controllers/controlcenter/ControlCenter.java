@@ -10,6 +10,7 @@ import scrabble.server.controllers.gameEngine.GameEngine;
 import scrabble.server.controllers.net.Net;
 import scrabble.server.controllers.net.NetCore;
 
+import java.util.Scanner;
 import java.util.concurrent.*;
 
 public class ControlCenter implements Runnable{
@@ -45,6 +46,7 @@ public class ControlCenter implements Runnable{
     }
     @Override
     public void run() {
+        Scanner read = new Scanner(System.in);
         while (true){
             getMessage();
         }
@@ -54,6 +56,7 @@ public class ControlCenter implements Runnable{
         String message=null;
         try {
             message = fromNet.take();
+            sendMsgToNet("hello");
             logger.info(tag+" get message from queue!");
         } catch (InterruptedException e) {
             logger.error(tag+e);
@@ -78,5 +81,13 @@ public class ControlCenter implements Runnable{
     }
     public void shutdown(){
         flag = false;
+    }
+
+    private void sendMsgToNet(String msg){
+        try {
+            toNet.put(msg);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }

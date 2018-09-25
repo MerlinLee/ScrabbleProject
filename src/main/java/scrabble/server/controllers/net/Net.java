@@ -2,6 +2,8 @@ package scrabble.server.controllers.net;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.apache.log4j.Logger;
+import scrabble.server.controllers.net.blockingqueue.NetGetMsg;
+import scrabble.server.controllers.net.blockingqueue.NetPutMsg;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -11,7 +13,7 @@ import java.util.Hashtable;
 import java.util.concurrent.*;
 
 public class Net implements Runnable{
-    private String tag = "ControlCenter";
+    private String tag = "Net";
     private static Logger logger = Logger.getLogger(Net.class);
     private final BlockingQueue<String> fromCenter;
     private final BlockingQueue<String> toCenter;
@@ -23,6 +25,15 @@ public class Net implements Runnable{
         this.toCenter = fromNet;
         this.fromCenter = toNet;
     }
+
+    public Hashtable getClientDataHsh() {
+        return clientDataHsh;
+    }
+
+    public Hashtable getClientNameHash() {
+        return clientNameHash;
+    }
+
     private Hashtable clientDataHsh = new Hashtable(50);
     private Hashtable clientNameHash = new Hashtable(50);
     private ServerSocket server;
@@ -54,7 +65,7 @@ public class Net implements Runnable{
         return net;
     }
 
-    private void initialServer(int port){
+    private void initialServer(int port, BlockingQueue toNetPutMsg){
         Socket client;
         int clientNumber = 1;
         threadForSocket = new ThreadFactoryBuilder()
@@ -68,8 +79,8 @@ public class Net implements Runnable{
                 DataOutputStream dataOutputStream = new DataOutputStream(client
                             .getOutputStream());
                 clientDataHsh.put(client,dataOutputStream);
-                clientNameHash.put(client,clientNumber++);
-                pool.execute(new NetThread(client,clientDataHsh,clientNameHash));
+                clientNameHash.put(clientNumber++,client);
+                pool.execute(new NetThread(client,clientDataHsh,clientNameHash,toNetPutMsg));
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -82,25 +93,9 @@ public class Net implements Runnable{
 
     @Override
     public void run() {
-        initialServer(6666);
-        while (true){
-            getMessage();
-        }
-    }
-
-    public void messageToCenter(String message){
-        try {
-            toCenter.put(message);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void getMessage(){
-        try {
-            String messageFromCenter = fromCenter.take();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        BlockingQueue<String> toNetPutMsg = new LinkedBlockingQueue<>();
+        initialServer(6666,toNetPutMsg);
+        pool.execute(new NetGetMsg(fromCenter,clientNameHash));
+        pool.execute(new NetPutMsg(toCenter,toNetPutMsg));
     }
 }
