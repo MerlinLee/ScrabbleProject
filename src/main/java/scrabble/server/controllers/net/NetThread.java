@@ -6,17 +6,20 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 import java.util.Hashtable;
+import java.util.concurrent.BlockingQueue;
 
 public class NetThread implements Runnable {
     private Socket client;
     private Hashtable clientDataHash;
     private Hashtable clientNameHash;
     private boolean isClientClosed = false;
+    private final BlockingQueue<String> toNetPutMsg;
 
-    public NetThread(Socket client, Hashtable clientDataHash, Hashtable clientNameHash) {
+    public NetThread(Socket client, Hashtable clientDataHash, Hashtable clientNameHash,BlockingQueue toNetPutMsg) {
         this.client = client;
         this.clientDataHash = clientDataHash;
         this.clientNameHash = clientNameHash;
+        this.toNetPutMsg = toNetPutMsg;
     }
 
     @Override
@@ -31,10 +34,10 @@ public class NetThread implements Runnable {
             inputStream = new BufferedReader(new InputStreamReader(client.getInputStream()));
             while (true){
                 String message = inputStream.readLine();
-                Net.getInstance().messageToCenter(message);
+                toNetPutMsg.put(message);
             }
 
-        }catch (IOException e){
+        }catch (Exception e){
             e.printStackTrace();
         }finally {
             if (!isClientClosed){
