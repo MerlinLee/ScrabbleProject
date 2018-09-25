@@ -54,7 +54,7 @@ public class ControlCenter implements Runnable{
         String message=null;
         try {
             message = fromNet.take();
-            logger.info(tag+" get message from queue!"+message);
+            logger.info(tag+" get message from queue!");
         } catch (InterruptedException e) {
             logger.error(tag+e);
         }

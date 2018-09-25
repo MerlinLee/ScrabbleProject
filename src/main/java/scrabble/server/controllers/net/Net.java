@@ -83,11 +83,22 @@ public class Net implements Runnable{
     @Override
     public void run() {
         initialServer(6666);
+        while (true){
+            getMessage();
+        }
     }
 
     public void messageToCenter(String message){
         try {
             toCenter.put(message);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void getMessage(){
+        try {
+            String messageFromCenter = fromCenter.take();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
