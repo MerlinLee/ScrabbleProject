@@ -45,14 +45,16 @@ public class ControlCenter implements Runnable{
     }
     @Override
     public void run() {
-        getMessage();
+        while (true){
+            getMessage();
+        }
     }
 
     public void getMessage(){
         String message=null;
         try {
             message = fromNet.take();
-            logger.info(tag+" get message from queue!");
+            logger.info(tag+" get message from queue!"+message);
         } catch (InterruptedException e) {
             logger.error(tag+e);
         }
