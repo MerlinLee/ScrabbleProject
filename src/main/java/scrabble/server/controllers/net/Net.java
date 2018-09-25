@@ -1,18 +1,23 @@
 package scrabble.server.controllers.net;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import org.apache.log4j.Logger;
+
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Hashtable;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.*;
 
-public class Net {
-
+public class Net implements Runnable{
+    private String tag = "ControlCenter";
+    private static Logger logger = Logger.getLogger(Net.class);
     private final BlockingQueue<String> fromCenter;
     private final BlockingQueue<String> toCenter;
     private boolean flag = true;
+    private ThreadFactory threadForSocket;
+    private ExecutorService pool;
 
     public Net(BlockingQueue fromNet, BlockingQueue toNet) {
         this.toCenter = fromNet;
@@ -52,6 +57,10 @@ public class Net {
     private void initialServer(int port){
         Socket client;
         int clientNumber = 1;
+        threadForSocket = new ThreadFactoryBuilder()
+                .setNameFormat("Net-pool-%d").build();
+        pool = new ThreadPoolExecutor(3,10,0L,TimeUnit.MILLISECONDS,
+                new LinkedBlockingQueue<Runnable>(1024),threadForSocket,new ThreadPoolExecutor.AbortPolicy());
         try {
             server = new ServerSocket(port);
             while (flag){
@@ -60,6 +69,7 @@ public class Net {
                             .getOutputStream());
                 clientDataHsh.put(client,dataOutputStream);
                 clientNameHash.put(client,clientNumber++);
+                pool.execute(new NetThread(client,clientDataHsh,clientNameHash));
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -68,5 +78,10 @@ public class Net {
 
     public void shutdown(){
         flag = false;
+    }
+
+    @Override
+    public void run() {
+        initialServer(6666);
     }
 }
