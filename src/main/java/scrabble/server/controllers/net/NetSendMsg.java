@@ -17,21 +17,30 @@ public class NetSendMsg implements Runnable {
     }
     @Override
     public void run() {
-        sendBroadcastMsg("");
+       sendToPeer("",2);
     }
 
     private void sendBroadcastMsg(String msg){
         synchronized (clientNameTable){
             for(Enumeration enu=clientNameTable.elements();enu.hasMoreElements();){
                 client = (Socket)enu.nextElement();
-                try {
-                    PrintWriter printWriter = new PrintWriter(new DataOutputStream(client.getOutputStream()));
-                    printWriter.println("hello");
-                    printWriter.flush();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                sendMsgOperation();
             }
+        }
+    }
+
+    private void sendToPeer(String msg, int clientId){
+        client = (Socket)clientNameTable.get(clientId);
+        sendMsgOperation();
+    }
+
+    private void sendMsgOperation(){
+        try {
+            PrintWriter printWriter = new PrintWriter(new DataOutputStream(client.getOutputStream()));
+            printWriter.println("hello");
+            printWriter.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
