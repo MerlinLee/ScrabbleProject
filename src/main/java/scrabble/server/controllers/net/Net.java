@@ -68,10 +68,6 @@ public class Net implements Runnable{
     private void initialServer(int port, BlockingQueue toNetPutMsg){
         Socket client;
         int clientNumber = 1;
-        threadForSocket = new ThreadFactoryBuilder()
-                .setNameFormat("Net-pool-%d").build();
-        pool = new ThreadPoolExecutor(3,10,0L,TimeUnit.MILLISECONDS,
-                new LinkedBlockingQueue<Runnable>(1024),threadForSocket,new ThreadPoolExecutor.AbortPolicy());
         try {
             server = new ServerSocket(port);
             while (flag){
@@ -93,9 +89,14 @@ public class Net implements Runnable{
 
     @Override
     public void run() {
+        threadForSocket = new ThreadFactoryBuilder()
+                .setNameFormat("Net-pool-%d").build();
+        pool = new ThreadPoolExecutor(10,10,0L,TimeUnit.MILLISECONDS,
+                new LinkedBlockingQueue<Runnable>(1024),threadForSocket,new ThreadPoolExecutor.AbortPolicy());
         BlockingQueue<String> toNetPutMsg = new LinkedBlockingQueue<>();
-        initialServer(6666,toNetPutMsg);
         pool.execute(new NetGetMsg(fromCenter,clientNameHash));
         pool.execute(new NetPutMsg(toCenter,toNetPutMsg));
+        initialServer(6666,toNetPutMsg);
+
     }
 }
