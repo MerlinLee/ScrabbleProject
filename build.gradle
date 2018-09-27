@@ -20,6 +20,8 @@ mainClassName = 'Main'
 dependencies {
     // This dependency is found on compile classpath of this component and consumers.
     compile 'com.google.guava:guava:23.0'
+    // https://mvnrepository.com/artifact/com.alibaba/fastjson
+    compile group: 'com.alibaba', name: 'fastjson', version: '1.2.49'
 
     // Use JUnit test framework
     testCompile 'junit:junit:4.12'

@@ -2,7 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/ScrabbleProject.iml" filepath="$PROJECT_DIR$/.idea/ScrabbleProject.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/IdeaProjects-ScrabbleProject_main.iml" filepath="$PROJECT_DIR$/.idea/modules/IdeaProjects-ScrabbleProject_main.iml" group="ScrabbleProject" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/IdeaProjects-ScrabbleProject_test.iml" filepath="$PROJECT_DIR$/.idea/modules/IdeaProjects-ScrabbleProject_test.iml" group="ScrabbleProject" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ScrabbleProject_main.iml" filepath="$PROJECT_DIR$/.idea/modules/ScrabbleProject_main.iml" group="ScrabbleProject" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ScrabbleProject_test.iml" filepath="$PROJECT_DIR$/.idea/modules/ScrabbleProject_test.iml" group="ScrabbleProject" />
     </modules>
   </component>
 </project>
