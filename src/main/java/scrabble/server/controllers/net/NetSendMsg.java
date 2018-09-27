@@ -17,7 +17,7 @@ public class NetSendMsg implements Runnable {
     }
     @Override
     public void run() {
-       sendToPeer("",2);
+
     }
 
     private void sendBroadcastMsg(String msg){
