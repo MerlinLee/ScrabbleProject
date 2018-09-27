@@ -5,6 +5,7 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.apache.log4j.Logger;
 import scrabble.protocols.GamingProtocol.GamingOperationProtocol;
 import scrabble.protocols.NonGamingProtocol.NonGamingProtocol;
+import scrabble.protocols.Package;
 import scrabble.protocols.ScrabbleProtocol;
 import scrabble.server.controllers.gameEngine.GameEngine;
 import scrabble.server.controllers.net.Net;
@@ -17,8 +18,8 @@ public class ControlCenter implements Runnable{
     private String tag = "ControlCenter";
     private static Logger logger = Logger.getLogger(ControlCenter.class);
     private final BlockingQueue<String> fromNet;
-    private final BlockingQueue<ScrabbleProtocol> toEngine;
-    private final BlockingQueue<ScrabbleProtocol> fromEngine;
+    private final BlockingQueue<Package> toEngine;
+    private final BlockingQueue<Package> fromEngine;
     private final BlockingQueue<String> toNet;
     private GameEngine gameEngine;
     private Net net;
@@ -38,7 +39,7 @@ public class ControlCenter implements Runnable{
     public void initialServer(){
         threadForSocket = new ThreadFactoryBuilder()
                 .setNameFormat("ControlCenter-pool-%d").build();
-        pool = new ThreadPoolExecutor(3,10,0L,TimeUnit.MILLISECONDS,
+        pool = new ThreadPoolExecutor(5,10,0L,TimeUnit.MILLISECONDS,
                 new LinkedBlockingQueue<Runnable>(1024),threadForSocket,new ThreadPoolExecutor.AbortPolicy());
         pool.execute(Net.getInstance(fromNet,toNet));
         pool.execute(GameEngine.getInstance(toEngine,fromEngine));

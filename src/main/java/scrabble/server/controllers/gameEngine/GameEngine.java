@@ -1,25 +1,31 @@
 package scrabble.server.controllers.gameEngine;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import scrabble.protocols.Package;
 import scrabble.protocols.ScrabbleProtocol;
+import scrabble.server.controllers.gameEngine.blockingqueque.EngineGetMsg;
+import scrabble.server.controllers.gameEngine.blockingqueque.EnginePutMsg;
 
-import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.*;
 
 public class GameEngine implements Runnable{
-    private BlockingQueue<ScrabbleProtocol> fromCenter;
-    private BlockingQueue<ScrabbleProtocol> toCenter;
+    private BlockingQueue<Package> fromCenter;
+    private BlockingQueue<Package> toCenter;
     private boolean flag = true;
-    public GameEngine(BlockingQueue<ScrabbleProtocol> toEngine, BlockingQueue<ScrabbleProtocol> fromEngine) {
+    private ThreadFactory threadForSocket;
+    private ExecutorService pool;
+    public GameEngine(BlockingQueue<Package> toEngine, BlockingQueue<Package> fromEngine) {
         this.fromCenter = toEngine;
         this.toCenter = fromEngine;
     }
 
     private void switchMessage(){
-        try {
-            //switch types of commands
-            String tag = fromCenter.take().getTAG();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            //switch types of commands
+//            //String tag = fromCenter.take();
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
     }
 
     private volatile static GameEngine gameEngine;
@@ -35,7 +41,7 @@ public class GameEngine implements Runnable{
         return gameEngine;
     }
 
-    public static GameEngine getInstance(BlockingQueue<ScrabbleProtocol> toEngine, BlockingQueue<ScrabbleProtocol> fromEngine){
+    public static GameEngine getInstance(BlockingQueue<Package> toEngine, BlockingQueue<Package> fromEngine){
         if (gameEngine == null ){
             synchronized (GameEngine.class){
                 if (gameEngine == null){
@@ -48,13 +54,12 @@ public class GameEngine implements Runnable{
 
     @Override
     public void run() {
-        while (flag){
-            try {
-                fromCenter.take();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+        threadForSocket = new ThreadFactoryBuilder()
+                .setNameFormat("ControlCenter-pool-%d").build();
+        pool = new ThreadPoolExecutor(2,10,0L, TimeUnit.MILLISECONDS,
+                new LinkedBlockingQueue<Runnable>(1024),threadForSocket,new ThreadPoolExecutor.AbortPolicy());
+        pool.execute(new EngineGetMsg(fromCenter));
+        pool.execute(new EnginePutMsg(toCenter));
     }
 
     public void shutdown(){
