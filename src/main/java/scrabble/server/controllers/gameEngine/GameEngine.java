@@ -14,6 +14,11 @@ public class GameEngine implements Runnable{
     private boolean flag = true;
     private ThreadFactory threadForSocket;
     private ExecutorService pool;
+
+
+
+
+
     public GameEngine(BlockingQueue<Package> toEngine, BlockingQueue<Package> fromEngine) {
         this.fromCenter = toEngine;
         this.toCenter = fromEngine;
@@ -28,6 +33,8 @@ public class GameEngine implements Runnable{
 //        }
     }
 
+
+    //Singleton GameEngine
     private volatile static GameEngine gameEngine;
     public GameEngine(){}
     public static GameEngine getInstance(){
