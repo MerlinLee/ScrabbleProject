@@ -4,14 +4,31 @@ import scrabble.Models.Users;
 import scrabble.protocols.ScrabbleProtocol;
 
 public class NonGamingResponse extends ScrabbleProtocol {
-    private int id;
 
-    public int getId() {
-        return id;
+    // userID is unnecessary
+//    private int userID;
+
+    public NonGamingResponse(Users[] usersList, String command) {
+        super.setTAG("NonGamingResponse");
+//        this.userID = userID;
+        this.usersList = usersList;
+        this.command = command;
     }
 
-    public void setId(int id) {
-        this.id = id;
+//    public int getUserID() {
+//        return userID;
+//    }
+//
+//    public void setUserID(int userID) {
+//        this.userID = userID;
+//    }
+
+    public String getCommand() {
+        return command;
+    }
+
+    public void setCommand(String command) {
+        this.command = command;
     }
 
     public Users[] getUsersList() {
@@ -22,14 +39,7 @@ public class NonGamingResponse extends ScrabbleProtocol {
         this.usersList = usersList;
     }
 
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
     private Users[] usersList;
-    private String status;
+    private String command;
+    // 原来有个status
 }

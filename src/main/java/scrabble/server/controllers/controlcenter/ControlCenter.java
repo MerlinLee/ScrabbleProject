@@ -5,11 +5,10 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.apache.log4j.Logger;
 import scrabble.protocols.GamingProtocol.GamingOperationProtocol;
 import scrabble.protocols.NonGamingProtocol.NonGamingProtocol;
-import scrabble.protocols.Package;
+import scrabble.protocols.Pack;
 import scrabble.protocols.ScrabbleProtocol;
 import scrabble.server.controllers.gameEngine.GameEngine;
 import scrabble.server.controllers.net.Net;
-import scrabble.server.controllers.net.NetCore;
 
 import java.util.Scanner;
 import java.util.concurrent.*;
@@ -18,8 +17,8 @@ public class ControlCenter implements Runnable{
     private String tag = "ControlCenter";
     private static Logger logger = Logger.getLogger(ControlCenter.class);
     private final BlockingQueue<String> fromNet;
-    private final BlockingQueue<Package> toEngine;
-    private final BlockingQueue<Package> fromEngine;
+    private final BlockingQueue<Pack> toEngine;
+    private final BlockingQueue<Pack> fromEngine;
     private final BlockingQueue<String> toNet;
     private GameEngine gameEngine;
     private Net net;

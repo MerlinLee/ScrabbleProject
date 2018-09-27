@@ -9,9 +9,28 @@ import scrabble.protocols.ScrabbleProtocol;
  * @date 20/09/2018
  */
 public class NonGamingProtocol extends ScrabbleProtocol {
-    //start,login, logout, quit, invite
+    // to server: start, login, logout, invite, inviteResponse
+    // from server: userUpdate, invite, inviteACK --- (possibly inviteMore)
     private String command;
     private String[] userList;
+    private boolean inviteAccepted;
+    private int hostID;
+
+    public int getHostID() {
+        return hostID;
+    }
+
+    public void setHostID(int hostID) {
+        this.hostID = hostID;
+    }
+
+    public boolean isInviteAccepted() {
+        return inviteAccepted;
+    }
+
+    public void setInviteAccepted(boolean inviteAccepted) {
+        this.inviteAccepted = inviteAccepted;
+    }
 
     public String getCommand() {
         return command;
@@ -29,4 +48,9 @@ public class NonGamingProtocol extends ScrabbleProtocol {
         this.userList = userList;
     }
 
+    public NonGamingProtocol(String command, String[] userList) {
+        super.setTAG("NonGamingProtocol");
+        this.command = command;
+        this.userList = userList;
+    }
 }

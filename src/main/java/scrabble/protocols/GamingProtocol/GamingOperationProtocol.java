@@ -5,6 +5,21 @@ import scrabble.protocols.ScrabbleProtocol;
 public class GamingOperationProtocol extends ScrabbleProtocol {
     private boolean vote;
 
+    public GamingOperationProtocol(boolean vote, BrickPlacing brickPlacing, int[] startPosition, int[] endPosition) {
+       super.setTAG("GamingOperationProtocol");
+        this.vote = vote;
+        this.brickPlacing = brickPlacing;
+        this.startPosition = startPosition;
+        this.endPosition = endPosition;
+    }
+
+    public GamingOperationProtocol(boolean vote, int[] startPosition, int[] endPosition) {
+        super.setTAG("GamingOperationProtocol");
+        this.vote = vote;
+        this.startPosition = startPosition;
+        this.endPosition = endPosition;
+    }
+
     public BrickPlacing getBrickPlacing() {
 
         return brickPlacing;

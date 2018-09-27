@@ -1,16 +1,14 @@
 package scrabble.server.controllers.gameEngine;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import scrabble.protocols.Package;
-import scrabble.protocols.ScrabbleProtocol;
+import scrabble.protocols.Pack;
 import scrabble.server.controllers.gameEngine.blockingqueque.EngineGetMsg;
-import scrabble.server.controllers.gameEngine.blockingqueque.EnginePutMsg;
 
 import java.util.concurrent.*;
 
 public class GameEngine implements Runnable{
-    private BlockingQueue<Package> fromCenter;
-    private BlockingQueue<Package> toCenter;
+    private BlockingQueue<Pack> fromCenter;
+    private BlockingQueue<Pack> toCenter;
     private boolean flag = true;
     private ThreadFactory threadForSocket;
     private ExecutorService pool;
@@ -19,7 +17,7 @@ public class GameEngine implements Runnable{
 
 
 
-    public GameEngine(BlockingQueue<Package> toEngine, BlockingQueue<Package> fromEngine) {
+    public GameEngine(BlockingQueue<Pack> toEngine, BlockingQueue<Pack> fromEngine) {
         this.fromCenter = toEngine;
         this.toCenter = fromEngine;
     }
@@ -48,7 +46,7 @@ public class GameEngine implements Runnable{
         return gameEngine;
     }
 
-    public static GameEngine getInstance(BlockingQueue<Package> toEngine, BlockingQueue<Package> fromEngine){
+    public static GameEngine getInstance(BlockingQueue<Pack> toEngine, BlockingQueue<Pack> fromEngine){
         if (gameEngine == null ){
             synchronized (GameEngine.class){
                 if (gameEngine == null){
@@ -66,7 +64,8 @@ public class GameEngine implements Runnable{
         pool = new ThreadPoolExecutor(2,10,0L, TimeUnit.MILLISECONDS,
                 new LinkedBlockingQueue<Runnable>(1024),threadForSocket,new ThreadPoolExecutor.AbortPolicy());
         pool.execute(new EngineGetMsg(fromCenter));
-        pool.execute(new EnginePutMsg(toCenter));
+        //pool.execute(new EnginePutMsg(toCenter));
+
     }
 
     public void shutdown(){

@@ -2,6 +2,10 @@ package scrabble.protocols.serverResponse;
 
 import scrabble.protocols.ScrabbleProtocol;
 
+/***
+ * this class should be VoteResponse
+ */
+
 public class VoteRequest extends ScrabbleProtocol {
 
     public int[] getStartPosition() {

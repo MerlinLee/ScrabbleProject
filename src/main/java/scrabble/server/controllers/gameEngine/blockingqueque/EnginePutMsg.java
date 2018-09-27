@@ -1,29 +1,49 @@
 package scrabble.server.controllers.gameEngine.blockingqueque;
 
-import scrabble.protocols.Package;
+import scrabble.protocols.Pack;
 
-import java.util.ArrayList;
 import java.util.concurrent.BlockingQueue;
 
-public class EnginePutMsg implements Runnable {
-    public EnginePutMsg(BlockingQueue<Package> toCenter) {
+public class EnginePutMsg  {
+    public EnginePutMsg(){}
+    public EnginePutMsg(BlockingQueue<Pack> toCenter) {
         this.toCenter = toCenter;
     }
 
-    private BlockingQueue<Package> toCenter;
-    private ArrayList<String> msg;
+    private BlockingQueue<Pack> toCenter;
 
 
-    @Override
-    public void run() {
-        try {
-            toCenter.put(new Package(1,""));
-
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+    //Singleton GameEngine
+    private volatile static EnginePutMsg enginePutMsg;
+    public static EnginePutMsg getInstance(){
+        if (enginePutMsg == null ){
+            synchronized (EnginePutMsg.class){
+                if (enginePutMsg == null){
+                    enginePutMsg = new EnginePutMsg();
+                }
+            }
         }
+        return enginePutMsg;
+    }
+
+    public static EnginePutMsg getInstance(BlockingQueue<Pack> toCenter){
+        if (enginePutMsg == null ){
+            synchronized (EnginePutMsg.class){
+                if (enginePutMsg == null){
+                    enginePutMsg = new EnginePutMsg(toCenter);
+                }
+            }
+        }
+        return enginePutMsg;
     }
 
 
+    public void putMsgToCenter(Pack msg){
+        try{
+            toCenter.put(msg);
+        }catch (InterruptedException e){
+            e.printStackTrace();
+        }
+    }
 
 }

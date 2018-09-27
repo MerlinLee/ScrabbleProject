@@ -1,23 +1,23 @@
 package scrabble.Models;
 
 public class Users {
-    private int id;
-    private String username;
+    private int userID;
+    private String userName;
 
-    public int getId() {
-        return id;
+    public int getUserID() {
+        return userID;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setUserID(int userID) {
+        this.userID = userID;
     }
 
-    public String getUsername() {
-        return username;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public String getStatus() {
@@ -36,7 +36,14 @@ public class Users {
         this.numWin = numWin;
     }
 
-    //be invited, is gaming, avaliable
+    public Users(int userID, String userName){
+        this.userID = userID;
+        this.userName= userName;
+        this.status = "available";
+        this.numWin = 0;
+    }
+
+    //ready, in-game, available
     private String status;
     private int numWin;
 }
