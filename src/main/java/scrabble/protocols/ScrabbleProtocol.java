@@ -6,6 +6,8 @@ package scrabble.protocols;
  * @date 20/09/2018
  */
 public class ScrabbleProtocol {
+
+    // GamingOperationProtocol, NonGamingProtocol, ErrorProtocol
     public String getTAG() {
         return TAG;
     }

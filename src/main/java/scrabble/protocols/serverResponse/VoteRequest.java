@@ -1,25 +1,12 @@
-package scrabble.protocols.GamingProtocol;
+package scrabble.protocols.serverResponse;
 
-public class VotingProtocol {
-    private boolean vote;
+import scrabble.protocols.ScrabbleProtocol;
 
-    public boolean isVote() {
-        return vote;
-    }
+/***
+ * this class should be VoteResponse
+ */
 
-    public void setVote(boolean vote) {
-        this.vote = vote;
-    }
-
-    public boolean isPass() {
-        return pass;
-    }
-
-    public void setPass(boolean pass) {
-        this.pass = pass;
-    }
-
-    private boolean pass;
+public class VoteRequest extends ScrabbleProtocol {
 
     public int[] getStartPosition() {
         return startPosition;
@@ -38,7 +25,15 @@ public class VotingProtocol {
     }
 
     private int[] startPosition = new int[2];
-
     private int[] endPosition = new int[2];
-}
 
+    public int getVoteInitiator() {
+        return voteInitiator;
+    }
+
+    public void setVoteInitiator(int voteInitiator) {
+        this.voteInitiator = voteInitiator;
+    }
+
+    private int voteInitiator;
+}
