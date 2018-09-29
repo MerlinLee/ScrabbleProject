@@ -2,7 +2,7 @@ package scrabble.Models;
 
 public class Player {
     private Users user;
-    private int score;
+    private int userId;
 
     public Users getUser() {
         return user;
@@ -12,11 +12,16 @@ public class Player {
         this.user = user;
     }
 
-    public int getScore() {
-        return score;
+    public int getUserId() {
+        return userId;
     }
 
-    public void setScore(int score) {
-        this.score = score;
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
+    public Player(Users user, int userId) {
+        this.user = user;
+        this.userId = userId;
     }
 }

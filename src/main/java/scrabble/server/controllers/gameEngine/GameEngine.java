@@ -1,33 +1,68 @@
 package scrabble.server.controllers.gameEngine;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import scrabble.protocols.Package;
 import scrabble.protocols.ScrabbleProtocol;
+import scrabble.server.controllers.gameEngine.blockingqueque.EngineGetMsg;
+import scrabble.server.controllers.gameEngine.blockingqueque.EnginePutMsg;
 
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.*;
 
 public class GameEngine implements Runnable{
-    private BlockingQueue<ScrabbleProtocol> fromCenter;
-
-    public static BlockingQueue<ScrabbleProtocol> getToCenter() {
-        return new LinkedBlockingQueue<>();
+    private BlockingQueue<Package> fromCenter;
+    private BlockingQueue<Package> toCenter;
+    private boolean flag = true;
+    private ThreadFactory threadForSocket;
+    private ExecutorService pool;
+    public GameEngine(BlockingQueue<Package> toEngine, BlockingQueue<Package> fromEngine) {
+        this.fromCenter = toEngine;
+        this.toCenter = fromEngine;
     }
 
-    private BlockingQueue<ScrabbleProtocol> toCenter;
-    public GameEngine(BlockingQueue<ScrabbleProtocol> fromCenter) {
-        this.fromCenter = fromCenter;
+    private void switchMessage(){
+//        try {
+//            //switch types of commands
+//            //String tag = fromCenter.take();
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+    }
+
+    private volatile static GameEngine gameEngine;
+    public GameEngine(){}
+    public static GameEngine getInstance(){
+        if (gameEngine == null ){
+            synchronized (GameEngine.class){
+                if (gameEngine == null){
+                    gameEngine = new GameEngine();
+                }
+            }
+        }
+        return gameEngine;
+    }
+
+    public static GameEngine getInstance(BlockingQueue<Package> toEngine, BlockingQueue<Package> fromEngine){
+        if (gameEngine == null ){
+            synchronized (GameEngine.class){
+                if (gameEngine == null){
+                    gameEngine = new GameEngine(toEngine, fromEngine);
+                }
+            }
+        }
+        return gameEngine;
     }
 
     @Override
     public void run() {
-        switchMessage();
+        threadForSocket = new ThreadFactoryBuilder()
+                .setNameFormat("ControlCenter-pool-%d").build();
+        pool = new ThreadPoolExecutor(2,10,0L, TimeUnit.MILLISECONDS,
+                new LinkedBlockingQueue<Runnable>(1024),threadForSocket,new ThreadPoolExecutor.AbortPolicy());
+        pool.execute(new EngineGetMsg(fromCenter));
+        pool.execute(new EnginePutMsg(toCenter));
     }
 
-    private void switchMessage(){
-        try {
-            //switch types of commands
-            String tag = fromCenter.take().getTAG();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+    public void shutdown(){
+        flag = false;
     }
 }
