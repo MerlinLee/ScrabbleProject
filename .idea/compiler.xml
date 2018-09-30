@@ -2,6 +2,10 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel>
+      <module name="a111-IdeaProjects-ScrabbleProject_main" target="1.9" />
+      <module name="a111-IdeaProjects-ScrabbleProject_test" target="1.9" />
+      <module name="IdeaProjects-ScrabbleProject_main" target="1.9" />
+      <module name="IdeaProjects-ScrabbleProject_test" target="1.9" />
       <module name="ScrabbleProject_main" target="1.10" />
       <module name="ScrabbleProject_test" target="1.10" />
     </bytecodeTargetLevel>
