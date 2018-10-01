@@ -24,6 +24,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public class GameProcess {
     private final int ID_PLACEHOLDER = -1;
+    private final int BOARD_SIZE = 20;
+    private final int INITIAL_SEQ= 1;
+
     private int gameHost = ID_PLACEHOLDER;
     private boolean gameStart = false;
     private int whoseTurn;
@@ -31,8 +34,10 @@ public class GameProcess {
     private int agree;
     private int disagree;
     private int voteInitiator;
+    private int numPass;
+    private int gameLoopStartSeq;
 
-    private char[][] board = new char[20][20];
+    private char[][] board = new char[BOARD_SIZE][BOARD_SIZE];
 
 //    private int currentUserID;
 //    private String msg;
@@ -108,24 +113,12 @@ public class GameProcess {
     private void gamingOperation(int currentUserID, GamingOperationProtocol gamingOperationProtocol) {
         //command:  brickPlacing, vote
         String command = gamingOperationProtocol.getCommand();
-        BrickPlacing bp = gamingOperationProtocol.getBrickPlacing();
-        int[] start = gamingOperationProtocol.getStartPosition();
-        int[] end = gamingOperationProtocol.getEndPosition();
         switch (command) {
             case "vote":
                 if (gamingOperationProtocol.isVote()){
-                    voteInitiator = currentUserID;
-                    board[bp.getPosition()[0]][bp.getPosition()[1]] = Character.toUpperCase(bp.getbrick());
-                    boardUpdate(currentUserID);
-                    voteOperation(currentUserID, start, end);
-                    waitVoting();
-
-                    voteResult(start,end);
-                    gameTurnControl();
-                    boardUpdate(currentUserID);
-//                    voteInitiator = ID_PLACEHOLDER;
+                    hasVote(currentUserID, gamingOperationProtocol);
                 }else {
-                    boardUpdate(currentUserID);
+                    hasNotVote(currentUserID, gamingOperationProtocol);
                 }
                 break;
             case "voteResponse":
@@ -133,7 +126,10 @@ public class GameProcess {
                 playerVoteResponse(gamingOperationProtocol.isVote());
                 break;
             case "disconnect":
-
+                win(currentUserID);
+                //reset gameEndCheck parameters
+                numPass = 0;
+                gameLoopStartSeq = 0;
                 break;
             default:
                 break;
@@ -147,25 +143,79 @@ public class GameProcess {
         if ((double)agree/disagree >= 0.5){
             //success
             int i;
-            for (i=0; i<playerList.size(); i++){
-                if (playerList.get(i).getUser().getUserID() == voteInitiator){
-                    if (start[0]==end[0]){
-                        playerList.get(i).setPoints(end[1]-start[1]+1);
-                    }else if (start[1]==end[1]){
-                        playerList.get(i).setPoints(end[0]-start[0]+1);
-                    }
-                    break;
+            int index = playerIndexSearch(voteInitiator);
+                if (start[0]==end[0]){
+                    playerList.get(index).setPoints(end[1]-start[1]+1);
+                }else if (start[1]==end[1]){
+                    playerList.get(index).setPoints(end[0]-start[0]+1);
                 }
-            }
         }else{
             //failure
         }
     }
 
-    private void gameEnd(){
-
+    //search player instance according to userID
+    private int playerIndexSearch(int currentUserID){
+        int index;
+        for (index = 0; index<playerList.size();index++){
+            if(playerList.get(index).getUser().getUserID()==currentUserID){
+                break;
+            }
+        }
+        return index;
     }
 
+    private void hasVote(int currentUserID, GamingOperationProtocol gamingOperationProtocol){
+        BrickPlacing bp = gamingOperationProtocol.getBrickPlacing();
+        int[] start = gamingOperationProtocol.getStartPosition();
+        int[] end = gamingOperationProtocol.getEndPosition();
+
+        voteInitiator = currentUserID;
+        board[bp.getPosition()[0]][bp.getPosition()[1]] = Character.toUpperCase(bp.getbrick());
+        boardUpdate(currentUserID);
+        voteOperation(currentUserID, start, end);
+        waitVoting();
+
+        voteResult(start,end);
+        gameTurnControl();
+        boardUpdate(currentUserID);
+
+        //reset gameEndCheck parameters
+        numPass = 0;
+        gameLoopStartSeq = 0;
+    }
+
+    private void hasNotVote(int currentUserID, GamingOperationProtocol gamingOperationProtocol){
+        BrickPlacing bp = gamingOperationProtocol.getBrickPlacing();
+        //initial check gameEnd conditions (1. if every player had a turn -- sequence loop check  2. num of direct pass)
+        if (!gameEndCheck(currentUserID)) {
+            if (bp.getPosition() != null) {
+                gameTurnControl();
+                boardUpdate(currentUserID);
+            } else {
+                int index = playerIndexSearch(currentUserID);
+                gameLoopStartSeq = playerList.get(index).getInGameSequence();
+                numPass++;
+                gameTurnControl();
+                boardUpdate(currentUserID);
+            }
+        }else {
+            win(currentUserID);
+
+            //reset gameEndCheck parameters
+            numPass = 0;
+            gameLoopStartSeq = 0;
+        }
+    }
+
+    private boolean gameEndCheck(int currentUserID){
+        int index = playerIndexSearch(currentUserID);
+        if((playerList.get(index).getInGameSequence() == gameLoopStartSeq) && (numPass == playerList.size())){
+           return true;  // game should be terminated
+        }else{
+            return false;  // game should continue
+        }
+    }
     private void gameTurnControl(){
         if(whoseTurn< playerList.size()){
             whoseTurn ++;
@@ -177,7 +227,6 @@ public class GameProcess {
     public void waitVoting(){
         while (numVoted != (playerList.size()-1)){
            Pack temp;
-           String msg;
            try{
                temp = queue.take();
                switchProtocols(temp.getUserId(), temp.getMsg());
@@ -268,7 +317,7 @@ public class GameProcess {
             db.put(currentUserID, userName);
             userList.add(new Users(currentUserID, userName));
             //send currentUserList back to client
-            userListToClient(currentUserID);
+            userListToClient();
         } else {
             error(currentUserID);
         }
@@ -356,6 +405,13 @@ public class GameProcess {
         }
     }
 
+    private void userListToClient() {
+        Users[] current = new Users[userList.size()];
+        String command = "userUpdate";
+        Pack list = new Pack(0, JSON.toJSONString(new NonGamingResponse(current, command)));
+        EnginePutMsg.getInstance().putMsgToCenter(list);
+    }
+
     private void userListToClient(int userID) {
         Users[] current = new Users[userList.size()];
         String command = "userUpdate";
@@ -372,7 +428,7 @@ public class GameProcess {
     }
 
     private void addPlayers(ArrayList<Users> readyUser) {
-        int sequence = 1;
+        int sequence = INITIAL_SEQ;
         playerList = new ArrayList(readyUser.size());
         for (Users member : readyUser) {
             playerList.add(new Player(member, sequence));
@@ -408,7 +464,7 @@ public class GameProcess {
             winner.add(playerList.get(j));
         }
         Pack win = new Pack(currentUserID, JSON.toJSONString(new GamingSync(command, playerList, whoseTurn, board)));
-        win.setRecipient(playersID);
+        win.setRecipient(playersID);   //multi-cast
         EnginePutMsg.getInstance().putMsgToCenter(win);
         teamStatusUpdate(teams.get(gameHost), "available");
 
@@ -416,6 +472,7 @@ public class GameProcess {
         gameStart = false;
         playersID = null;
         playerList = null;
+        board = new char[BOARD_SIZE][BOARD_SIZE];
         teamsInWait.remove(teams.get(gameHost));
         teams.remove(gameHost, teams.get(gameHost));
         gameHost = ID_PLACEHOLDER;
