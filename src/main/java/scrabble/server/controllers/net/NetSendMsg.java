@@ -37,20 +37,20 @@ public class NetSendMsg implements Runnable {
         synchronized (clientNameTable){
             for(Enumeration enu=clientNameTable.elements();enu.hasMoreElements();){
                 client = (Socket)enu.nextElement();
-                sendMsgOperation();
+                sendMsgOperation(msg);
             }
         }
     }
 
     private void sendToPeer(String msg, int clientId){
         client = (Socket)clientNameTable.get(clientId);
-        sendMsgOperation();
+        sendMsgOperation(msg);
     }
 
-    private void sendMsgOperation(){
+    private void sendMsgOperation(String msg){
         try {
             PrintWriter printWriter = new PrintWriter(new DataOutputStream(client.getOutputStream()));
-            printWriter.println("hello");
+            printWriter.println(msg);
             printWriter.flush();
         } catch (IOException e) {
             e.printStackTrace();
