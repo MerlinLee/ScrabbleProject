@@ -5,6 +5,16 @@ import scrabble.protocols.ScrabbleProtocol;
 public class GamingOperationProtocol extends ScrabbleProtocol {
     private boolean vote;
 
+    public String getCommand() {
+        return command;
+    }
+
+    public void setCommand(String command) {
+        this.command = command;
+    }
+
+    private String command;  //vote, voteResponse
+
     public GamingOperationProtocol(boolean vote, BrickPlacing brickPlacing, int[] startPosition, int[] endPosition) {
        super.setTAG("GamingOperationProtocol");
         this.vote = vote;

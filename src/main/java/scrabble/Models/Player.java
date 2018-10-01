@@ -1,6 +1,6 @@
 package scrabble.Models;
 
-public class Player {
+public class Player implements Comparable<Player>{
     private Users user;
     private int inGameSequence;  // sequence for gaming turns control
 
@@ -35,5 +35,9 @@ public class Player {
     public Player(Users user, int inGameSequence) {
         this.user = user;
         this.inGameSequence = inGameSequence;
+    }
+
+    public int compareTo(Player rival) {
+        return getPoints()-rival.getPoints();
     }
 }
