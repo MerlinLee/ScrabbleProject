@@ -23,10 +23,12 @@ public class ClientCenterPutMsg implements Runnable {
 
     @Override
     public void run() {
-        try {
-            toNet.put(fromGui.take());
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        while (true){
+            try {
+                toNet.put(fromGui.take());
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

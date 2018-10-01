@@ -89,16 +89,20 @@ public class GameProcess {
 
 
     public void switchProtocols(int currentUserID, String msg) {
-        ScrabbleProtocol temp = JSON.parseObject(msg, ScrabbleProtocol.class);
-        String type = temp.getTAG();
-        switch (type) {
-            case "NonGamingProtocol":
-                nonGamingOperation(currentUserID, JSON.parseObject(msg, NonGamingProtocol.class));
-            case "GamingOperationProtocol":
-                gamingOperation(currentUserID, JSON.parseObject(msg, GamingOperationProtocol.class));
-            default:
-                break;
+        ScrabbleProtocol temp = null;
+        if(!msg.equals("null")){
+             temp = JSON.parseObject(msg, ScrabbleProtocol.class);
+            String type = temp.getTAG();
+            switch (type) {
+                case "NonGamingProtocol":
+                    nonGamingOperation(currentUserID, JSON.parseObject(msg, NonGamingProtocol.class));
+                case "GamingOperationProtocol":
+                    gamingOperation(currentUserID, JSON.parseObject(msg, GamingOperationProtocol.class));
+                default:
+                    break;
+            }
         }
+
     }
 
     private void nonGamingOperation(int currentUserID, NonGamingProtocol nonGamingProtocol) {

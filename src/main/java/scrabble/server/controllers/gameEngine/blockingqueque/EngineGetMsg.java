@@ -21,7 +21,10 @@ public class EngineGetMsg implements Runnable {
             try {
                 temp = fromCenter.take();
 //                GameProcess.getInstance().addData(temp.getUserId(), temp.getMsg());
-                GameProcess.getInstance().switchProtocols(temp.getUserId(), temp.getMsg());
+//                GameProcess.getInstance().switchProtocols(temp.getUserId(), temp.getMsg());
+                if(temp.getMsg()!=null){
+                    GameProcess.getInstance().switchProtocols(temp.getUserId(), temp.getMsg());
+                }
                 System.out.println(temp.getMsg());
             } catch (InterruptedException e) {
                 e.printStackTrace();
