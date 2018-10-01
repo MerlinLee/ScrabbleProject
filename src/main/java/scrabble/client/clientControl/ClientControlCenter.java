@@ -48,9 +48,9 @@ public class ClientControlCenter implements Runnable{
 
     @Override
     public void run() {
+        initialClient();
         pool.execute(new ClientCenterGetMsg(fromNet,toGui,fromGui,toNet));
         pool.execute(new ClientCenterPutMsg(fromNet,toGui,fromGui,toNet));
-        initialClient();
 
         //开启gui
 
