@@ -67,18 +67,7 @@ public class ControlCenter implements Runnable{
         }
     }
 
-    private ScrabbleProtocol toObject(String message){
-        ScrabbleProtocol scrabbleProtocol =  JSON.parseObject(message,ScrabbleProtocol.class);
-        switch (scrabbleProtocol.getTAG()){
-                case "NonGamingProtocol":
-                    return JSON.parseObject(message, NonGamingProtocol.class);
-                case "GamingOperationProtocol":
-                    return JSON.parseObject(message, GamingOperationProtocol.class);
-                default:
-                    break;
-        }
-        return null;
-    }
+
     public void shutdown(){
         flag = false;
     }
