@@ -1,12 +1,14 @@
 package scrabble.server.controllers.net.blockingqueue;
 
+import scrabble.protocols.Pack;
+
 import java.util.concurrent.BlockingQueue;
 
 public class NetPutMsg implements Runnable{
-    private final BlockingQueue<String> toCenter;
-    private final BlockingQueue<String> fromNetThread;
+    private final BlockingQueue<Pack> toCenter;
+    private final BlockingQueue<Pack> fromNetThread;
     private boolean flag = true;
-    public NetPutMsg(BlockingQueue<String> toCenter,BlockingQueue<String> fromNetThread) {
+    public NetPutMsg(BlockingQueue<Pack> toCenter,BlockingQueue<Pack> fromNetThread) {
         this.toCenter = toCenter;
         this.fromNetThread = fromNetThread;
     }

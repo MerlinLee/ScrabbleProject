@@ -1,6 +1,7 @@
 package scrabble.server.controllers.net.blockingqueue;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import scrabble.protocols.Pack;
 import scrabble.server.controllers.net.NetSendMsg;
 
 import java.net.Socket;
@@ -12,7 +13,7 @@ public class NetGetMsg implements Runnable {
     private boolean flag = true;
     private ThreadFactory threadForSocket;
     private ExecutorService pool;
-    public NetGetMsg(BlockingQueue<String> fromCenter,Hashtable clientName) {
+    public NetGetMsg(BlockingQueue<Pack> fromCenter, Hashtable clientName) {
         this.fromCenter = fromCenter;
         this.clientName = clientName;
         threadForSocket = new ThreadFactoryBuilder()
@@ -21,12 +22,12 @@ public class NetGetMsg implements Runnable {
                 new LinkedBlockingQueue<Runnable>(1024),threadForSocket,new ThreadPoolExecutor.AbortPolicy());
     }
 
-    private final BlockingQueue<String> fromCenter;
+    private final BlockingQueue<Pack> fromCenter;
     @Override
     public void run() {
         while (flag){
             try {
-                String message = fromCenter.take();
+                Pack message = fromCenter.take();
                 pool.execute(new NetSendMsg(message,clientName));
             } catch (InterruptedException e) {
                 e.printStackTrace();

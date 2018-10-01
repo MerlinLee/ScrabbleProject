@@ -14,7 +14,9 @@ public class GamingOperationProtocol extends ScrabbleProtocol {
     }
 
     private String command;  //vote, voteResponse
-
+    public GamingOperationProtocol(String command){
+        setCommand(command);
+    }
     public GamingOperationProtocol(boolean vote, BrickPlacing brickPlacing, int[] startPosition, int[] endPosition) {
        super.setTAG("GamingOperationProtocol");
         this.vote = vote;
