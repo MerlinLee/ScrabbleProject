@@ -46,36 +46,13 @@ public class ControlCenter implements Runnable{
     }
     @Override
     public void run() {
-        while (true){
-            getMessage();
-        }
+        while (true){}
     }
 
-    public void getMessage(){
-        Pack message=null;
-        try {
-            message = fromNet.take();
-            sendMsgToNet(message);
-            logger.info(tag+" get message from queue!");
-        } catch (InterruptedException e) {
-            logger.error(tag+e);
-        }
-        if(!message.equals("")){
-           // ScrabbleProtocol scrabbleProtocol = toObject(message);
-            System.out.println(message);
-        }
-    }
 
 
     public void shutdown(){
         flag = false;
     }
 
-    private void sendMsgToNet(Pack msg){
-        try {
-            toNet.put(msg);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
 }
