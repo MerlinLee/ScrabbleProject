@@ -1,21 +1,10 @@
 package scrabble.client.gui;
 
-import java.awt.event.ActionListener ;
-import java.awt.event.WindowListener ;
-import java.awt.event.MouseMotionAdapter ;
-import java.awt.event.MouseMotionListener ;
-import java.awt.event.WindowAdapter ;
-import java.awt.event.WindowEvent ;
-import java.awt.event.KeyEvent ;
-import java.awt.event.MouseEvent ;
-import java.awt.event.MouseAdapter ;
-import java.awt.event.KeyAdapter ;
-import java.awt.event.KeyListener ;
-import java.awt.event.MouseListener ;
-import javax.swing.JTextArea ;
-import javax.swing.JFrame ;
-import javax.swing.JScrollPane ;
-import javax.swing.JPasswordField ;
+import javax.swing.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 class TestMyMouse extends JFrame
 {
@@ -44,7 +33,7 @@ class TestMyMouse extends JFrame
     }
 
 
-} ;
+};
 
 class Tester
 {
@@ -52,4 +41,4 @@ class Tester
     {
         TestMyMouse mhk = new TestMyMouse() ;
     }
-} ;
+};

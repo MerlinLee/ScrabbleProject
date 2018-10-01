@@ -1,13 +1,9 @@
 package scrabble.client.gui;
 
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.Point;
-import java.awt.event.MouseEvent;
-
-import javax.swing.JLabel;
-import javax.swing.JWindow;
+import javax.swing.*;
 import javax.swing.event.MouseInputListener;
+import java.awt.*;
+import java.awt.event.MouseEvent;
 
 /**
  * 自定义程序窗口，鼠标可拖拽移动其位置。
