@@ -46,7 +46,13 @@ public class ControlCenter implements Runnable{
     }
     @Override
     public void run() {
-        while (true){}
+        while (true){
+            try {
+                toEngine.put(fromNet.take());
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 
