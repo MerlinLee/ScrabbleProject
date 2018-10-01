@@ -1,8 +1,10 @@
 package scrabble.client;
 
+import com.alibaba.fastjson.JSON;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import scrabble.client.blockingqueue.GuiGetMsg;
 import scrabble.client.blockingqueue.GuiPutMsg;
+import scrabble.protocols.NonGamingProtocol.NonGamingProtocol;
 import scrabble.protocols.Pack;
 
 import java.util.Scanner;
@@ -61,7 +63,9 @@ public class Gui implements Runnable{
                     break;
                 case "NonGamingProtocol":
                     msg = scanner.nextLine();
-                    pack = new Pack(-1, msg);
+                    String[] user = new String[1];
+                    user[0]=msg;
+                    pack = new Pack(-1, JSON.toJSONString(new NonGamingProtocol("login",user)));
                     try {
                         toCenter.put(pack);
                     } catch (InterruptedException e) {
