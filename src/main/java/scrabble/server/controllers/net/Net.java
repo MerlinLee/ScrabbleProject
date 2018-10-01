@@ -77,7 +77,7 @@ public class Net implements Runnable{
                             .getOutputStream());
                 clientDataHsh.put(client,dataOutputStream);
                 clientNameHash.put(clientNumber++,client);
-                pool.execute(new NetThread(client,clientDataHsh,clientNameHash,toNetPutMsg));
+                pool.execute(new NetThread(client,clientDataHsh,clientNameHash,toNetPutMsg,clientNumber-1));
             }
         } catch (IOException e) {
             e.printStackTrace();
