@@ -12,7 +12,7 @@ public class Pack {
         this.recipient = recipient;
     }
 
-    private int[] recipient;  //not necessary, peer-to-peer communication is not direct.
+    private int[] recipient;
 
     public int getUserId() {
         return userId;
