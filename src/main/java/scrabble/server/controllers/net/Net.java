@@ -96,7 +96,7 @@ public class Net implements Runnable{
         BlockingQueue<String> toNetPutMsg = new LinkedBlockingQueue<>();
         pool.execute(new NetGetMsg(fromCenter,clientNameHash));
         pool.execute(new NetPutMsg(toCenter,toNetPutMsg));
-        initialServer(6666,toNetPutMsg);
+        initialServer(8866,toNetPutMsg);
 
     }
 }

@@ -3,35 +3,36 @@ package scrabble.client.clientControl;
 import com.alibaba.fastjson.JSON;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.apache.log4j.Logger;
+import scrabble.client.Gui;
 import scrabble.client.Net.clientNet;
 import scrabble.protocols.GamingProtocol.GamingOperationProtocol;
 import scrabble.protocols.NonGamingProtocol.NonGamingProtocol;
-import scrabble.protocols.Package;
+import scrabble.protocols.Pack;
 import scrabble.protocols.ScrabbleProtocol;
 
 import java.util.Scanner;
 import java.util.concurrent.*;
 
-public class clientControlCenter implements Runnable{
+public class ClientControlCenter implements Runnable{
     private String tag = "clientControl";
-    private static Logger logger = Logger.getLogger(clientControlCenter.class);
+    private static Logger logger = Logger.getLogger(ClientControlCenter.class);
     private final BlockingQueue<String> fromNet;
-    private final BlockingQueue<Package> toGui;
-    private final BlockingQueue<Package> fromGui;
+    private final BlockingQueue<Pack> toGui;
+    private final BlockingQueue<Pack> fromGui;
     private final BlockingQueue<String> toNet;
-    private GameEngine gameEngine;
+    private Gui gui;
     private clientNet net;
     private boolean flag = true;
     private ThreadFactory threadForSocket;
     private ExecutorService pool;
 
-    public clientControlCenter() {
+    public ClientControlCenter() {
         this.fromNet = new LinkedBlockingQueue<>();
         toGui = new LinkedBlockingQueue<>();
         fromGui = new LinkedBlockingQueue<>();
         toNet = new LinkedBlockingQueue<>();
         initialClient();
-        logger.info(tag+" Initial clientControlCenter Complete!");
+        logger.info(tag+" Initial clientContrColCenter Complete!");
     }
     public void initialClient(){
         threadForSocket = new ThreadFactoryBuilder()
@@ -39,17 +40,17 @@ public class clientControlCenter implements Runnable{
         pool = new ThreadPoolExecutor(5,10,0L,TimeUnit.MILLISECONDS,
                 new LinkedBlockingQueue<Runnable>(1024),threadForSocket,new ThreadPoolExecutor.AbortPolicy());
         pool.execute(clientNet.getInstance(fromNet,toNet));
-        pool.execute(GameEngine.getInstance(toEngine,fromEngine));
+        pool.execute(Gui.getInstance(toGui,fromGui));
         logger.info(tag+" Initial Server Competed");
     }
 
 
     @Override
     public void run() {
-        Scanner read = new Scanner(System.in);
-        while (true){
-            getMessage();
-        }
+        initialClient();
+
+        //开启gui
+
     }
 
     public void getMessage(){
