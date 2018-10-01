@@ -2,18 +2,22 @@ package scrabble.client.Net.blockingqueue;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import scrabble.client.Net.clientNetSendMsg;
+import scrabble.protocols.Pack;
 
+import java.net.Socket;
 import java.util.Hashtable;
 import java.util.concurrent.*;
 
 public class clientNetGetMsg implements Runnable {
+    private final Socket socket;
     private Hashtable clientName;
     private boolean flag = true;
     private ThreadFactory threadForSocket;
     private ExecutorService pool;
 
-    public clientNetGetMsg(BlockingQueue<Pack> fromCenter) {
+    public clientNetGetMsg(BlockingQueue<Pack> fromCenter, Socket socket) {
         this.fromCenter = fromCenter;
+        this.socket = socket;
 
         threadForSocket = new ThreadFactoryBuilder()
                 .setNameFormat("NetGetMsg-pool-%d").build();
@@ -27,7 +31,7 @@ public class clientNetGetMsg implements Runnable {
         while (flag){
             try {
                 Pack message = fromCenter.take();
-                pool.execute(new clientNetSendMsg(message));
+                pool.execute(new clientNetSendMsg(message,socket));
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
