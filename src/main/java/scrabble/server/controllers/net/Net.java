@@ -2,6 +2,7 @@ package scrabble.server.controllers.net;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.apache.log4j.Logger;
+import scrabble.protocols.Pack;
 import scrabble.server.controllers.net.blockingqueue.NetGetMsg;
 import scrabble.server.controllers.net.blockingqueue.NetPutMsg;
 
@@ -15,8 +16,8 @@ import java.util.concurrent.*;
 public class Net implements Runnable{
     private String tag = "Net";
     private static Logger logger = Logger.getLogger(Net.class);
-    private final BlockingQueue<String> fromCenter;
-    private final BlockingQueue<String> toCenter;
+    private final BlockingQueue<Pack> fromCenter;
+    private final BlockingQueue<Pack> toCenter;
     private boolean flag = true;
     private ThreadFactory threadForSocket;
     private ExecutorService pool;
@@ -93,7 +94,7 @@ public class Net implements Runnable{
                 .setNameFormat("Net-pool-%d").build();
         pool = new ThreadPoolExecutor(10,10,0L,TimeUnit.MILLISECONDS,
                 new LinkedBlockingQueue<Runnable>(1024),threadForSocket,new ThreadPoolExecutor.AbortPolicy());
-        BlockingQueue<String> toNetPutMsg = new LinkedBlockingQueue<>();
+        BlockingQueue<Pack> toNetPutMsg = new LinkedBlockingQueue<>();
         pool.execute(new NetGetMsg(fromCenter,clientNameHash));
         pool.execute(new NetPutMsg(toCenter,toNetPutMsg));
         initialServer(6666,toNetPutMsg);

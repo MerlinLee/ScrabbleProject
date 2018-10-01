@@ -1,5 +1,7 @@
 package scrabble.server.controllers.net;
 
+import scrabble.protocols.Pack;
+
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -10,13 +12,14 @@ import java.util.Hashtable;
 public class NetSendMsg implements Runnable {
     private Hashtable clientNameTable;
     private Socket client;
-    private String message;
-    public NetSendMsg(String message,Hashtable clientNameTable) {
+    private Pack message;
+    public NetSendMsg(Pack message, Hashtable clientNameTable) {
         this.message=message;
         this.clientNameTable=clientNameTable;
     }
     @Override
     public void run() {
+
         sendToPeer("",2);
     }
 

@@ -16,10 +16,10 @@ import java.util.concurrent.*;
 public class ControlCenter implements Runnable{
     private String tag = "ControlCenter";
     private static Logger logger = Logger.getLogger(ControlCenter.class);
-    private final BlockingQueue<String> fromNet;
+    private final BlockingQueue<Pack> fromNet;
     private final BlockingQueue<Pack> toEngine;
     private final BlockingQueue<Pack> fromEngine;
-    private final BlockingQueue<String> toNet;
+    private final BlockingQueue<Pack> toNet;
     private GameEngine gameEngine;
     private Net net;
     private boolean flag = true;
@@ -53,10 +53,10 @@ public class ControlCenter implements Runnable{
     }
 
     public void getMessage(){
-        String message=null;
+        Pack message=null;
         try {
             message = fromNet.take();
-            sendMsgToNet("hello");
+            sendMsgToNet(message);
             logger.info(tag+" get message from queue!");
         } catch (InterruptedException e) {
             logger.error(tag+e);
@@ -83,7 +83,7 @@ public class ControlCenter implements Runnable{
         flag = false;
     }
 
-    private void sendMsgToNet(String msg){
+    private void sendMsgToNet(Pack msg){
         try {
             toNet.put(msg);
         } catch (InterruptedException e) {
