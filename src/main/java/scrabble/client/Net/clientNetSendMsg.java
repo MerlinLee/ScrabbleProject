@@ -1,5 +1,7 @@
 package scrabble.client.Net;
 
+import scrabble.protocols.Pack;
+
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -8,25 +10,29 @@ import java.net.Socket;
 public class clientNetSendMsg implements Runnable{
 
     private Socket client;
-    private String message;
-    public clientNetSendMsg(String message) {
-        this.message=message;
+    private Pack message;
+    private Pack msg;
+    private Socket socket;
 
+    public clientNetSendMsg(Pack message,Socket socket) {
+        this.message=message;
+        this.socket=socket;
     }
     @Override
     public void run() {
-
+        sendToPeer(msg);
     }
-    private void sendToPeer(String msg, int clientId){
-        client = (Socket)clientNameTable.get(clientId);
-        sendMsgOperation();
+    private void sendToPeer(Pack msg){
+
+        sendMsgOperation(msg,socket);
     }
 
-    private void sendMsgOperation(){
+    private void sendMsgOperation(Pack msg, Socket socket){
         try {
-            PrintWriter printWriter = new PrintWriter(new DataOutputStream(client.getOutputStream()));
-            printWriter.println("hello");
-            printWriter.flush();
+
+            PrintWriter out=new PrintWriter(socket.getOutputStream());
+            out.println(msg);
+            out.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -1,4 +1,30 @@
 package scrabble.client.Net.blockingqueue;
 
-public class clientNetPutMsg {
+import scrabble.protocols.Pack;
+
+import java.util.concurrent.BlockingQueue;
+
+public class clientNetPutMsg implements Runnable {
+    private final BlockingQueue<Pack> toCenter;
+    private final BlockingQueue<Pack> fromNetThread;
+    private boolean flag = true;
+    public clientNetPutMsg(BlockingQueue<Pack> toCenter,BlockingQueue<Pack> fromNetThread) {
+        this.toCenter = toCenter;
+        this.fromNetThread = fromNetThread;
+    }
+
+    @Override
+    public void run() {
+        while (flag){
+            try {
+                toCenter.put(fromNetThread.take());
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void shutdown(){
+        flag = false;
+    }
 }
