@@ -46,7 +46,6 @@ public class ControlCenter implements Runnable{
     }
     @Override
     public void run() {
-        Scanner read = new Scanner(System.in);
         while (true){
             getMessage();
         }
