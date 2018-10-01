@@ -11,12 +11,12 @@ public class BrickPlacing {
         this.userID = userID;
     }
 
-    public char getCharacter() {
-        return character;
+    public char getbrick() {
+        return brick;
     }
 
-    public void setCharacter(char character) {
-        this.character = character;
+    public void setbrick(char character) {
+        this.brick = brick;
     }
 
     public int[] getPosition() {
@@ -27,6 +27,6 @@ public class BrickPlacing {
         this.position = position;
     }
 
-    private char character;
+    private char brick;
     private int[] position = new int[2];
 }
