@@ -19,8 +19,18 @@ public class NetSendMsg implements Runnable {
     }
     @Override
     public void run() {
-
-        sendToPeer("",2);
+        if(message.getRecipient()==null){
+            if(message.getUserId()==0){
+                sendBroadcastMsg(message.getMsg());
+            }else {
+                sendToPeer(message.getMsg(),message.getUserId());
+            }
+        }else {
+            int peerNum = message.getRecipient().length;
+            for(int i=0;i<peerNum;i++){
+                sendToPeer(message.getMsg(),message.getRecipient()[i]);
+            }
+        }
     }
 
     private void sendBroadcastMsg(String msg){
