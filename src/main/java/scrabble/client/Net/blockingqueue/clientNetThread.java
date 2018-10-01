@@ -7,13 +7,14 @@ import java.io.InputStreamReader;
 import java.net.Socket;
 import java.util.Hashtable;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class clientNetThread implements Runnable {
     private Socket server;
     private Hashtable clientDataHash;
     private Hashtable clientNameHash;
     private boolean isClientClosed = false;
-    private final BlockingQueue<String> toNetPutMsg;
+    private final BlockingQueue<Pack> toNetPutMsg;
 
     public clientNetThread(Socket server, BlockingQueue toNetPutMsg) {
         this.server = server;
@@ -30,7 +31,8 @@ public class clientNetThread implements Runnable {
             while (true){
                 String message = inputStream.readLine();
                 Pack msg = new Pack(-1,message);
-                toNetPutMsg.put(message);
+                System.out.println(message);
+                toNetPutMsg.put(msg);
             }
 
         }catch (Exception e){

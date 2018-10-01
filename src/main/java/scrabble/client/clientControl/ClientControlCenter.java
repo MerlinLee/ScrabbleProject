@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.apache.log4j.Logger;
 import scrabble.client.Gui;
-import scrabble.client.Net.clientNet;
+import scrabble.client.Net.blockingqueue.ClientNet;
 import scrabble.protocols.GamingProtocol.GamingOperationProtocol;
 import scrabble.protocols.NonGamingProtocol.NonGamingProtocol;
 import scrabble.protocols.Pack;
@@ -20,7 +20,7 @@ public class ClientControlCenter implements Runnable{
     private final BlockingQueue<Pack> fromGui;
     private final BlockingQueue<String> toNet;
     private Gui gui;
-    private clientNet net;
+    private ClientNet net;
     private boolean flag = true;
     private ThreadFactory threadForSocket;
     private ExecutorService pool;
@@ -30,15 +30,15 @@ public class ClientControlCenter implements Runnable{
         toGui = new LinkedBlockingQueue<>();
         fromGui = new LinkedBlockingQueue<>();
         toNet = new LinkedBlockingQueue<>();
-        initialClient();
-        logger.info(tag+" Initial clientContrColCenter Complete!");
+//        initialClient();
+        logger.info(tag+" Initial clientControlCenter Complete!");
     }
     public void initialClient(){
         threadForSocket = new ThreadFactoryBuilder()
                 .setNameFormat("ControlCenter-pool-%d").build();
         pool = new ThreadPoolExecutor(5,10,0L,TimeUnit.MILLISECONDS,
                 new LinkedBlockingQueue<Runnable>(1024),threadForSocket,new ThreadPoolExecutor.AbortPolicy());
-        pool.execute(clientNet.getInstance(fromNet,toNet));
+        pool.execute(ClientNet.getInstance(fromNet,toNet));
         pool.execute(Gui.getInstance(toGui,fromGui));
         logger.info(tag+" Initial Server Competed");
     }

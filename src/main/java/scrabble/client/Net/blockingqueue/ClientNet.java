@@ -17,6 +17,7 @@ public class ClientNet implements Runnable {
     private static Logger logger = Logger.getLogger(ClientNet.class);
     private final BlockingQueue<Pack> fromCenter;
     private final BlockingQueue<Pack> toCenter;
+    private final BlockingQueue<Pack> toNetPutMsg;
     private boolean flag = true;
     private ThreadFactory threadForSocket;
     private ExecutorService pool;
@@ -24,6 +25,7 @@ public class ClientNet implements Runnable {
     public ClientNet(BlockingQueue fromNet, BlockingQueue toNet) {
         this.toCenter = fromNet;
         this.fromCenter = toNet;
+        toNetPutMsg = new LinkedBlockingQueue<>();
     }
 
     private ServerSocket server;
@@ -32,7 +34,10 @@ public class ClientNet implements Runnable {
     private ClientNet(){
         fromCenter = new LinkedBlockingQueue<>();
         toCenter = new LinkedBlockingQueue<>();
+        toNetPutMsg = new LinkedBlockingQueue<>();
     }
+
+
     public static ClientNet getInstance(){
         if (net == null){
             synchronized (ClientNet.class){
@@ -56,18 +61,17 @@ public class ClientNet implements Runnable {
     }
 
     private void initialServer(Socket server, BlockingQueue toNetPutMsg){
+//        try {
+//            pool.execute(new clientNetThread(server,toNetPutMsg));
+//            while (flag){
+//                DataOutputStream dataOutputStream = new DataOutputStream(server
+//                        .getOutputStream());
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
 
-        try {
-
-            while (flag){
-
-                DataOutputStream dataOutputStream = new DataOutputStream(server
-                        .getOutputStream());
-                pool.execute(new clientNetThread(server,toNetPutMsg));
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        pool.execute(new clientNetThread(server,toNetPutMsg));
     }
 
     public void shutdown(){
@@ -84,9 +88,8 @@ public class ClientNet implements Runnable {
         }
         threadForSocket = new ThreadFactoryBuilder()
                 .setNameFormat("Net-pool-%d").build();
-        pool = new ThreadPoolExecutor(10,10,0L,TimeUnit.MILLISECONDS,
+        pool = new ThreadPoolExecutor(3,10,0L,TimeUnit.MILLISECONDS,
                 new LinkedBlockingQueue<Runnable>(1024),threadForSocket,new ThreadPoolExecutor.AbortPolicy());
-        BlockingQueue<Pack> toNetPutMsg = new LinkedBlockingQueue<>();
         pool.execute(new clientNetGetMsg(fromCenter,socket));
         pool.execute(new clientNetPutMsg(toCenter,toNetPutMsg));
 
