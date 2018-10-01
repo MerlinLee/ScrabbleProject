@@ -30,6 +30,7 @@ public class GamingOperationProtocol extends ScrabbleProtocol {
         this.endPosition = endPosition;
     }
 
+
     public BrickPlacing getBrickPlacing() {
 
         return brickPlacing;
