@@ -1,5 +1,9 @@
 package scrabble.server.controllers.net;
 
+import com.alibaba.fastjson.JSON;
+import scrabble.protocols.GamingProtocol.GamingOperationProtocol;
+import scrabble.protocols.Pack;
+
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -13,13 +17,15 @@ public class NetThread implements Runnable {
     private Hashtable clientDataHash;
     private Hashtable clientNameHash;
     private boolean isClientClosed = false;
-    private final BlockingQueue<String> toNetPutMsg;
+    private final BlockingQueue<Pack> toNetPutMsg;
+    private int clientID;
 
-    public NetThread(Socket client, Hashtable clientDataHash, Hashtable clientNameHash,BlockingQueue toNetPutMsg) {
+    public NetThread(Socket client, Hashtable clientDataHash, Hashtable clientNameHash,BlockingQueue toNetPutMsg,int clientID) {
         this.client = client;
         this.clientDataHash = clientDataHash;
         this.clientNameHash = clientNameHash;
         this.toNetPutMsg = toNetPutMsg;
+        this.clientID = clientID;
     }
 
     @Override
@@ -34,7 +40,7 @@ public class NetThread implements Runnable {
             inputStream = new BufferedReader(new InputStreamReader(client.getInputStream()));
             while (true){
                 String message = inputStream.readLine();
-                toNetPutMsg.put(message);
+                toNetPutMsg.put(new Pack(clientID,message));
             }
 
         }catch (Exception e){
@@ -45,6 +51,12 @@ public class NetThread implements Runnable {
             }
         }
     }
-    private void closeClient(){}
+    private void closeClient(){
+        try {
+            toNetPutMsg.put(new Pack(clientID, JSON.toJSONString(new GamingOperationProtocol("disconnect"))));
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 
 }
