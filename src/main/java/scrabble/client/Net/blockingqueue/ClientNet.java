@@ -29,6 +29,8 @@ public class ClientNet implements Runnable {
         this.toCenter = fromNet;
         this.fromCenter = toNet;
         toNetPutMsg = new LinkedBlockingQueue<>();
+        this.ipAddr=ipAddr;
+        this.portNum=portNum;
     }
 
     private ServerSocket server;
@@ -85,7 +87,7 @@ public class ClientNet implements Runnable {
     public void run() {
         Socket socket = null;
         try {
-            socket = new Socket("localhost", 6666);
+            socket = new Socket(ipAddr, portNum);
         } catch (IOException e) {
             e.printStackTrace();
         }
