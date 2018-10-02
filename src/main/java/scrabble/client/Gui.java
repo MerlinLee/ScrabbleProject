@@ -64,7 +64,7 @@ public class Gui implements Runnable {
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    String trash = scanner.nextLine();
+                   // String trash = scanner.nextLine();
                    // getMsg();
                     break;
                 case "NonGamingProtocol":
