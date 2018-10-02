@@ -48,10 +48,6 @@ public class NetThread implements Runnable {
 
         }catch (Exception e){
             closeClient();
-        }finally {
-            if (!isClientClosed){
-                closeClient();
-            }
         }
     }
     private void closeClient(){
