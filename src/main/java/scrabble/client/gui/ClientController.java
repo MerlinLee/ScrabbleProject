@@ -136,39 +136,39 @@ public class ClientController {
     */
 
     void sendPass(int[] lastMove, char c) {
-        try {
-            GamingOperationProtocol gamingProtocol = new GamingOperationProtocol();
-            gamingProtocol.setVote(false);
-            BrickPlacing brickPlacing = new BrickPlacing();
-            brickPlacing.setbrick(c);
-            brickPlacing.setPosition(lastMove);
-            gamingProtocol.setBrickPlacing(brickPlacing);
-            sender.sendToServer(gamingProtocol);
-        } catch (Exception e) {
-            System.out.println(e.toString());
-        }
+//        try {
+//            GamingOperationProtocol gamingProtocol = new GamingOperationProtocol();
+//            gamingProtocol.setVote(false);
+//            BrickPlacing brickPlacing = new BrickPlacing();
+//            brickPlacing.setbrick(c);
+//            brickPlacing.setPosition(lastMove);
+//            gamingProtocol.setBrickPlacing(brickPlacing);
+//            sender.sendToServer(gamingProtocol);
+//        } catch (Exception e) {
+//            System.out.println(e.toString());
+//        }
     }
 
     void sendVote(int[] lastMove, char c, int sx, int sy, int ex, int ey) {
-        try {
-            GamingOperationProtocol gamingProtocol = new GamingOperationProtocol();
-            gamingProtocol.setVote(true);
-            BrickPlacing brickPlacing = new BrickPlacing();
-            brickPlacing.setbrick(c);
-            brickPlacing.setPosition(lastMove);
-            gamingProtocol.setBrickPlacing(brickPlacing);
-            int[] startPosition = new int[2];
-            startPosition[0] = sx;
-            startPosition[0] = sy;
-            int[] endPosition = new int[2];
-            endPosition[0] = ex;
-            endPosition[0] = ey;
-            gamingProtocol.setStartPosition(startPosition);
-            gamingProtocol.setStartPosition(endPosition);
-            sender.sendToServer(gamingProtocol);
-        } catch (Exception e) {
-            System.out.println(e.toString());
-        }
+//        try {
+//            GamingOperationProtocol gamingProtocol = new GamingOperationProtocol();
+//            gamingProtocol.setVote(true);
+//            BrickPlacing brickPlacing = new BrickPlacing();
+//            brickPlacing.setbrick(c);
+//            brickPlacing.setPosition(lastMove);
+//            gamingProtocol.setBrickPlacing(brickPlacing);
+//            int[] startPosition = new int[2];
+//            startPosition[0] = sx;
+//            startPosition[0] = sy;
+//            int[] endPosition = new int[2];
+//            endPosition[0] = ex;
+//            endPosition[0] = ey;
+//            gamingProtocol.setStartPosition(startPosition);
+//            gamingProtocol.setStartPosition(endPosition);
+//            sender.sendToServer(gamingProtocol);
+//        } catch (Exception e) {
+//            System.out.println(e.toString());
+//        }
     }
 
     void showLoginRespond(Users[] users, String status) {
