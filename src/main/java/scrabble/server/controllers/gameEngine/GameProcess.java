@@ -115,7 +115,7 @@ public class GameProcess {
     }
 
     private void gamingOperation(int currentUserID, GamingOperationProtocol gamingOperationProtocol) {
-        //command:  brickPlacing, vote
+        //command: vote, voteResponse, disconnect
         String command = gamingOperationProtocol.getCommand();
         switch (command) {
             case "vote":
@@ -411,6 +411,7 @@ public class GameProcess {
 
     private void userListToClient() {
         Users[] current = new Users[userList.size()];
+        current = userList.toArray(current);
         String command = "userUpdate";
         Pack list = new Pack(0, JSON.toJSONString(new NonGamingResponse(current, command)));
         EnginePutMsg.getInstance().putMsgToCenter(list);
@@ -418,6 +419,7 @@ public class GameProcess {
 
     private void userListToClient(int userID) {
         Users[] current = new Users[userList.size()];
+        current = userList.toArray(current);
         String command = "userUpdate";
         Pack list = new Pack(userID, JSON.toJSONString(new NonGamingResponse(current, command)));
         EnginePutMsg.getInstance().putMsgToCenter(list);
