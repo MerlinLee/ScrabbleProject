@@ -7,6 +7,7 @@ import scrabble.client.Gui;
 import scrabble.client.Net.blockingqueue.ClientNet;
 import scrabble.client.clientControl.blockingqueue.ClientCenterGetMsg;
 import scrabble.client.clientControl.blockingqueue.ClientCenterPutMsg;
+import scrabble.client.gui.LoginWindow;
 import scrabble.protocols.GamingProtocol.GamingOperationProtocol;
 import scrabble.protocols.NonGamingProtocol.NonGamingProtocol;
 import scrabble.protocols.Pack;
@@ -26,6 +27,7 @@ public class ClientControlCenter implements Runnable{
     private boolean flag = true;
     private ThreadFactory threadForSocket;
     private ExecutorService pool;
+    private LoginWindow loginWindow;
 
     public ClientControlCenter() {
         this.fromNet = new LinkedBlockingQueue<>();
@@ -53,7 +55,10 @@ public class ClientControlCenter implements Runnable{
         pool.execute(new ClientCenterPutMsg(fromNet,toGui,fromGui,toNet));
 
         //开启gui
-
+//        loginWindow = LoginWindow.get();
+//        loginWindow.setClient(this);
+//        Thread loginThread = new Thread(loginWindow);
+//        loginThread.start();
     }
 
 
