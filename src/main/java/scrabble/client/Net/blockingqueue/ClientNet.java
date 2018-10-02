@@ -21,8 +21,11 @@ public class ClientNet implements Runnable {
     private boolean flag = true;
     private ThreadFactory threadForSocket;
     private ExecutorService pool;
+    private String ipAddr;
+    private int portNum;
+    private String userName;
 
-    public ClientNet(BlockingQueue fromNet, BlockingQueue toNet) {
+    public ClientNet(BlockingQueue fromNet, BlockingQueue toNet,String ipAddr, int portNum,String userName) {
         this.toCenter = fromNet;
         this.fromCenter = toNet;
         toNetPutMsg = new LinkedBlockingQueue<>();
@@ -49,11 +52,11 @@ public class ClientNet implements Runnable {
         return net;
     }
 
-    public static ClientNet getInstance (BlockingQueue fromNet, BlockingQueue toNet){
+    public static ClientNet getInstance (BlockingQueue fromNet, BlockingQueue toNet,String ipAddr, int portNum,String userName){
         if (net == null){
             synchronized (ClientNet.class){
                 if (net == null){
-                    net = new ClientNet(fromNet,toNet);
+                    net = new ClientNet(fromNet,toNet,ipAddr,portNum,userName);
                 }
             }
         }

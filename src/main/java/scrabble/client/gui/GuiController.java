@@ -126,12 +126,12 @@ public class GuiController {
 
     void showLoginRespond(Users[] users, String status) {
         this.id = Integer.toString(users[0].getUserID());
-        gameLobbyWindow.updateUserList(users[0].getUserID(), users[0].getUserName(), users[0].getStatus());
+//        gameLobbyWindow.updateUserList(users[0].getUserID(), users[0].getUserName(), users[0].getStatus());
     }
 
     void showInviteRespond(int id, boolean ac) {
         if (ac) {
-            gameLobbyWindow.addToPlayerList(id);
+//            gameLobbyWindow.addToPlayerList(id);
         }
         else {
             gameLobbyWindow.refuseInvite(id);

@@ -5,6 +5,9 @@ import scrabble.protocols.ScrabbleProtocol;
 public class GamingOperationProtocol extends ScrabbleProtocol {
     private boolean vote;
 
+    public GamingOperationProtocol() {
+    }
+
     public String getCommand() {
         return command;
     }

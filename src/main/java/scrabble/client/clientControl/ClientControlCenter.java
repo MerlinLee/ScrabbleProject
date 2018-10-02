@@ -42,11 +42,14 @@ public class ClientControlCenter implements Runnable{
                 .setNameFormat("ControlCenter-pool-%d").build();
         pool = new ThreadPoolExecutor(5,10,0L,TimeUnit.MILLISECONDS,
                 new LinkedBlockingQueue<Runnable>(1024),threadForSocket,new ThreadPoolExecutor.AbortPolicy());
-        pool.execute(ClientNet.getInstance(fromNet,toNet));
+//        pool.execute(ClientNet.getInstance(fromNet,toNet));
         pool.execute(Gui.getInstance(toGui,fromGui));
         logger.info(tag+" Initial Server Competed");
     }
 
+    public void openNet(String ipAddr, int portNum,String username){
+        pool.execute(ClientNet.getInstance(fromNet,toNet,ipAddr,portNum,username));
+    }
 
     @Override
     public void run() {
