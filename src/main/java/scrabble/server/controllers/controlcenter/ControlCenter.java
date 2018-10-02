@@ -8,6 +8,7 @@ import scrabble.protocols.NonGamingProtocol.NonGamingProtocol;
 import scrabble.protocols.Pack;
 import scrabble.protocols.ScrabbleProtocol;
 import scrabble.server.controllers.controlcenter.blockingqueue.CenterGetMsg;
+import scrabble.server.controllers.controlcenter.blockingqueue.CenterPutMsg;
 import scrabble.server.controllers.gameEngine.GameEngine;
 import scrabble.server.controllers.net.Net;
 
@@ -48,7 +49,7 @@ public class ControlCenter implements Runnable{
     @Override
     public void run() {
         pool.execute(new CenterGetMsg(fromNet,toEngine,fromEngine,toNet));
-        pool.execute(new CenterGetMsg(fromNet,toEngine,fromEngine,toNet));
+        pool.execute(new CenterPutMsg(fromNet,toEngine,fromEngine,toNet));
     }
 
 

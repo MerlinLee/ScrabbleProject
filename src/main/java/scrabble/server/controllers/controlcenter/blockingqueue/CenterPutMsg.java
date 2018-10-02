@@ -25,7 +25,9 @@ public class CenterPutMsg implements Runnable {
     public void run() {
         while (true){
             try {
-                toNet.put(fromEngine.take());
+                Pack pack=null;
+                pack = fromEngine.take();
+                toNet.put(pack);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
