@@ -41,7 +41,7 @@ public class NetThread implements Runnable {
             while (true){
                 String message = inputStream.readLine();
                 toNetPutMsg.put(new Pack(clientID,message));
-                if(client.isClosed()){
+                if(client.isConnected()){
                     break;
                 }
             }
