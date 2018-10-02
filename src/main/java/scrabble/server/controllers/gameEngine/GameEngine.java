@@ -3,6 +3,7 @@ package scrabble.server.controllers.gameEngine;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import scrabble.protocols.Pack;
 import scrabble.server.controllers.gameEngine.blockingqueque.EngineGetMsg;
+import scrabble.server.controllers.gameEngine.blockingqueque.EnginePutMsg;
 
 import java.util.concurrent.*;
 
@@ -64,7 +65,7 @@ public class GameEngine implements Runnable{
         pool = new ThreadPoolExecutor(2,10,0L, TimeUnit.MILLISECONDS,
                 new LinkedBlockingQueue<Runnable>(1024),threadForSocket,new ThreadPoolExecutor.AbortPolicy());
         pool.execute(new EngineGetMsg(fromCenter));
-        //pool.execute(new EnginePutMsg(toCenter));
+        EnginePutMsg.getInstance(toCenter);
 
     }
 

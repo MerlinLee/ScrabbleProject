@@ -96,8 +96,10 @@ public class GameProcess {
             switch (type) {
                 case "NonGamingProtocol":
                     nonGamingOperation(currentUserID, JSON.parseObject(msg, NonGamingProtocol.class));
+                    break;
                 case "GamingOperationProtocol":
                     gamingOperation(currentUserID, JSON.parseObject(msg, GamingOperationProtocol.class));
+                    break;
                 default:
                     break;
             }
@@ -411,6 +413,7 @@ public class GameProcess {
 
     private void userListToClient() {
         Users[] current = new Users[userList.size()];
+        current = userList.toArray(current);
         String command = "userUpdate";
         Pack list = new Pack(0, JSON.toJSONString(new NonGamingResponse(current, command)));
         EnginePutMsg.getInstance().putMsgToCenter(list);
@@ -418,6 +421,7 @@ public class GameProcess {
 
     private void userListToClient(int userID) {
         Users[] current = new Users[userList.size()];
+        current = userList.toArray(current);
         String command = "userUpdate";
         Pack list = new Pack(userID, JSON.toJSONString(new NonGamingResponse(current, command)));
         EnginePutMsg.getInstance().putMsgToCenter(list);
@@ -481,6 +485,7 @@ public class GameProcess {
         teams.remove(gameHost, teams.get(gameHost));
         gameHost = ID_PLACEHOLDER;
     }
+
 
 
 }

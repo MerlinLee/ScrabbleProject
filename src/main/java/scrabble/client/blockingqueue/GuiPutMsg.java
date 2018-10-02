@@ -12,10 +12,10 @@ public class GuiPutMsg implements Runnable{
     private BlockingQueue<Pack> toCenter;
     @Override
     public void run() {
-        try {
-            toCenter.put(new Pack(1,""));
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            toCenter.put(new Pack(1,""));
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
     }
 }
