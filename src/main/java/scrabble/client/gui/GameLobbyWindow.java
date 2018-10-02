@@ -64,6 +64,7 @@ public class GameLobbyWindow implements Runnable {
     public void run() {
         initialize();
         this.frame.setVisible(true);
+
     }
 
     /**
@@ -89,6 +90,7 @@ public class GameLobbyWindow implements Runnable {
         frame.getContentPane().add(btnInvite);
 
         btnInvite.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent arg0) {
                 int[] selection = userList.getSelectedRows();
                 if (selection.length < 2) {
@@ -135,6 +137,7 @@ public class GameLobbyWindow implements Runnable {
         frame.getContentPane().add(btnStart);
 
         btnStart.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent arg0) {
                 if (playerList.getRowCount() < 1) {
                     showDialog("You must have more than one player");
@@ -204,8 +207,10 @@ public class GameLobbyWindow implements Runnable {
 
     void updateUserList(Users[] userList) {
         clearUserList();
-        for (Users user : userList)
+        for (Users user : userList){
             addToUserList(user.getUserID(), user.getUserName(), user.getStatus());
+        }
+
     }
 
     void addToUserList(int id, String name, String status) {
@@ -222,8 +227,10 @@ public class GameLobbyWindow implements Runnable {
 
     void updatePlayerList(Player[] playerList) {
         clearPlayerList();
-        for (Player player : playerList)
+        for (Player player : playerList){
             addToUserList(player.getUser().getUserID(), player.getUser().getUserName(), player.getUser().getStatus());
+        }
+
     }
 
     void addToPlayerList(int id, String name, String status) {

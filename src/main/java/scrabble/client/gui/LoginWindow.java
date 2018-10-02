@@ -1,6 +1,10 @@
 package scrabble.client.gui;
 
+import com.alibaba.fastjson.JSON;
+import scrabble.client.Gui;
+import scrabble.client.blockingqueue.GuiPutMsg;
 import scrabble.client.clientControl.ClientControlCenter;
+import scrabble.protocols.NonGamingProtocol.NonGamingProtocol;
 
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
@@ -50,6 +54,8 @@ public class LoginWindow implements Runnable {
 
     public void showDialog(String res) {
         JOptionPane.showMessageDialog(null, res);
+        closeWindow();
+        GuiController.get().loginGame();
     }
 
     public void closeWindow() {
@@ -103,6 +109,11 @@ public class LoginWindow implements Runnable {
                 String portStr = port.getText();
                 String userNameStr = userName.getText();
                 clientManager.openNet(address, Integer.parseInt(portStr), userNameStr);
+                showDialog(userNameStr);
+                String[] userList = new String[1];
+                userList[0]=userNameStr;
+                GuiController.get().setUsername(userNameStr);
+                GuiPutMsg.getInstance().putMsgToCenter(JSON.toJSONString(new NonGamingProtocol("login",userList)));
             }
         });
     }

@@ -1,14 +1,22 @@
 package scrabble.client.gui;
 
+import com.alibaba.fastjson.JSON;
 import scrabble.Models.Users;
+import scrabble.client.blockingqueue.GuiPutMsg;
 import scrabble.protocols.GamingProtocol.BrickPlacing;
 import scrabble.protocols.GamingProtocol.GamingOperationProtocol;
 import scrabble.protocols.NonGamingProtocol.NonGamingProtocol;
+import scrabble.protocols.ScrabbleProtocol;
+import scrabble.protocols.serverResponse.NonGamingResponse;
 
 import java.net.Socket;
 import java.net.UnknownHostException;
 
 public class GuiController {
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
     private String username;
     private String id;
@@ -17,13 +25,17 @@ public class GuiController {
     private LoginWindow loginWindow;
     private GameLobbyWindow gameLobbyWindow;
 
-    private static GuiController instance = null;
+    private volatile static GuiController guiController;
 
-    public static synchronized GuiController get() {
-        if (instance == null) {
-            instance = new GuiController();
+    public static GuiController  get() {
+        if (guiController == null) {
+            synchronized (GuiController.class){
+                if(guiController==null){
+                    guiController=new GuiController();
+                }
+            }
         }
-        return instance;
+        return guiController;
     }
 
     /*
@@ -53,20 +65,22 @@ public class GuiController {
     }
 
     void loginGame() {
-        String[] selfArray = new String[1];
-        selfArray[0] = username;
-        NonGamingProtocol nonGamingProtocol = new NonGamingProtocol("login", selfArray);
-        GuiSender.get().sendToCenter(nonGamingProtocol);
+//        String[] selfArray = new String[1];
+//        selfArray[0] = username;
+//        NonGamingProtocol nonGamingProtocol = new NonGamingProtocol("login", selfArray);
+//        GuiSender.get().sendToCenter(nonGamingProtocol);
+        runGameLobbyWindow();
     }
 
     void invitePlayers(String[] players) {
-        NonGamingProtocol nonGamingProtocol = new NonGamingProtocol("invite", players);
-        GuiSender.get().sendToCenter(nonGamingProtocol);
+        NonGamingProtocol nonGamingProtocol = new NonGamingProtocol("inviteOperation", players);
+//        GuiSender.get().sendToCenter(nonGamingProtocol);
+        GuiPutMsg.getInstance().putMsgToCenter(JSON.toJSONString(nonGamingProtocol));
     }
 
     void startGame(String[] players) {
         NonGamingProtocol nonGamingProtocol = new NonGamingProtocol("start", players);
-        GuiSender.get().sendToCenter(nonGamingProtocol);
+        GuiPutMsg.getInstance().putMsgToCenter(JSON.toJSONString(nonGamingProtocol));
         runGameWindow();
     }
 
@@ -74,7 +88,8 @@ public class GuiController {
         String[] selfArray = new String[1];
         selfArray[0] = username;
         NonGamingProtocol nonGamingProtocol = new NonGamingProtocol("quit", selfArray);
-        GuiSender.get().sendToCenter(nonGamingProtocol);
+//        GuiSender.get().sendToCenter(nonGamingProtocol);
+        GuiPutMsg.getInstance().putMsgToCenter(JSON.toJSONString(nonGamingProtocol));
     }
 
     void logoutGame() {
@@ -82,7 +97,8 @@ public class GuiController {
             String[] selfArray = new String[1];
             selfArray[0] = username;
             NonGamingProtocol nonGamingProtocol = new NonGamingProtocol("logout", selfArray);
-            GuiSender.get().sendToCenter(nonGamingProtocol);
+//            GuiSender.get().sendToCenter(nonGamingProtocol);
+            GuiPutMsg.getInstance().putMsgToCenter(JSON.toJSONString(nonGamingProtocol));
         } catch (Exception e) {
             System.out.println(e.toString());
         }
@@ -96,7 +112,8 @@ public class GuiController {
             brickPlacing.setbrick(c);
             brickPlacing.setPosition(lastMove);
             gamingProtocol.setBrickPlacing(brickPlacing);
-            GuiSender.get().sendToCenter(gamingProtocol);
+//            GuiSender.get().sendToCenter(gamingProtocol);
+            GuiPutMsg.getInstance().putMsgToCenter(JSON.toJSONString(gamingProtocol));
         } catch (Exception e) {
             System.out.println(e.toString());
         }
@@ -118,7 +135,8 @@ public class GuiController {
             endPosition[1] = ey;
             gamingProtocol.setStartPosition(startPosition);
             gamingProtocol.setStartPosition(endPosition);
-            GuiSender.get().sendToCenter(gamingProtocol);
+//            GuiSender.get().sendToCenter(gamingProtocol);
+            GuiPutMsg.getInstance().putMsgToCenter(JSON.toJSONString(gamingProtocol));
         } catch (Exception e) {
             System.out.println(e.toString());
         }
@@ -151,11 +169,48 @@ public class GuiController {
         NonGamingProtocol nonGamingProtocol = new NonGamingProtocol("inviteResponse", userList);
         nonGamingProtocol.setInviteAccepted(ack);
         nonGamingProtocol.setHostID(inviterId);
-        GuiSender.get().sendToCenter(nonGamingProtocol);
+//        GuiSender.get().sendToCenter(nonGamingProtocol);
+        GuiPutMsg.getInstance().putMsgToCenter(JSON.toJSONString(nonGamingProtocol));
     }
 
     String getId() {
         return id;
+    }
+
+    public void receiveMsgFromCenter(String msg){
+        ScrabbleProtocol scrabbleProtocol = JSON.parseObject(msg,ScrabbleProtocol.class);
+        switch (scrabbleProtocol.getTAG()){
+            case "NonGamingResponse":
+                switchMethods(JSON.parseObject(msg,NonGamingResponse.class));
+                break;
+            case "NonGamingProtocol":
+                switchMethods(JSON.parseObject(msg,NonGamingProtocol.class));
+                break;
+                default:
+                    break;
+        }
+    }
+
+    private void findMyId(Users[] usersLisr){
+        for(Users users:usersLisr){
+            if(users.getUserName().equals(this.username)){
+                this.id=String.valueOf(users.getUserID());
+            }
+        }
+    }
+
+    private void switchMethods(NonGamingResponse protocol){
+        if(protocol.getCommand().equals("userUpdate")){
+            findMyId(protocol.getUsersList());
+            GameLobbyWindow.get().updateUserList(protocol.getUsersList());
+        }
+
+    }
+
+    private void switchMethods(NonGamingProtocol protocol){
+        if(protocol.getCommand().equals("invite")){
+            showInviteMessage(0,protocol.getUserList()[0]);
+        }
     }
 }
 
