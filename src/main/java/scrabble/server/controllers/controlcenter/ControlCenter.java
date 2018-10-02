@@ -7,6 +7,8 @@ import scrabble.protocols.GamingProtocol.GamingOperationProtocol;
 import scrabble.protocols.NonGamingProtocol.NonGamingProtocol;
 import scrabble.protocols.Pack;
 import scrabble.protocols.ScrabbleProtocol;
+import scrabble.server.controllers.controlcenter.blockingqueue.CenterGetMsg;
+import scrabble.server.controllers.controlcenter.blockingqueue.CenterPutMsg;
 import scrabble.server.controllers.gameEngine.GameEngine;
 import scrabble.server.controllers.net.Net;
 
@@ -16,10 +18,10 @@ import java.util.concurrent.*;
 public class ControlCenter implements Runnable{
     private String tag = "ControlCenter";
     private static Logger logger = Logger.getLogger(ControlCenter.class);
-    private final BlockingQueue<String> fromNet;
+    private final BlockingQueue<Pack> fromNet;
     private final BlockingQueue<Pack> toEngine;
     private final BlockingQueue<Pack> fromEngine;
-    private final BlockingQueue<String> toNet;
+    private final BlockingQueue<Pack> toNet;
     private GameEngine gameEngine;
     private Net net;
     private boolean flag = true;
@@ -46,48 +48,14 @@ public class ControlCenter implements Runnable{
     }
     @Override
     public void run() {
-        Scanner read = new Scanner(System.in);
-        while (true){
-            getMessage();
-        }
+        pool.execute(new CenterGetMsg(fromNet,toEngine,fromEngine,toNet));
+        pool.execute(new CenterPutMsg(fromNet,toEngine,fromEngine,toNet));
     }
 
-    public void getMessage(){
-        String message=null;
-        try {
-            message = fromNet.take();
-            sendMsgToNet("hello");
-            logger.info(tag+" get message from queue!");
-        } catch (InterruptedException e) {
-            logger.error(tag+e);
-        }
-        if(!message.equals("")){
-           // ScrabbleProtocol scrabbleProtocol = toObject(message);
-            System.out.println(message);
-        }
-    }
 
-    private ScrabbleProtocol toObject(String message){
-        ScrabbleProtocol scrabbleProtocol =  JSON.parseObject(message,ScrabbleProtocol.class);
-        switch (scrabbleProtocol.getTAG()){
-                case "NonGamingProtocol":
-                    return JSON.parseObject(message, NonGamingProtocol.class);
-                case "GamingOperationProtocol":
-                    return JSON.parseObject(message, GamingOperationProtocol.class);
-                default:
-                    break;
-        }
-        return null;
-    }
+
     public void shutdown(){
         flag = false;
     }
 
-    private void sendMsgToNet(String msg){
-        try {
-            toNet.put(msg);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
 }

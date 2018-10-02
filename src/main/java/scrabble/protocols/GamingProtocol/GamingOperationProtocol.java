@@ -5,20 +5,35 @@ import scrabble.protocols.ScrabbleProtocol;
 public class GamingOperationProtocol extends ScrabbleProtocol {
     private boolean vote;
 
-    public GamingOperationProtocol(boolean vote, BrickPlacing brickPlacing, int[] startPosition, int[] endPosition) {
+    public String getCommand() {
+        return command;
+    }
+
+    public void setCommand(String command) {
+        this.command = command;
+    }
+
+    private String command;  //vote, voteResponse
+    public GamingOperationProtocol(String command){
+        super.setTAG("GamingOperationProtocol");
+        setCommand(command);
+    }
+    public GamingOperationProtocol(String command, boolean vote, BrickPlacing brickPlacing, int[] startPosition, int[] endPosition) {
        super.setTAG("GamingOperationProtocol");
+       this.command = command;
         this.vote = vote;
         this.brickPlacing = brickPlacing;
         this.startPosition = startPosition;
         this.endPosition = endPosition;
     }
 
-    public GamingOperationProtocol(boolean vote, int[] startPosition, int[] endPosition) {
-        super.setTAG("GamingOperationProtocol");
-        this.vote = vote;
-        this.startPosition = startPosition;
-        this.endPosition = endPosition;
-    }
+//    public GamingOperationProtocol(boolean vote, int[] startPosition, int[] endPosition) {
+//        super.setTAG("GamingOperationProtocol");
+//        this.vote = vote;
+//        this.startPosition = startPosition;
+//        this.endPosition = endPosition;
+//    }
+
 
     public BrickPlacing getBrickPlacing() {
 

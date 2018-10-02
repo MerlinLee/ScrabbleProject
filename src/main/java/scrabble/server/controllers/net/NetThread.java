@@ -1,5 +1,9 @@
 package scrabble.server.controllers.net;
 
+import com.alibaba.fastjson.JSON;
+import scrabble.protocols.GamingProtocol.GamingOperationProtocol;
+import scrabble.protocols.Pack;
+
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -13,13 +17,15 @@ public class NetThread implements Runnable {
     private Hashtable clientDataHash;
     private Hashtable clientNameHash;
     private boolean isClientClosed = false;
-    private final BlockingQueue<String> toNetPutMsg;
+    private final BlockingQueue<Pack> toNetPutMsg;
+    private int clientID;
 
-    public NetThread(Socket client, Hashtable clientDataHash, Hashtable clientNameHash,BlockingQueue toNetPutMsg) {
+    public NetThread(Socket client, Hashtable clientDataHash, Hashtable clientNameHash,BlockingQueue toNetPutMsg,int clientID) {
         this.client = client;
         this.clientDataHash = clientDataHash;
         this.clientNameHash = clientNameHash;
         this.toNetPutMsg = toNetPutMsg;
+        this.clientID = clientID;
     }
 
     @Override
@@ -34,17 +40,23 @@ public class NetThread implements Runnable {
             inputStream = new BufferedReader(new InputStreamReader(client.getInputStream()));
             while (true){
                 String message = inputStream.readLine();
-                toNetPutMsg.put(message);
+                toNetPutMsg.put(new Pack(clientID,message));
+                if(client.isConnected()){
+                    break;
+                }
             }
 
         }catch (Exception e){
-            e.printStackTrace();
-        }finally {
-            if (!isClientClosed){
-                closeClient();
-            }
+            closeClient();
         }
     }
-    private void closeClient(){}
+    private void closeClient(){
+        try {
+            System.out.println("client "+clientID+" is closed!");
+            toNetPutMsg.put(new Pack(clientID, JSON.toJSONString(new GamingOperationProtocol("disconnect"))));
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 
 }
