@@ -20,7 +20,7 @@ public class clientNetSendMsg implements Runnable{
     }
     @Override
     public void run() {
-        sendToPeer(msg);
+        sendToPeer(message);
     }
     private void sendToPeer(Pack msg){
 
@@ -31,7 +31,7 @@ public class clientNetSendMsg implements Runnable{
         try {
 
             PrintWriter out=new PrintWriter(socket.getOutputStream());
-            out.println(msg);
+            out.println(msg.getMsg());
             out.flush();
         } catch (IOException e) {
             e.printStackTrace();

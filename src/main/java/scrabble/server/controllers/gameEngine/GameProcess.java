@@ -96,8 +96,10 @@ public class GameProcess {
             switch (type) {
                 case "NonGamingProtocol":
                     nonGamingOperation(currentUserID, JSON.parseObject(msg, NonGamingProtocol.class));
+                    break;
                 case "GamingOperationProtocol":
                     gamingOperation(currentUserID, JSON.parseObject(msg, GamingOperationProtocol.class));
+                    break;
                 default:
                     break;
             }
@@ -483,6 +485,7 @@ public class GameProcess {
         teams.remove(gameHost, teams.get(gameHost));
         gameHost = ID_PLACEHOLDER;
     }
+
 
 
 }
