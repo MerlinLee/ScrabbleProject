@@ -82,7 +82,7 @@ public class ClientNet implements Runnable {
     public void run() {
         Socket socket = null;
         try {
-            socket = new Socket("10.13.102.117", 6666);
+            socket = new Socket("localhost", 6666);
         } catch (IOException e) {
             e.printStackTrace();
         }
