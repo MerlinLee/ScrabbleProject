@@ -5,10 +5,10 @@ import scrabble.protocols.Pack;
 import java.util.concurrent.BlockingQueue;
 
 public class clientNetPutMsg implements Runnable {
-    private final BlockingQueue<Pack> toCenter;
-    private final BlockingQueue<Pack> fromNetThread;
+    private final BlockingQueue<String> toCenter;
+    private final BlockingQueue<String> fromNetThread;
     private boolean flag = true;
-    public clientNetPutMsg(BlockingQueue<Pack> toCenter,BlockingQueue<Pack> fromNetThread) {
+    public clientNetPutMsg(BlockingQueue<String> toCenter,BlockingQueue<String> fromNetThread) {
         this.toCenter = toCenter;
         this.fromNetThread = fromNetThread;
     }

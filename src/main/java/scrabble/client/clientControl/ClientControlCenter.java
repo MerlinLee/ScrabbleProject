@@ -17,10 +17,10 @@ import java.util.concurrent.*;
 public class ClientControlCenter implements Runnable{
     private String tag = "clientControl";
     private static Logger logger = Logger.getLogger(ClientControlCenter.class);
-    private final BlockingQueue<Pack> fromNet;
-    private final BlockingQueue<Pack> toGui;
-    private final BlockingQueue<Pack> fromGui;
-    private final BlockingQueue<Pack> toNet;
+    private final BlockingQueue<String> fromNet;
+    private final BlockingQueue<String> toGui;
+    private final BlockingQueue<String> fromGui;
+    private final BlockingQueue<String> toNet;
     private Gui gui;
     private ClientNet net;
     private boolean flag = true;
