@@ -8,7 +8,7 @@ import scrabble.protocols.NonGamingProtocol.NonGamingProtocol;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-public class ClientController {
+public class GuiController {
 
     private String username;
     private String id;
@@ -16,43 +16,27 @@ public class ClientController {
     private GameWindow gameWindow;
     private LoginWindow loginWindow;
     private GameLobbyWindow gameLobbyWindow;
-    private ClientListener listener;
-    private ClientSender sender;
 
-    private Socket socket;
+    private static GuiController instance = null;
 
+    public static synchronized GuiController get() {
+        if (instance == null) {
+            instance = new GuiController();
+        }
+        return instance;
+    }
+
+    /*
     ClientController() {
         loginWindow = LoginWindow.get();
         loginWindow.setClient(this);
         Thread loginThread = new Thread(loginWindow);
         loginThread.start();
     }
-
-    public void openSocket(String address, String portStr, String username) {
-        try {
-            if (address.length() == 0 || portStr.length() == 0 || username.length() == 0) {
-                loginWindow.showDialog("Please fill out all fields!");
-                return;
-            }
-            int port = Integer.parseInt(portStr);
-            socket = new Socket(address, port);
-            this.username = username;
-            listenToServer();
-            sendToServer();
-            loginWindow.closeWindow();
-            runGameLobbyWindow();
-            loginGame();
-        } catch (UnknownHostException e) {
-            loginWindow.showDialog("Unkonwn Host!");
-        } catch (Exception e) {
-            System.out.println(e.toString());
-            loginWindow.showDialog("Cannot connect to the server!");
-        }
-    }
+    */
 
     private void runGameLobbyWindow() {
         gameLobbyWindow = GameLobbyWindow.get();
-        gameLobbyWindow.setClient(this);
         gameLobbyWindow.setModel();
         Thread lobbyThread = new Thread(gameLobbyWindow);
         lobbyThread.start();
@@ -60,37 +44,29 @@ public class ClientController {
 
     private void runGameWindow() {
         gameWindow = GameWindow.get();
-        gameWindow.setClient(this);
         Thread gameThread = new Thread(gameWindow);
         gameThread.start();
-    }
-
-    void listenToServer() {
-        listener = ClientListener.get(socket, this);
-        listener.start();
-    }
-
-    void sendToServer() {
-        sender = ClientSender.get(socket);
-        sender.start();
     }
 
     void startOneTurn() {
         gameWindow.startOneTurn();
     }
 
-    public static void main(String[] args) {
-        ClientController client = new ClientController();
+    void loginGame() {
+        String[] selfArray = new String[1];
+        selfArray[0] = username;
+        NonGamingProtocol nonGamingProtocol = new NonGamingProtocol("login", selfArray);
+        GuiSender.get().sendToCenter(nonGamingProtocol);
     }
 
     void invitePlayers(String[] players) {
         NonGamingProtocol nonGamingProtocol = new NonGamingProtocol("invite", players);
-        sender.sendToServer(nonGamingProtocol);
+        GuiSender.get().sendToCenter(nonGamingProtocol);
     }
 
     void startGame(String[] players) {
         NonGamingProtocol nonGamingProtocol = new NonGamingProtocol("start", players);
-        sender.sendToServer(nonGamingProtocol);
+        GuiSender.get().sendToCenter(nonGamingProtocol);
         runGameWindow();
     }
 
@@ -98,14 +74,7 @@ public class ClientController {
         String[] selfArray = new String[1];
         selfArray[0] = username;
         NonGamingProtocol nonGamingProtocol = new NonGamingProtocol("quit", selfArray);
-        sender.sendToServer(nonGamingProtocol);
-    }
-
-    void loginGame() {
-        String[] selfArray = new String[1];
-        selfArray[0] = username;
-        NonGamingProtocol nonGamingProtocol = new NonGamingProtocol("login", selfArray);
-        sender.sendToServer(nonGamingProtocol);
+        GuiSender.get().sendToCenter(nonGamingProtocol);
     }
 
     void logoutGame() {
@@ -113,27 +82,11 @@ public class ClientController {
             String[] selfArray = new String[1];
             selfArray[0] = username;
             NonGamingProtocol nonGamingProtocol = new NonGamingProtocol("logout", selfArray);
-            sender.sendToServer(nonGamingProtocol);
-            socket.close();
+            GuiSender.get().sendToCenter(nonGamingProtocol);
         } catch (Exception e) {
             System.out.println(e.toString());
         }
     }
-
-    /*
-    void placingChar(int[] lastMove, char c) {
-        try {
-            GamingOperationProtocol gamingProtocol = new GamingOperationProtocol();
-            gamingProtocol.setUserID(Integer.parseInt(id));
-            gamingProtocol.setCharacter(c);
-            gamingProtocol.setPosition(lastMove);
-            gamingProtocol.setTAG("BrickPlacing");
-            sender.sendToServer(gamingProtocol);
-        } catch (Exception e) {
-            System.out.println(e.toString());
-        }
-    }
-    */
 
     void sendPass(int[] lastMove, char c) {
         try {
@@ -143,7 +96,7 @@ public class ClientController {
             brickPlacing.setbrick(c);
             brickPlacing.setPosition(lastMove);
             gamingProtocol.setBrickPlacing(brickPlacing);
-            sender.sendToServer(gamingProtocol);
+            GuiSender.get().sendToCenter(gamingProtocol);
         } catch (Exception e) {
             System.out.println(e.toString());
         }
@@ -165,7 +118,7 @@ public class ClientController {
             endPosition[0] = ey;
             gamingProtocol.setStartPosition(startPosition);
             gamingProtocol.setStartPosition(endPosition);
-            sender.sendToServer(gamingProtocol);
+            GuiSender.get().sendToCenter(gamingProtocol);
         } catch (Exception e) {
             System.out.println(e.toString());
         }
@@ -183,6 +136,22 @@ public class ClientController {
         else {
             gameLobbyWindow.refuseInvite(id);
         }
+    }
+
+    void updateUserList(Users[] userList) {
+        gameLobbyWindow.updateUserList(userList);
+    }
+
+    void showInviteMessage(int inviterId, String inviterName) {
+        gameLobbyWindow.showInviteMessage(inviterId, inviterName);
+    }
+
+    void sendInviteResponse(boolean ack, int inviterId) {
+        String[] userList = new String[1];
+        NonGamingProtocol nonGamingProtocol = new NonGamingProtocol("inviteResponse", userList);
+        nonGamingProtocol.setInviteAccepted(ack);
+        nonGamingProtocol.setHostID(inviterId);
+        GuiSender.get().sendToCenter(nonGamingProtocol);
     }
 
     String getId() {
