@@ -9,12 +9,12 @@ import scrabble.protocols.Pack;
 import java.util.concurrent.BlockingQueue;
 
 public class ClientCenterGetMsg implements Runnable {
-    private final BlockingQueue<Pack> fromNet;
-    private final BlockingQueue<Pack> toGui;
-    private final BlockingQueue<Pack> fromGui;
-    private final BlockingQueue<Pack> toNet;
+    private final BlockingQueue<String> fromNet;
+    private final BlockingQueue<String> toGui;
+    private final BlockingQueue<String> fromGui;
+    private final BlockingQueue<String> toNet;
 
-    public ClientCenterGetMsg(BlockingQueue<Pack> fromNet, BlockingQueue<Pack> toGui, BlockingQueue<Pack> fromGui, BlockingQueue<Pack> toNet) {
+    public ClientCenterGetMsg(BlockingQueue<String> fromNet, BlockingQueue<String> toGui, BlockingQueue<String> fromGui, BlockingQueue<String> toNet) {
         this.fromNet = fromNet;
         this.toGui = toGui;
         this.fromGui = fromGui;

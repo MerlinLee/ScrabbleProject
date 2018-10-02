@@ -117,7 +117,7 @@ public class GameProcess {
     }
 
     private void gamingOperation(int currentUserID, GamingOperationProtocol gamingOperationProtocol) {
-        //command:  brickPlacing, vote
+        //command: vote, voteResponse, disconnect
         String command = gamingOperationProtocol.getCommand();
         switch (command) {
             case "vote":
@@ -360,6 +360,8 @@ public class GameProcess {
                     makeEnvelope(currentUserID, peer);
                 }
             }
+        }else{
+            //error
         }
     }
 
@@ -473,10 +475,11 @@ public class GameProcess {
 
             winner.add(playerList.get(j));
         }
-        Pack win = new Pack(currentUserID, JSON.toJSONString(new GamingSync(command, playerList, whoseTurn, board)));
+        Pack win = new Pack(currentUserID, JSON.toJSONString(new GamingSync(command, winner, whoseTurn, board)));
         win.setRecipient(playersID);   //multi-cast
         EnginePutMsg.getInstance().putMsgToCenter(win);
         teamStatusUpdate(teams.get(gameHost), "available");
+        userListToClient();
 
         //terminate game, reset parameters
         gameStart = false;

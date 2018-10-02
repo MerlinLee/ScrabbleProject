@@ -10,6 +10,22 @@ public class GamingSync extends ScrabbleProtocol {
 //    private int userID;     -----overlapped with Player
     private String FLAG;
 
+    public ArrayList<Player> getPlayerList() {
+        return playerList;
+    }
+
+    public void setPlayerList(ArrayList<Player> playerList) {
+        this.playerList = playerList;
+    }
+
+    public int getNextTurn() {
+        return nextTurn;
+    }
+
+    public void setNextTurn(int nextTurn) {
+        this.nextTurn = nextTurn;
+    }
+
     private String command;   // new add -- 9.28
 
     public String getCommand() {
