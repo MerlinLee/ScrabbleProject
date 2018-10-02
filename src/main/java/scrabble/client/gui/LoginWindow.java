@@ -27,7 +27,7 @@ public class LoginWindow implements Runnable {
         private static final LoginWindow INSTANCE = new LoginWindow();
     }
 
-    private LoginWindow() {
+    public LoginWindow() {
 
     }
 
