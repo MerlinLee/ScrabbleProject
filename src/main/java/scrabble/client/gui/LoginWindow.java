@@ -35,7 +35,7 @@ public class LoginWindow implements Runnable {
         return LoginWindowHolder.INSTANCE;
     }
 
-    void setClient(ClientControlCenter client) {
+    public void setClient(ClientControlCenter client) {
         clientManager = client;
     }
 
