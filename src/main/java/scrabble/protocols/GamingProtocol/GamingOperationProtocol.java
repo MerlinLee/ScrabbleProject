@@ -17,20 +17,21 @@ public class GamingOperationProtocol extends ScrabbleProtocol {
     public GamingOperationProtocol(String command){
         setCommand(command);
     }
-    public GamingOperationProtocol(boolean vote, BrickPlacing brickPlacing, int[] startPosition, int[] endPosition) {
+    public GamingOperationProtocol(String command, boolean vote, BrickPlacing brickPlacing, int[] startPosition, int[] endPosition) {
        super.setTAG("GamingOperationProtocol");
+       this.command = command;
         this.vote = vote;
         this.brickPlacing = brickPlacing;
         this.startPosition = startPosition;
         this.endPosition = endPosition;
     }
 
-    public GamingOperationProtocol(boolean vote, int[] startPosition, int[] endPosition) {
-        super.setTAG("GamingOperationProtocol");
-        this.vote = vote;
-        this.startPosition = startPosition;
-        this.endPosition = endPosition;
-    }
+//    public GamingOperationProtocol(boolean vote, int[] startPosition, int[] endPosition) {
+//        super.setTAG("GamingOperationProtocol");
+//        this.vote = vote;
+//        this.startPosition = startPosition;
+//        this.endPosition = endPosition;
+//    }
 
 
     public BrickPlacing getBrickPlacing() {

@@ -15,9 +15,9 @@ import java.util.concurrent.*;
 public class ClientNet implements Runnable {
     private String tag = "Net";
     private static Logger logger = Logger.getLogger(ClientNet.class);
-    private final BlockingQueue<Pack> fromCenter;
-    private final BlockingQueue<Pack> toCenter;
-    private final BlockingQueue<Pack> toNetPutMsg;
+    private final BlockingQueue<String> fromCenter;
+    private final BlockingQueue<String> toCenter;
+    private final BlockingQueue<String> toNetPutMsg;
     private boolean flag = true;
     private ThreadFactory threadForSocket;
     private ExecutorService pool;
@@ -82,7 +82,7 @@ public class ClientNet implements Runnable {
     public void run() {
         Socket socket = null;
         try {
-            socket = new Socket("localhost", 6666);
+            socket = new Socket("10.13.102.117", 6666);
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -14,8 +14,10 @@ public class clientNetGetMsg implements Runnable {
     private boolean flag = true;
     private ThreadFactory threadForSocket;
     private ExecutorService pool;
+    private final BlockingQueue<String> fromCenter;
 
-    public clientNetGetMsg(BlockingQueue<Pack> fromCenter, Socket socket) {
+
+    public clientNetGetMsg(BlockingQueue<String> fromCenter, Socket socket) {
         this.fromCenter = fromCenter;
         this.socket = socket;
 
@@ -25,12 +27,11 @@ public class clientNetGetMsg implements Runnable {
                 new LinkedBlockingQueue<Runnable>(1024),threadForSocket,new ThreadPoolExecutor.AbortPolicy());
     }
 
-    private final BlockingQueue<Pack> fromCenter;
     @Override
     public void run() {
         while (flag){
             try {
-                Pack message = fromCenter.take();
+                String message = fromCenter.take();
                 pool.execute(new clientNetSendMsg(message,socket));
             } catch (InterruptedException e) {
                 e.printStackTrace();

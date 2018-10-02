@@ -5,11 +5,11 @@ import scrabble.protocols.Pack;
 import java.util.concurrent.BlockingQueue;
 
 public class GuiPutMsg implements Runnable{
-    public GuiPutMsg(BlockingQueue<Pack> toCenter) {
+    public GuiPutMsg(BlockingQueue<String> toCenter) {
         this.toCenter = toCenter;
     }
 
-    private BlockingQueue<Pack> toCenter;
+    private BlockingQueue<String> toCenter;
     @Override
     public void run() {
 //        try {
