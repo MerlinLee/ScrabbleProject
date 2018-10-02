@@ -90,7 +90,7 @@ public class GuiController {
 
     void sendPass(int[] lastMove, char c) {
         try {
-            GamingOperationProtocol gamingProtocol = new GamingOperationProtocol();
+            GamingOperationProtocol gamingProtocol = new GamingOperationProtocol("vote");
             gamingProtocol.setVote(false);
             BrickPlacing brickPlacing = new BrickPlacing();
             brickPlacing.setbrick(c);
@@ -104,7 +104,7 @@ public class GuiController {
 
     void sendVote(int[] lastMove, char c, int sx, int sy, int ex, int ey) {
         try {
-            GamingOperationProtocol gamingProtocol = new GamingOperationProtocol();
+            GamingOperationProtocol gamingProtocol = new GamingOperationProtocol("vote");
             gamingProtocol.setVote(true);
             BrickPlacing brickPlacing = new BrickPlacing();
             brickPlacing.setbrick(c);
@@ -112,10 +112,10 @@ public class GuiController {
             gamingProtocol.setBrickPlacing(brickPlacing);
             int[] startPosition = new int[2];
             startPosition[0] = sx;
-            startPosition[0] = sy;
+            startPosition[1] = sy;
             int[] endPosition = new int[2];
             endPosition[0] = ex;
-            endPosition[0] = ey;
+            endPosition[1] = ey;
             gamingProtocol.setStartPosition(startPosition);
             gamingProtocol.setStartPosition(endPosition);
             GuiSender.get().sendToCenter(gamingProtocol);
