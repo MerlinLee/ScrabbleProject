@@ -17,8 +17,6 @@ import java.awt.event.WindowEvent;
 
 public class GameWindow implements Runnable {
 
-    private ClientController clientManager;
-
     private JFrame frame;
     private GameGridPanel gridPanel = GameGridPanel.get();
     private GameAlphabet alphabetPanel = GameAlphabet.get();
@@ -35,10 +33,6 @@ public class GameWindow implements Runnable {
 
     public static final GameWindow get() {
         return GameWindowHolder.INSTANCE;
-    }
-
-    void setClient(ClientController client) {
-        clientManager = client;
     }
 
     @Override
@@ -81,7 +75,7 @@ public class GameWindow implements Runnable {
             public void actionPerformed(ActionEvent arg0) {
                 int[] lastMove = new int[2];
                 lastMove = gridPanel.getLastMove();
-                clientManager.sendPass(lastMove, gridPanel.getCharacter(lastMove[0], lastMove[1]));
+                GuiController.get().sendPass(lastMove, gridPanel.getCharacter(lastMove[0], lastMove[1]));
                 gridPanel.drawUneditable(lastMove[0], lastMove[1]);
                 gridPanel.delLastMoveValue();
                 gridPanel.setAllowDrag(false);
@@ -105,7 +99,7 @@ public class GameWindow implements Runnable {
             public void windowClosing(WindowEvent e)
             {
                 super.windowClosing(e);
-                clientManager.quitGame();
+                GuiController.get().quitGame();
                 frame.dispose();
             }
         });
@@ -123,6 +117,6 @@ public class GameWindow implements Runnable {
 
     void sendSelect(int[] lastMove, int sx, int sy, int ex, int ey) {
         char c = gridPanel.getCharacter(lastMove[0], lastMove[1]);
-        clientManager.sendVote(lastMove, c, sx, sy, ex, ey);
+        GuiController.get().sendVote(lastMove, c, sx, sy, ex, ey);
     }
 }

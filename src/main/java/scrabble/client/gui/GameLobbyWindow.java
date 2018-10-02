@@ -1,5 +1,6 @@
 package scrabble.client.gui;
 
+import scrabble.Models.Player;
 import scrabble.Models.Users;
 
 import java.awt.EventQueue;
@@ -25,7 +26,6 @@ public class GameLobbyWindow implements Runnable {
     private JTable userList;
     private JTable playerList;
 
-    private ClientController clientManager;
     private JButton btnInvite;
     private JButton btnStart;
 
@@ -42,10 +42,6 @@ public class GameLobbyWindow implements Runnable {
 
     public static final GameLobbyWindow get() {
         return LobbyWindowHolder.INSTANCE;
-    }
-
-    void setClient(ClientController client) {
-        clientManager = client;
     }
 
     void setModel() {
@@ -95,27 +91,26 @@ public class GameLobbyWindow implements Runnable {
         btnInvite.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
                 int[] selection = userList.getSelectedRows();
-                if (selection.length < 1) {
+                if (selection.length < 2) {
                     showDialog("You must select more than one players.");
                 }
                 else {
                     String[] players = new String[selection.length];
-
-                    System.out.printf("%d%n", selection[0]);
+                    //System.out.printf("%d%n", selection[0]);
                     int num = 0;
                     boolean valid = false;
                     for (int i : selection) {
                         System.out.printf("row index: %d%n", i);
-                        if (userList.getValueAt(i, 0).toString().equals(clientManager.getId())) {
+                        if (userList.getValueAt(i, 0).toString().equals(GuiController.get().getId())) {
                             valid = true;
                         }
-                        players[num++] = userList.getValueAt(i, 0).toString(); // include the inviter
+                        players[num++] = userList.getValueAt(i, 1).toString(); // include the inviter
                     }
                     if (!valid) {
                         showDialog("You must select yourself.");
                     }
                     else {
-                        clientManager.invitePlayers(players);
+                        GuiController.get().invitePlayers(players);
                     }
                 }
             }
@@ -149,7 +144,7 @@ public class GameLobbyWindow implements Runnable {
                     for (int i = 0; i < playerList.getRowCount(); i++) {
                         players[i] = playerList.getValueAt(i, 0).toString();
                     }
-                    clientManager.startGame(players);
+                    GuiController.get().startGame(players);
                 }
             }
         });
@@ -163,7 +158,7 @@ public class GameLobbyWindow implements Runnable {
             public void windowClosing(WindowEvent e)
             {
                 super.windowClosing(e);
-                clientManager.logoutGame();;
+                GuiController.get().logoutGame();;
                 frame.dispose();
                 System.exit(0);
             }
@@ -186,6 +181,7 @@ public class GameLobbyWindow implements Runnable {
         return -1;
     }
 
+    /*
     void updateUserList(int id, String username, String status) {
         String strId = Integer.toString(id);
         int index = getIndexInUserList(strId);
@@ -197,20 +193,58 @@ public class GameLobbyWindow implements Runnable {
             userList.setValueAt(status, index, 2);
         }
     }
+    */
 
-    void addToUserList(String id, String name, String status) {
-        userTableModel.addRow(new Object[]{id, name, status});
+    void clearUserList() {
+        int rowCount = userTableModel.getRowCount();
+        for (int i = rowCount - 1; i >= 0; i--) {
+            userTableModel.removeRow(i);
+        }
     }
 
-    void addToPlayerList(int id) {
+    void updateUserList(Users[] userList) {
+        clearUserList();
+        for (Users user : userList)
+            addToUserList(user.getUserID(), user.getUserName(), user.getStatus());
+    }
+
+    void addToUserList(int id, String name, String status) {
         String strId = Integer.toString(id);
-        int index = getIndexInUserList(strId);
-        playerTableModel.addRow(new Object[]{strId, userList.getValueAt(index, 1), userList.getValueAt(index, 2)});
+        userTableModel.addRow(new Object[]{strId, name, status});
+    }
+
+    void clearPlayerList() {
+        int rowCount = playerTableModel.getRowCount();
+        for (int i = rowCount - 1; i >= 0; i--) {
+            playerTableModel.removeRow(i);
+        }
+    }
+
+    void updatePlayerList(Player[] playerList) {
+        clearPlayerList();
+        for (Player player : playerList)
+            addToUserList(player.getUser().getUserID(), player.getUser().getUserName(), player.getUser().getStatus());
+    }
+
+    void addToPlayerList(int id, String name, String status) {
+        String strId = Integer.toString(id);
+        playerTableModel.addRow(new Object[]{strId, name, status});
+    }
+
+    void showInviteMessage(int inviterId, String inviterName) {
+        int confirmed = JOptionPane.showConfirmDialog(null, inviterName+" ask you to join a game, yes or no?",
+                "Invite", JOptionPane.YES_NO_OPTION);
+        if (confirmed == JOptionPane.YES_OPTION) {
+            GuiController.get().sendInviteResponse(true, inviterId);
+        }
+        else {
+            GuiController.get().sendInviteResponse(false, inviterId);
+        }
     }
 
     void refuseInvite(int id) {
         String strId = Integer.toString(id);
         int index = getIndexInUserList(strId);
-        showDialog(strId + userList.getValueAt(index, 1) + "has refused you.");
+        showDialog(userList.getValueAt(index, 1) + "has refused you.");
     }
 }
