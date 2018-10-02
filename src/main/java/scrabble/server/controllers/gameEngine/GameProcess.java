@@ -132,7 +132,9 @@ public class GameProcess {
                 playerVoteResponse(gamingOperationProtocol.isVote());
                 break;
             case "disconnect":
+                if (gameStart == true){
                 win(currentUserID);
+                }
                 //reset gameEndCheck parameters
                 numPass = 0;
                 gameLoopStartSeq = 0;
