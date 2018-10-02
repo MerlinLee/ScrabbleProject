@@ -1,0 +1,13 @@
+2018-10-01 23:45:48  [ main:0 ] - [ INFO ]  ControlCenter Initial Server Competed
+2018-10-01 23:45:48  [ main:4 ] - [ INFO ]  ControlCenter Initial ControlCenter Complete!
+2018-10-01 23:46:30  [ main:0 ] - [ INFO ]  clientControl Initial Server Competed
+2018-10-01 23:46:30  [ main:4 ] - [ INFO ]  clientControl Initial clientContrColCenter Complete!
+2018-10-01 23:46:30  [ Thread-0:6 ] - [ INFO ]  clientControl Initial Server Competed
+2018-10-01 23:53:08  [ main:0 ] - [ INFO ]  clientControl Initial Server Competed
+2018-10-01 23:53:08  [ main:5 ] - [ INFO ]  clientControl Initial clientContrColCenter Complete!
+2018-10-01 23:53:08  [ Thread-0:6 ] - [ INFO ]  clientControl Initial Server Competed
+2018-10-01 23:53:14  [ main:0 ] - [ INFO ]  ControlCenter Initial Server Competed
+2018-10-01 23:53:14  [ main:3 ] - [ INFO ]  ControlCenter Initial ControlCenter Complete!
+2018-10-01 23:53:19  [ main:0 ] - [ INFO ]  clientControl Initial Server Competed
+2018-10-01 23:53:19  [ main:5 ] - [ INFO ]  clientControl Initial clientContrColCenter Complete!
+2018-10-01 23:53:19  [ Thread-0:6 ] - [ INFO ]  clientControl Initial Server Competed
