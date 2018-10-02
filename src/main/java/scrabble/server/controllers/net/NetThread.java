@@ -41,18 +41,18 @@ public class NetThread implements Runnable {
             while (true){
                 String message = inputStream.readLine();
                 toNetPutMsg.put(new Pack(clientID,message));
+                if(client.isConnected()){
+                    break;
+                }
             }
 
         }catch (Exception e){
-            e.printStackTrace();
-        }finally {
-            if (!isClientClosed){
-                closeClient();
-            }
+            closeClient();
         }
     }
     private void closeClient(){
         try {
+            System.out.println("client "+clientID+" is closed!");
             toNetPutMsg.put(new Pack(clientID, JSON.toJSONString(new GamingOperationProtocol("disconnect"))));
         } catch (InterruptedException e) {
             e.printStackTrace();
