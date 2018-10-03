@@ -44,9 +44,11 @@ public class NetThread implements Runnable {
                     String message = inputStream.readLine();
                     toNetPutMsg.put(new Pack(clientID,message));
                 }else {
+                    client.close();
                     break;
                 }
                 if(client.isConnected()==false||client.isClosed()==true){
+                    client.close();
                     break;
                 }
             }
