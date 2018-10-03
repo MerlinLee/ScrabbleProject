@@ -1,5 +1,6 @@
 package scrabble.client.gui;
 
+import com.alibaba.fastjson.JSON;
 import scrabble.Models.Player;
 import scrabble.Models.Users;
 import scrabble.protocols.GamingProtocol.BrickPlacing;
@@ -193,15 +194,21 @@ public class GuiController {
         // Placing but pass
         if (lastMove[0] != -1 && lastMove[1] != -1) {
             brickPlacing.setPosition(lastMove);
-            brickPlacing.setbrick(c);
+            brickPlacing.setbrick(Character.toString(c));
+            System.err.println("sendbrick: " + c);
         }
+        System.err.println("brickSelf: " + brickPlacing.getbrick());
+        String str1 = JSON.toJSONString(brickPlacing);
+        System.err.println("brickPlacing: " + str1);
         gamingProtocol = new GamingOperationProtocol("vote", false, brickPlacing, empty, empty);
+        String str = JSON.toJSONString(gamingProtocol);
+        System.err.println("controller: " + str);
         GuiSender.get().sendToCenter(gamingProtocol);
     }
 
     void sendVote(int[] lastMove, char c, int sx, int sy, int ex, int ey) {
         BrickPlacing brickPlacing = new BrickPlacing();
-        brickPlacing.setbrick(c);
+        brickPlacing.setbrick(Character.toString(c));
         brickPlacing.setPosition(lastMove);
         int[] startPosition = new int[2];
         startPosition[0] = sx;
