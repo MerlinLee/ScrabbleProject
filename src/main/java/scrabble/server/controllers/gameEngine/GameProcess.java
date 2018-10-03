@@ -132,24 +132,29 @@ public class GameProcess {
                 playerVoteResponse(gamingOperationProtocol.isVote());
                 break;
             case "disconnect":
-                if (gameStart == true){
-                win(currentUserID);
-                    //reset gameEndCheck parameters
-                    numPass = 0;
-                    gameLoopStartSeq = 0;
-                }else{
-                    //remove disconnected users
-                    db.remove(currentUserID);
-                    userList.remove(userIndexSearch(currentUserID));
-
-                    userListToClient();
-                }
+                disconnect(currentUserID);
                 break;
             default:
                 break;
 
         }
 
+    }
+
+    private void disconnect(int currentUserID){
+        if (gameStart == true){
+            win(currentUserID);
+            //reset gameEndCheck parameters
+            numPass = 0;
+            gameLoopStartSeq = 0;
+        }else{
+            //remove disconnected users
+            if(db.containsKey(currentUserID)) {
+                db.remove(currentUserID);
+                userList.remove(userIndexSearch(currentUserID));
+            }
+            userListToClient();
+        }
     }
 
 
