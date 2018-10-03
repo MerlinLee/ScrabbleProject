@@ -39,7 +39,7 @@ public class GuiPutMsg {
     }
 
 
-    public void putMsgToCenter(String msg){
+    public synchronized void putMsgToCenter(String msg){
         try{
             toCenter.put(msg);
         }catch (InterruptedException e){
