@@ -42,7 +42,9 @@ public class NetThread implements Runnable {
             while (flag){
                 if(client.isClosed()==false&&client.isConnected()==true){
                     String message = inputStream.readLine();
-                    toNetPutMsg.put(new Pack(clientID,message));
+                    if(message!=null||!message.equals("")){
+                        toNetPutMsg.put(new Pack(clientID,message));
+                    }
                 }else {
                     flag=false;
                     client.close();
@@ -66,6 +68,7 @@ public class NetThread implements Runnable {
             Net.getInstance().getClientDataHsh().remove(client);
             Net.getInstance().getClientNameHash().remove(clientID);
             toNetPutMsg.put(new Pack(clientID, JSON.toJSONString(new GamingOperationProtocol("disconnect"))));
+            
         } catch (Exception e) {
             e.printStackTrace();
         }
