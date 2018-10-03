@@ -194,10 +194,10 @@ public class GuiController {
         // Placing but pass
         if (lastMove[0] != -1 && lastMove[1] != -1) {
             brickPlacing.setPosition(lastMove);
-            brickPlacing.setbrick(Character.toString(c));
+            brickPlacing.setBrick(Character.toString(c));
             System.err.println("sendbrick: " + c);
         }
-        System.err.println("brickSelf: " + brickPlacing.getbrick());
+        System.err.println("brickSelf: " + brickPlacing.getBrick());
         String str1 = JSON.toJSONString(brickPlacing);
         System.err.println("brickPlacing: " + str1);
         gamingProtocol = new GamingOperationProtocol("vote", false, brickPlacing, empty, empty);
@@ -208,7 +208,7 @@ public class GuiController {
 
     void sendVote(int[] lastMove, char c, int sx, int sy, int ex, int ey) {
         BrickPlacing brickPlacing = new BrickPlacing();
-        brickPlacing.setbrick(Character.toString(c));
+        brickPlacing.setBrick(Character.toString(c));
         brickPlacing.setPosition(lastMove);
         int[] startPosition = new int[2];
         startPosition[0] = sx;

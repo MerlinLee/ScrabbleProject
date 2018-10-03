@@ -190,7 +190,7 @@ public class GameProcess {
         int[] end = gamingOperationProtocol.getEndPosition();
 
         voteInitiator = currentUserID;
-        board[bp.getPosition()[0]][bp.getPosition()[1]] = Character.toUpperCase(bp.getbrick().charAt(0));
+        board[bp.getPosition()[0]][bp.getPosition()[1]] = Character.toUpperCase(bp.getBrick().charAt(0));
         boardUpdate(currentUserID);
         voteOperation(currentUserID, start, end);
         waitVoting();
@@ -209,7 +209,7 @@ public class GameProcess {
         //initial check gameEnd conditions (1. if every player had a turn -- sequence loop check  2. num of direct pass)
         if (!gameEndCheck(currentUserID)) {
             if (bp.getPosition() != null) {
-                board[bp.getPosition()[0]][bp.getPosition()[1]] = Character.toUpperCase(bp.getbrick().charAt(0));
+                board[bp.getPosition()[0]][bp.getPosition()[1]] = Character.toUpperCase(bp.getBrick().charAt(0));
                 gameTurnControl();
                 boardUpdate(currentUserID);
             } else {

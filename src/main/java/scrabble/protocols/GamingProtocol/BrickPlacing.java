@@ -11,11 +11,11 @@ public class BrickPlacing {
         this.userID = userID;
     }
 
-    public String getbrick() {
+    public String getBrick() {
         return brick;
     }
 
-    public void setbrick(String character) {
+    public void setBrick(String character) {
         this.brick = character;
     }
 
