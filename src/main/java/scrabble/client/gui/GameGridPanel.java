@@ -30,7 +30,6 @@ public class GameGridPanel extends JPanel{
     private int[] lastMove = new int[2];
     private int vHead, vTail, vJ, hHead, hTail, hI;
     private int num = 0;
-    private int curScore;
 
     private boolean allowDrag = false;
     private boolean allowSelectHead = false;
@@ -64,10 +63,6 @@ public class GameGridPanel extends JPanel{
 
     public int[] getLastMove() {
         return lastMove;
-    }
-
-    int getCurScore() {
-        return curScore;
     }
 
     public char getCharacter(int i, int j) {
@@ -110,6 +105,8 @@ public class GameGridPanel extends JPanel{
         }
     }
 
+    // grid[i][j] ~ grid[iend][j]
+    // grid[x][y] ~ grid[x][yend]
     public void headBlink(int i, int j, int x, int y, int iend, int yend) {
 
         Timer timer1 = new Timer(500, new ActionListener() {
@@ -147,19 +144,18 @@ public class GameGridPanel extends JPanel{
                 if (allowSelectHead) {
                     System.out.printf("%d %d", i, j);
                     GameWindow.get().sendSelect(lastMove, i, j, iend, j);
-                    curScore = iend - i + 1;
                 }
                 timer1.stop();
                 allowSelectHead = false;
                 resetToDefault();
             }
         });
+
         grid[x][y].addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
                 if (allowSelectHead) {
                     System.out.printf("%d %d", x, y);
                     GameWindow.get().sendSelect(lastMove, x, y, x, yend);
-                    curScore = yend - y + 1;
                 }
                 timer2.stop();
                 allowSelectHead = false;
@@ -169,7 +165,6 @@ public class GameGridPanel extends JPanel{
     }
 
     public void getSelectArea() {
-        allowSelectHead = true;
         int i = lastMove[0], j = lastMove[1];
         if (!isInGrid(i, j))		return;
         while (i >= 0 && grid[i][j].getText() != " ") {
@@ -203,13 +198,17 @@ public class GameGridPanel extends JPanel{
         btn.setOpaque(true);
         btn.setBorderPainted(false);
 
+        // Allow to select vote area
+        allowSelectHead = true;
         headBlink(vHead, vJ, hI, hHead, vTail, hTail);
     }
 
+    /*
     private void delOutline(int i, int j) {
         JButton btn = grid[i][j];
         btn.setBorder(UIManager.getBorder("Button.border"));
     }
+    */
 
     public void drawUneditable(int i, int j) {
         JButton btn = grid[i][j];

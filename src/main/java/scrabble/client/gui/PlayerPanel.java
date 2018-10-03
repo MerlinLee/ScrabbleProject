@@ -71,7 +71,7 @@ public class PlayerPanel extends JPanel {
         }
     }
 
-    void updatePlayerList(ArrayList<Player> players) {
+    void updatePlayerList(Player[] players) {
         for (Player player : players) {
             int id = player.getUser().getUserID();
             int index = getIndexInPlayerList(id);

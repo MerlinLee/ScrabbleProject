@@ -104,7 +104,11 @@ public class GuiController {
         gameLobbyWindow.updateUserList(userList);
     }
 
-    void updatePlayerListInLobby(Player[] playerList) {
+    void updatePlayerListInLobby(Users[] users) {
+        gameLobbyWindow.updatePlayerList(users);
+    }
+
+    void updatePlayerListInGame(Player[] playerList) {
         // Set user seq when first update playerList
         if (seq == -1) {
             for (Player player: playerList) {
@@ -114,10 +118,6 @@ public class GuiController {
                 }
             }
         }
-        gameLobbyWindow.updatePlayerList(playerList);
-    }
-
-    void updatePlayerListInGame(ArrayList<Player> playerList) {
         gameWindow.updatePlayerList(playerList);
     }
 
@@ -134,8 +134,8 @@ public class GuiController {
         gameWindow.updateBoard(board);
     }
 
-    void showWinners(ArrayList<Player> players) {
-        this.setSeq(-1);
+    void showWinners(Player[] players) {
+        setSeq(-1);
         gameWindow.showWinners(players);
     }
 
@@ -182,17 +182,14 @@ public class GuiController {
 
     void sendPass(int[] lastMove, char c) {
         int[] empty = new int[2];
+        GamingOperationProtocol gamingProtocol;
         BrickPlacing brickPlacing = new BrickPlacing();
         // Placing but pass
         if (lastMove[0] != -1 && lastMove[1] != -1) {
             brickPlacing.setPosition(lastMove);
             brickPlacing.setbrick(c);
-            GamingOperationProtocol gamingProtocol = new GamingOperationProtocol("vote", false, brickPlacing, empty, empty);
         }
-        // No Placing
-        else {
-            GamingOperationProtocol gamingProtocol = new GamingOperationProtocol("vote", false, brickPlacing, empty, empty);
-        }
+        gamingProtocol = new GamingOperationProtocol("vote", false, brickPlacing, empty, empty);
         GuiSender.get().sendToCenter(gamingProtocol);
     }
 

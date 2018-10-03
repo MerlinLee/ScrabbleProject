@@ -105,7 +105,7 @@ public class GameWindow implements Runnable {
             public void windowClosing(WindowEvent e)
             {
                 super.windowClosing(e);
-                GuiController.get().quitGame();
+                //GuiController.get().quitGame();
                 frame.dispose();
             }
         });
@@ -126,7 +126,7 @@ public class GameWindow implements Runnable {
         GuiController.get().sendVote(lastMove, c, sx, sy, ex, ey);
     }
 
-    void updatePlayerList(ArrayList<Player> playerList) {
+    void updatePlayerList(Player[] playerList) {
         playerPanel.updatePlayerList(playerList);
     }
 
@@ -142,7 +142,7 @@ public class GameWindow implements Runnable {
         String inviterName = PlayerPanel.get().getPlayerName(inviterId);
         String word = GameGridPanel.get().getWord(startPosition, endPosition);
         int confirmed = JOptionPane.showConfirmDialog(null, inviterName+"'s Vote:%n" + "Do you agree " + word + " is a word?"
-                "Vote", JOptionPane.YES_NO_OPTION);
+                ,"Vote", JOptionPane.YES_NO_OPTION);
         if (confirmed == JOptionPane.YES_OPTION) {
             GuiController.get().sendVoteResponse(true);
         }
@@ -151,7 +151,7 @@ public class GameWindow implements Runnable {
         }
     }
 
-    void showWinners(ArrayList<Player> players) {
+    void showWinners(Player[] players) {
         String message = new String();
         message = "Winner:%n";
         for (Player player: players) {

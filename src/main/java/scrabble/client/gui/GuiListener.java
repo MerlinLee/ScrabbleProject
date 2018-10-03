@@ -68,10 +68,10 @@ public class GuiListener {
         GamingSync respond = JSON.parseObject(str, GamingSync.class);
         String command = respond.getCommand();
         char[][] board;
-        ArrayList<Player> players;
+        Player[] players;
         switch (command) {
             case "update":
-                players = respond.getTeamList();
+                players = respond.getPlayerList();
                 GuiController.get().updatePlayerListInGame(players);
                 int nextTurn = respond.getNextTurn();
                 GuiController.get().checkIfStartATurn(nextTurn);
@@ -98,8 +98,8 @@ public class GuiListener {
                 }
                 break;
             case "playerUpdate":
-                Player[] players = respond.getPlayerList();
-                GuiController.get().updatePlayerListInLobby(players);
+                Users[] users = respond.getTeamList();
+                GuiController.get().updatePlayerListInLobby(users);
                 break;
         }
     }
@@ -118,8 +118,8 @@ public class GuiListener {
                 GuiController.get().showInviteMessage(inviterId, inviterName);
                 break;
         }
-        Users[] users = respond.getUsersList();
+        //Users[] users = respond.getUsersList();
         //String status = respond.getStatus();
-        GuiController.get().showLoginRespond(users, "Free");
+        //GuiController.get().showLoginRespond(users, "Free");
     }
 }
