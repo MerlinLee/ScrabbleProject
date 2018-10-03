@@ -1,7 +1,10 @@
 package scrabble.client.gui;
 
+import scrabble.Models.Player;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import java.util.ArrayList;
 
 public class PlayerPanel extends JPanel {
 
@@ -36,12 +39,28 @@ public class PlayerPanel extends JPanel {
         return PlayerPanelHolder.INSTANCE;
     }
 
-    void updateScore(String id, int score) {
+    private int getIndexInPlayerList(int id) {
+        String strId = Integer.toString(id);
         for (int i = 0; i < playerList.getRowCount(); i++) {
             if (playerList.getValueAt(i, 0).toString().equals(id)) {
-                int lastScore = Integer.parseInt(playerList.getValueAt(i, 2).toString());
-                playerList.setValueAt(Integer.toString(lastScore+score), i, 2);
+                return i;
             }
+        }
+        return -1;
+    }
+
+    String getPlayerName(int id) {
+        int index = getIndexInPlayerList(id);
+        return playerList.getValueAt(index, 1).toString();
+    }
+
+    private void addToPlayerList(Player player) {
+        String strId = Integer.toString(player.getUser().getUserID());
+        String name = player.getUser().getUserName();
+        String score = Integer.toString(player.getPoints());
+        playerTableModel.addRow(new Object[]{strId, name, score});
+        if (player.getPoints() != 0) {
+            GameWindow.get().showDialog("The vote is successful!");
         }
     }
 
@@ -49,6 +68,23 @@ public class PlayerPanel extends JPanel {
         @Override
         public boolean isCellEditable(int row, int column) {
             return false;
+        }
+    }
+
+    void updatePlayerList(Player[] players) {
+        for (Player player : players) {
+            int id = player.getUser().getUserID();
+            int index = getIndexInPlayerList(id);
+            if (index != -1) {
+                int lastScore = Integer.parseInt(playerList.getValueAt(index, 2).toString());
+                if (player.getPoints() != lastScore) {
+                    GameWindow.get().showDialog("The vote is successful!");
+                }
+                playerList.setValueAt(Integer.toString(player.getPoints()), index, 2);
+            }
+            else {
+                addToPlayerList(player);
+            }
         }
     }
 }

@@ -8,7 +8,7 @@ import java.util.ArrayList;
 public class InviteACK extends ScrabbleProtocol {
     private String command; //inviteACK, playerUpdate
     private int userID;
-    private ArrayList<Users> teamList;
+    private Users[] teamList;
 
     public String getCommand() {
         return command;
@@ -26,11 +26,11 @@ public class InviteACK extends ScrabbleProtocol {
         this.userID = userID;
     }
 
-    public ArrayList<Users> getTeamList() {
+    public Users[] getTeamList() {
         return teamList;
     }
 
-    public void setTeamList(ArrayList<Users> teamList) {
+    public void setTeamList(Users[] teamList) {
         this.teamList = teamList;
     }
 
@@ -53,7 +53,7 @@ public class InviteACK extends ScrabbleProtocol {
     //accept, reject
     private boolean isAccept;
 
-    public InviteACK(int userID, String command, boolean isAccept, ArrayList<Users> teamList) {
+    public InviteACK(int userID, String command, boolean isAccept, Users[] teamList) {
         super.setTAG("InviteACK");
         this.teamList = teamList;
         this.command = command;

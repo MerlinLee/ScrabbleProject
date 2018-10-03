@@ -1,11 +1,5 @@
 package scrabble.client.gui;
 
-import com.alibaba.fastjson.JSON;
-import scrabble.client.Gui;
-import scrabble.client.blockingqueue.GuiPutMsg;
-import scrabble.client.clientControl.ClientControlCenter;
-import scrabble.protocols.NonGamingProtocol.NonGamingProtocol;
-
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -20,8 +14,6 @@ import javax.swing.JButton;
 
 public class LoginWindow implements Runnable {
 
-    private ClientControlCenter clientManager;
-
     private JFrame frame;
     private JTextField userName;
     private JTextField ip;
@@ -31,7 +23,7 @@ public class LoginWindow implements Runnable {
         private static final LoginWindow INSTANCE = new LoginWindow();
     }
 
-    public LoginWindow() {
+    private LoginWindow() {
 
     }
 
@@ -39,9 +31,6 @@ public class LoginWindow implements Runnable {
         return LoginWindowHolder.INSTANCE;
     }
 
-    public void setClient(ClientControlCenter client) {
-        clientManager = client;
-    }
 
     /**
      * @wbp.parser.entryPoint
@@ -54,8 +43,6 @@ public class LoginWindow implements Runnable {
 
     public void showDialog(String res) {
         JOptionPane.showMessageDialog(null, res);
-        closeWindow();
-        GuiController.get().loginGame();
     }
 
     public void closeWindow() {
@@ -103,17 +90,13 @@ public class LoginWindow implements Runnable {
         frame.getContentPane().add(login);
 
         login.addActionListener(new ActionListener() {
-            @Override
             public void actionPerformed(ActionEvent arg0) {
                 String address = ip.getText();
                 String portStr = port.getText();
                 String userNameStr = userName.getText();
-                clientManager.openNet(address, Integer.parseInt(portStr), userNameStr);
-                showDialog(userNameStr);
-                String[] userList = new String[1];
-                userList[0]=userNameStr;
-                GuiController.get().setUsername(userNameStr);
-                GuiPutMsg.getInstance().putMsgToCenter(JSON.toJSONString(new NonGamingProtocol("login",userList)));
+                //clientManager.openSocket(address, portStr, userNameStr);
+                GuiController.get().setUserName(userNameStr);
+                GuiController.get().loginGame();
             }
         });
     }
