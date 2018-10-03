@@ -137,7 +137,6 @@ public class GameProcess {
                     //reset gameEndCheck parameters
                     numPass = 0;
                     gameLoopStartSeq = 0;
-
                 }else{
                     //remove disconnected users
                     db.remove(currentUserID);
@@ -520,9 +519,9 @@ public class GameProcess {
         if (playerList != null) {
             int size = playerList.size();
             Player[] temp = playerList.toArray(new Player[size]);
-            Pack start = new Pack(ID_PLACEHOLDER, JSON.toJSONString(new GamingSync(command, temp, whoseTurn, board)));
-            start.setRecipient(playersID);
-            EnginePutMsg.getInstance().putMsgToCenter(start);
+            Pack update = new Pack(ID_PLACEHOLDER, JSON.toJSONString(new GamingSync(command, temp, whoseTurn, board)));
+            update.setRecipient(playersID);
+            EnginePutMsg.getInstance().putMsgToCenter(update);
             boardUpdate(ID_PLACEHOLDER);
         }
 

@@ -71,6 +71,8 @@ public class GameWindow implements Runnable {
         frame.add(passBtn);
         frame.add(voteBtn);
 
+//        gridPanel.setAllowDrag(true);
+
         passBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
                 int[] lastMove = gridPanel.getLastMove();
@@ -156,7 +158,6 @@ public class GameWindow implements Runnable {
             message = message + player.getUser().getUserName() + "  ";
         }
         showDialog(message);
-        GameLobbyWindow.get().clearPlayerList();
         frame.dispose();
     }
 }
