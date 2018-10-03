@@ -67,7 +67,7 @@ public class GuiListener {
         ArrayList<Player> players;
         switch (command) {
             case "update":
-                players = respond.getPlayerList();
+                players = respond.getTeamList();
                 GuiController.get().updatePlayerListInGame(players);
                 int nextTurn = respond.getNextTurn();
                 GuiController.get().checkIfStartATurn(nextTurn);
