@@ -310,11 +310,19 @@ public class GameProcess {
         return index;
     }
 
+    private void boardInitialation(){
+        for (int i = 0 ; i<BOARD_SIZE; i++){
+            for(int j = 0; j < BOARD_SIZE; j++){
+                board[i][j] = ' ';
+            }
+        }
+    }
 
     private void start(int currentUserID) {
         if (teamsInWait.contains(currentUserID) && !gameStart) {
             //lack check for connected players
             gameStart = true;
+            boardInitialation();
             gameHost = currentUserID;
             teamStatusUpdate(onlineCheck(teamsInWait.get(gameHost)), "in-game");
             addPlayers(teamsInWait.get(gameHost));
@@ -518,7 +526,7 @@ public class GameProcess {
         gameStart = false;
         playersID = null;
         playerList = null;
-        board = new char[BOARD_SIZE][BOARD_SIZE];
+        boardInitialation();
         teamsInWait.remove(teams.get(gameHost));
         teams.remove(gameHost, teams.get(gameHost));
         gameHost = ID_PLACEHOLDER;
