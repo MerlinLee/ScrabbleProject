@@ -40,7 +40,6 @@ public class NetThread implements Runnable {
 //            inputStream = new DataInputStream(client.getInputStream());
             inputStream = new BufferedReader(new InputStreamReader(client.getInputStream()));
             while (flag){
-
                 if(client.isClosed()==false&&client.isConnected()==true){
                     String message = inputStream.readLine();
                     toNetPutMsg.put(new Pack(clientID,message));
