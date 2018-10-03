@@ -128,8 +128,11 @@ public class GuiController {
     }
 
     void checkIfStartATurn(int seq) {
-        if (this.seq == seq)
+        System.err.println("this = "+ this.seq + "    " + "The turn = " + seq);
+        if (this.seq == seq) {
+            System.err.println("My turn");
             gameWindow.startOneTurn();
+        }
     }
 
     void updateBoard(char[][] board) {

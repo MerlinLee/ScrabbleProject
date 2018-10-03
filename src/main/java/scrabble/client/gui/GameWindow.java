@@ -71,7 +71,7 @@ public class GameWindow implements Runnable {
         frame.add(passBtn);
         frame.add(voteBtn);
 
-//        gridPanel.setAllowDrag(true);
+//      gridPanel.setAllowDrag(true);
 
         passBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
@@ -79,14 +79,15 @@ public class GameWindow implements Runnable {
                 if (lastMove[0] != -1 && lastMove[1] != -1) {
                     // Placing but pass
                     GuiController.get().sendPass(lastMove, gridPanel.getCharacter(lastMove[0], lastMove[1]));
-                    gridPanel.delLastMoveValue();
                     gridPanel.drawUneditable(lastMove[0], lastMove[1]);
+                    gridPanel.delLastMoveValue();
                 }
                 else {
                     // No Placing
                     GuiController.get().sendPass(lastMove, '0');
                 }
                 gridPanel.setAllowDrag(false);
+                System.err.println("set to false 3");
             }
         });
 
@@ -97,6 +98,7 @@ public class GameWindow implements Runnable {
                 gridPanel.getSelectArea();
                 gridPanel.delLastMoveValue();
                 gridPanel.setAllowDrag(false);
+                System.err.println("set to false 2");
             }
         });
 
@@ -112,6 +114,7 @@ public class GameWindow implements Runnable {
     }
 
     void startOneTurn() {
+        System.err.println("set to true 1");
         gridPanel.setAllowDrag(true);
     }
 
