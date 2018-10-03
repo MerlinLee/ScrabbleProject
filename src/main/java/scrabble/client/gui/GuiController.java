@@ -156,7 +156,7 @@ public class GuiController {
     }
 
     void invitePlayers(String[] players) {
-        NonGamingProtocol nonGamingProtocol = new NonGamingProtocol("invite", players);
+        NonGamingProtocol nonGamingProtocol = new NonGamingProtocol("inviteOperation", players);
         GuiSender.get().sendToCenter(nonGamingProtocol);
     }
 
