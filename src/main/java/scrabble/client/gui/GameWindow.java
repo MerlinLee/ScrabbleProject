@@ -78,6 +78,7 @@ public class GameWindow implements Runnable {
                 int[] lastMove = gridPanel.getLastMove();
                 if (lastMove[0] != -1 && lastMove[1] != -1) {
                     // Placing but pass
+                    System.err.println("sendPass: " + gridPanel.getCharacter(lastMove[0], lastMove[1]));
                     GuiController.get().sendPass(lastMove, gridPanel.getCharacter(lastMove[0], lastMove[1]));
                     gridPanel.drawUneditable(lastMove[0], lastMove[1]);
                     gridPanel.delLastMoveValue();
