@@ -53,7 +53,7 @@ public class NetSendMsg implements Runnable {
             printWriter.println(msg);
             printWriter.flush();
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Welcome back!");
         }
     }
 }
