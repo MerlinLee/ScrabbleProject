@@ -5,7 +5,7 @@
     <output-test url="file://$MODULE_DIR$/../../out/test/classes" />
     <exclude-output />
     <content url="file://$MODULE_DIR$/../../src/test" />
-    <orderEntry type="jdk" jdkName="9" jdkType="JavaSDK" />
+    <orderEntry type="jdk" jdkName="1.8" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="ScrabbleProject_main" />
     <orderEntry type="library" name="Gradle: com.google.guava:guava:23.0" level="project" />

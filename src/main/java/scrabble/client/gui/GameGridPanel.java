@@ -34,6 +34,8 @@ public class GameGridPanel extends JPanel{
     private boolean allowDrag = false;
     private boolean allowSelectHead = false;
 
+    private char[][] bbb = new char[GRID_SIZE][GRID_SIZE];
+
     public static class GameGridPanelHolder {
         private static final GameGridPanel INSTANCE = new GameGridPanel();
     }
@@ -167,12 +169,12 @@ public class GameGridPanel extends JPanel{
     public void getSelectArea() {
         int i = lastMove[0], j = lastMove[1];
         if (!isInGrid(i, j))		return;
-        while (i >= 0 && grid[i][j].getText() != " ") {
+        while (i >= 0 && ! grid[i][j].getText().equals(" ")) {
             i--;
         }
         vHead = i+1;
         i = lastMove[0];
-        while (i < GRID_SIZE && grid[i][j].getText() != " ") {
+        while (i < GRID_SIZE && !grid[i][j].getText().equals(" ")) {
             i++;
         }
         vTail = i-1;
@@ -181,12 +183,12 @@ public class GameGridPanel extends JPanel{
 
         i = lastMove[0];
         j = lastMove[1];
-        while (j >= 0 && grid[i][j].getText() != " ") {
+        while (j >= 0 && !grid[i][j].getText().equals(" ")) {
             j--;
         }
         hHead = j+1;
         j = lastMove[1];
-        while (j < GRID_SIZE && grid[i][j].getText() != " ") {
+        while (j < GRID_SIZE && !grid[i][j].getText().equals(" ")) {
             j++;
         }
         hTail = j-1;
@@ -257,7 +259,7 @@ public class GameGridPanel extends JPanel{
         }
 
         public boolean isEmpty(int i, int j) {
-            if (i >= 0 && i < GRID_SIZE && j >=0 && j < GRID_SIZE && grid[i][j].getText() != " ") {
+            if (i >= 0 && i < GRID_SIZE && j >=0 && j < GRID_SIZE && !grid[i][j].getText().equals(" ")) {
                 return false;
             }
             return true;
@@ -266,13 +268,28 @@ public class GameGridPanel extends JPanel{
         @Override
         public boolean canImport(TransferSupport support) {
             boolean flag = support.isDataFlavorSupported(DataFlavor.stringFlavor) && allowDrag;
+            System.err.print("Flag to allowDrag: ");
+            if (flag) {
+                System.err.println("True");
+            }
+            else
+                System.err.println("False");
             Component comp = support.getComponent();
-            if (((JButton) comp).getText() != " ") {
+            if (!((JButton) comp).getText().equals(" ")) {
                 flag = false;
+                System.err.println("Flag to false 1");
+                System.err.println("in grid" + (int)((JButton) comp).getText().charAt(0));
+                System.err.println("length" + ((JButton) comp).getText().length());
+                System.err.println("ppp" + (int)" ".charAt(0));
             }
             if (isEmpty(rowIndex-1, colIndex) && isEmpty(rowIndex, colIndex-1) && isEmpty(rowIndex+1, colIndex) && isEmpty(rowIndex, colIndex+1) && num!=0) {
                 flag = false;
+                System.err.println("Flag to false 2");
             }
+            if (flag == true)
+                System.err.println("can!");
+            else
+                System.err.println("cannot!");
             return flag;
         }
 
@@ -282,12 +299,13 @@ public class GameGridPanel extends JPanel{
                 Object str = t.getTransferData(DataFlavor.stringFlavor);
                 if (str instanceof String) {
                     if (comp instanceof JButton) {
-                        if (((JButton) comp).getText() == " ") {
+                        if (((JButton) comp).getText().equals(" ")) {
                             ((JButton) comp).setText(str.toString());
                             ++num;
                             lastMove[0] = rowIndex;
                             lastMove[1] = colIndex;
                             allowDrag = false;
+                            System.err.println("set to false");
                             //GameWindow.get().placingChar(lastMove, str.toString().charAt(0));
                             drawCurOutline(rowIndex, colIndex);
                             return true;
@@ -310,6 +328,7 @@ public class GameGridPanel extends JPanel{
     }
 
     void updateBoard(char[][] board) {
+        bbb = board;
         for (int i = 0; i < GRID_SIZE; i++) {
             for (int j = 0; j < GRID_SIZE; j++) {
                 grid[i][j].setText(Character.toString(board[i][j]));
