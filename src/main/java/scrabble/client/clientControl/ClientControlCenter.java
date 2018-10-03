@@ -22,12 +22,20 @@ public class ClientControlCenter implements Runnable{
     private final BlockingQueue<String> toGui;
     private final BlockingQueue<String> fromGui;
     private final BlockingQueue<String> toNet;
-    private Gui gui;
-    private ClientNet net;
+    private volatile static ClientControlCenter clientControlCenter;
     private boolean flag = true;
     private ThreadFactory threadForSocket;
     private ExecutorService pool;
-    private LoginWindow loginWindow;
+    public static ClientControlCenter getInstance(){
+        if(clientControlCenter==null){
+            synchronized (ClientControlCenter.class){
+                if(clientControlCenter==null){
+                    clientControlCenter=new ClientControlCenter();
+                }
+            }
+        }
+        return clientControlCenter;
+    }
 
     public ClientControlCenter() {
         this.fromNet = new LinkedBlockingQueue<>();
@@ -56,8 +64,6 @@ public class ClientControlCenter implements Runnable{
         initialClient();
         pool.execute(new ClientCenterGetMsg(fromNet,toGui,fromGui,toNet));
         pool.execute(new ClientCenterPutMsg(fromNet,toGui,fromGui,toNet));
-        LoginWindow.get().setClient(this);
-        pool.execute(LoginWindow.get());
         //开启gui
 //        loginWindow = LoginWindow.get();
 //        loginWindow.setClient(this);

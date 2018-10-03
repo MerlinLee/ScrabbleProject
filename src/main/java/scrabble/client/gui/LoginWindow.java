@@ -1,5 +1,7 @@
 package scrabble.client.gui;
 
+import scrabble.client.clientControl.ClientControlCenter;
+
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -90,10 +92,13 @@ public class LoginWindow implements Runnable {
         frame.getContentPane().add(login);
 
         login.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent arg0) {
                 String address = ip.getText();
                 String portStr = port.getText();
                 String userNameStr = userName.getText();
+                ClientControlCenter.getInstance().openNet(address, Integer.parseInt(portStr), userNameStr);
+                showDialog(userNameStr);
                 //clientManager.openSocket(address, portStr, userNameStr);
                 GuiController.get().setUserName(userNameStr);
                 GuiController.get().loginGame();
