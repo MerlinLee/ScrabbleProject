@@ -287,6 +287,7 @@ public class GameGridPanel extends JPanel{
                             ++num;
                             lastMove[0] = rowIndex;
                             lastMove[1] = colIndex;
+                            allowDrag = false;
                             //GameWindow.get().placingChar(lastMove, str.toString().charAt(0));
                             drawCurOutline(rowIndex, colIndex);
                             return true;

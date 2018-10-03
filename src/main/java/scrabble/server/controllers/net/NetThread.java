@@ -13,6 +13,7 @@ import java.util.Hashtable;
 import java.util.concurrent.BlockingQueue;
 
 public class NetThread implements Runnable {
+    private boolean flag = true;
     private Socket client;
     private Hashtable clientDataHash;
     private Hashtable clientNameHash;
@@ -38,15 +39,20 @@ public class NetThread implements Runnable {
         try {
 //            inputStream = new DataInputStream(client.getInputStream());
             inputStream = new BufferedReader(new InputStreamReader(client.getInputStream()));
-            while (true){
-
+            while (flag){
                 if(client.isClosed()==false&&client.isConnected()==true){
                     String message = inputStream.readLine();
-                    toNetPutMsg.put(new Pack(clientID,message));
+                    if(message!=null||!message.equals("")){
+                        toNetPutMsg.put(new Pack(clientID,message));
+                    }
                 }else {
+                    flag=false;
+                    client.close();
                     break;
                 }
                 if(client.isConnected()==false||client.isClosed()==true){
+                    flag=false;
+                    client.close();
                     break;
                 }
             }
@@ -57,9 +63,13 @@ public class NetThread implements Runnable {
     }
     private void closeClient(){
         try {
+            client.close();
             System.out.println("client "+clientID+" is closed!");
+            Net.getInstance().getClientDataHsh().remove(client);
+            Net.getInstance().getClientNameHash().remove(clientID);
             toNetPutMsg.put(new Pack(clientID, JSON.toJSONString(new GamingOperationProtocol("disconnect"))));
-        } catch (InterruptedException e) {
+            
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

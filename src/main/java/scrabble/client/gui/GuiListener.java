@@ -19,7 +19,7 @@ import java.util.concurrent.BlockingQueue;
 
 public class GuiListener {
 
-    private static GuiListener instance = null;
+    private volatile static GuiListener instance;
     private BlockingQueue<String> queue;
 
     private GuiListener() {
@@ -28,7 +28,9 @@ public class GuiListener {
 
     public static synchronized GuiListener get() {
         if (instance == null) {
-            instance = new GuiListener();
+            synchronized (GuiListener.class){
+                instance = new GuiListener();
+            }
         }
         return instance;
     }
@@ -84,21 +86,28 @@ public class GuiListener {
                 players = respond.getPlayerList();
                 GuiController.get().showWinners(players);
                 break;
+            case "start":
+                GuiController.get().runGameWindow();
+                break;
+                default:
+                    break;
         }
     }
 
     private void processInviteACK(String str) {
         InviteACK respond = JSON.parseObject(str, InviteACK.class);
         String command = respond.getCommand();
+        Users[] users = respond.getTeamList();
         switch (command) {
             case "inviteACK":
                 boolean ac = respond.isAccept();
                 if (!ac) {
                     GuiController.get().showInviteACK(respond.getId());
                 }
+
+                GuiController.get().updatePlayerListInLobby(users);
                 break;
             case "playerUpdate":
-                Users[] users = respond.getTeamList();
                 GuiController.get().updatePlayerListInLobby(users);
                 break;
         }

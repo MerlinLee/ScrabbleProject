@@ -141,6 +141,8 @@ public class GameProcess {
                     //remove disconnected users
                     db.remove(currentUserID);
                     userList.remove(userIndexSearch(currentUserID));
+
+                    userListToClient();
                 }
                 break;
             default:
@@ -310,16 +312,30 @@ public class GameProcess {
         return index;
     }
 
+    private void boardInitiation(){
+        for (int i = 0 ; i<BOARD_SIZE; i++){
+            for(int j = 0; j < BOARD_SIZE; j++){
+                board[i][j] = ' ';
+            }
+        }
+    }
 
     private void start(int currentUserID) {
-        if (teamsInWait.contains(currentUserID) && !gameStart) {
+        if (teamsInWait.contains(teams.get(currentUserID)) && !gameStart) {
             //lack check for connected players
             gameStart = true;
+            boardInitiation();
             gameHost = currentUserID;
-            teamStatusUpdate(onlineCheck(teamsInWait.get(gameHost)), "in-game");
-            addPlayers(teamsInWait.get(gameHost));
+            teamStatusUpdate(onlineCheck(teams.get(gameHost)), "in-game");
+
+            //playerID assigned here
+            addPlayers(teams.get(gameHost));
             whoseTurn = 1;
-            boardUpdate(currentUserID);
+
+            boardUpdate(playersID);
+
+            //broadcast to all online users to update status
+            userListToClient();
         } else {
             error(currentUserID);
         }
@@ -396,6 +412,9 @@ public class GameProcess {
 
             //broadcast to all members of a team
             playerUpdate(teamList, hostID, isAccept );
+
+            //broadcast to all users to update status
+            userListToClient();
         } else {
             int size = teams.get(hostID).size();
             Users[] teamList = teams.get(hostID).toArray(new Users[size]);
@@ -431,7 +450,7 @@ public class GameProcess {
     private void makeEnvelope(int currentUserID, String peerName) {
         if (db.contains(peerName)) {
             String command = "invite";
-            String[] inviteInitiator = new String[]{db.get(currentUserID)};
+            Users[] inviteInitiator = new Users[]{userList.get(userIndexSearch(currentUserID))};
             int recipient = ID_PLACEHOLDER;
             for (Users user : userList) {
                 if (user.getUserName().equals(peerName)) {
@@ -439,7 +458,7 @@ public class GameProcess {
                     break;
                 }
             }
-            String envelope = JSON.toJSONString(new NonGamingProtocol(command, inviteInitiator));
+            String envelope = JSON.toJSONString(new NonGamingResponse(inviteInitiator, command));
             Pack inviteEnvelope = new Pack(recipient, envelope);
             EnginePutMsg.getInstance().putMsgToCenter(inviteEnvelope);
         }
@@ -472,6 +491,7 @@ public class GameProcess {
     private void addPlayers(ArrayList<Users> readyUser) {
         int sequence = INITIAL_SEQ;
         playerList = new ArrayList(readyUser.size());
+        playersID = new int[readyUser.size()];
         for (Users member : readyUser) {
             playerList.add(new Player(member, sequence));
             playersID[sequence - 1] = member.getUserID();
@@ -489,6 +509,20 @@ public class GameProcess {
             Pack update = new Pack(currentUserID, JSON.toJSONString(new GamingSync(command, temp, whoseTurn, board)));
             update.setRecipient(playersID);
             EnginePutMsg.getInstance().putMsgToCenter(update);
+        }
+
+    }
+
+    private void boardUpdate(int[] playersID) {
+        String command = "start";
+//            Player[] playerArr = playerList.toArray(new Player[playerList.size()]);
+        if (playerList != null) {
+            int size = playerList.size();
+            Player[] temp = playerList.toArray(new Player[size]);
+            Pack update = new Pack(ID_PLACEHOLDER, JSON.toJSONString(new GamingSync(command, temp, whoseTurn, board)));
+            update.setRecipient(playersID);
+            EnginePutMsg.getInstance().putMsgToCenter(update);
+            boardUpdate(ID_PLACEHOLDER);
         }
 
     }
@@ -518,7 +552,7 @@ public class GameProcess {
         gameStart = false;
         playersID = null;
         playerList = null;
-        board = new char[BOARD_SIZE][BOARD_SIZE];
+        boardInitiation();
         teamsInWait.remove(teams.get(gameHost));
         teams.remove(gameHost, teams.get(gameHost));
         gameHost = ID_PLACEHOLDER;

@@ -19,11 +19,13 @@ public class GuiController {
     private GameWindow gameWindow;
     private GameLobbyWindow gameLobbyWindow;
 
-    private static GuiController instance = null;
+    private volatile static GuiController instance;
 
     public static synchronized GuiController get() {
         if (instance == null) {
-            instance = new GuiController();
+            synchronized (GuiController.class){
+                instance = new GuiController();
+            }
         }
         return instance;
     }
@@ -68,7 +70,7 @@ public class GuiController {
         lobbyThread.start();
     }
 
-    private void runGameWindow() {
+    public void runGameWindow() {
         gameWindow = GameWindow.get();
         Thread gameThread = new Thread(gameWindow);
         gameThread.start();
@@ -178,7 +180,7 @@ public class GuiController {
         String[] emptyArray = new String[1];
         NonGamingProtocol nonGamingProtocol = new NonGamingProtocol("start", emptyArray);
         GuiSender.get().sendToCenter(nonGamingProtocol);
-        runGameWindow();
+//        runGameWindow();
     }
 
     void sendPass(int[] lastMove, char c) {

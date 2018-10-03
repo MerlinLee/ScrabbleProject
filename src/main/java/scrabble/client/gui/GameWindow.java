@@ -71,7 +71,7 @@ public class GameWindow implements Runnable {
         frame.add(passBtn);
         frame.add(voteBtn);
 
-        gridPanel.setAllowDrag(true);
+//        gridPanel.setAllowDrag(true);
 
         passBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
