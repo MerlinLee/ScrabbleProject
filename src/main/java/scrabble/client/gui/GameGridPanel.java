@@ -110,8 +110,9 @@ public class GameGridPanel extends JPanel{
     // grid[i][j] ~ grid[iend][j]
     // grid[x][y] ~ grid[x][yend]
     public void headBlink(int i, int j, int x, int y, int iend, int yend) {
+        Timer timer1, timer2;
 
-        Timer timer1 = new Timer(500, new ActionListener() {
+        timer1 = new Timer(500, new ActionListener() {
             private int counter = 0;
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -121,49 +122,113 @@ public class GameGridPanel extends JPanel{
                 } else {
                     grid[i][j].setBackground(new Color(224, 255, 255));
                 }
+                System.out.printf("Blink1: %d %d", i, j);
+                System.out.println();
             }
         });
+        timer1.start();
 
-
-        Timer timer2 = new Timer(500, new ActionListener() {
+        timer2 = new Timer(500, new ActionListener() {
             private int counter = 0;
             @Override
             public void actionPerformed(ActionEvent e) {
                 counter++;
                 if (counter % 2 == 0) {
                     grid[x][y].setBackground(new Color(143, 188, 143));
-                } else {
+                }
+                else {
                     grid[x][y].setBackground(new Color(240, 255, 240));
                 }
+                System.out.printf("Blink2: %d %d", x, y);
+                System.out.println();
             }
         });
-
-        timer1.start();
         timer2.start();
 
-        grid[i][j].addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent arg0) {
-                if (allowSelectHead) {
-                    System.out.printf("%d %d", i, j);
-                    GameWindow.get().sendSelect(lastMove, i, j, iend, j);
+        if (i == iend) {
+            grid[i][j].addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent arg0) {
+                    if (allowSelectHead) {
+                        GameWindow.get().sendSelect(lastMove, i, j, iend, j); //行起点，列，行终点，列
+                        timer1.stop();
+                        timer2.stop();
+                        allowSelectHead = false;
+                        resetToDefault();
+                    }
                 }
-                timer1.stop();
-                allowSelectHead = false;
-                resetToDefault();
+            });
+            for (int col = y; col <= yend; col++) {
+                if (i == x && col == j)	continue;
+                grid[x][col].addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent arg0) {
+                        if (allowSelectHead) {
+                            GameWindow.get().sendSelect(lastMove, x, y, x, yend); //行起点，列，行终点，列
+                            timer1.stop();
+                            timer2.stop();
+                            allowSelectHead = false;
+                            resetToDefault();
+                        }
+                    }
+                });
             }
-        });
+            return;
+        }
+        if (y == yend) {
+            grid[x][y].addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent arg0) {
+                    if (allowSelectHead) {
+                        GameWindow.get().sendSelect(lastMove, x, y, x, yend); //行起点，列，行终点，列
+                        timer1.stop();
+                        timer2.stop();
+                        allowSelectHead = false;
+                        resetToDefault();
+                    }
+                }
+            });
+            for (int row = i; row <= iend; row++) {
+                if (row == x && j == y)	continue;
+                grid[row][j].addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent arg0) {
+                        if (allowSelectHead) {
+                            GameWindow.get().sendSelect(lastMove, i, j, iend, j); //行起点，列，行终点，列
+                            timer1.stop();
+                            timer2.stop();
+                            allowSelectHead = false;
+                            resetToDefault();
+                        }
+                    }
+                });
+            }
+            return;
+        }
 
-        grid[x][y].addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent arg0) {
-                if (allowSelectHead) {
-                    System.out.printf("%d %d", x, y);
-                    GameWindow.get().sendSelect(lastMove, x, y, x, yend);
+        for (int row = i; row <= iend; row++) {
+            grid[row][j].addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent arg0) {
+                    if (allowSelectHead) {
+                        GameWindow.get().sendSelect(lastMove, i, j, iend, j); //行起点，列，行终点，列
+                        timer1.stop();
+                        timer2.stop();
+                        allowSelectHead = false;
+                        resetToDefault();
+                    }
                 }
-                timer2.stop();
-                allowSelectHead = false;
-                resetToDefault();
-            }
-        });
+            });
+        }
+
+        for (int col = y; col <= yend; col++) {
+            grid[x][col].addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent arg0) {
+                    if (allowSelectHead) {
+                        GameWindow.get().sendSelect(lastMove, x, y, x, yend); //行，列起点，行，列终点
+                        timer1.stop();
+                        timer2.stop();
+                        allowSelectHead = false;
+                        resetToDefault();
+                    }
+                }
+            });
+        }
     }
 
     public void getSelectArea() {
