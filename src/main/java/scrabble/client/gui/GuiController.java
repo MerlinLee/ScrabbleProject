@@ -159,9 +159,8 @@ public class GuiController {
         GuiSender.get().sendToCenter(nonGamingProtocol);
     }
 
-    void sendInviteResponse(boolean ack, int inviterId,String userList_1) {
+    void sendInviteResponse(boolean ack, int inviterId) {
         String[] userList = new String[1];
-        userList[0]=userList_1;
         NonGamingProtocol nonGamingProtocol = new NonGamingProtocol("inviteResponse", userList);
         nonGamingProtocol.setInviteAccepted(ack);
         nonGamingProtocol.setHostID(inviterId);
