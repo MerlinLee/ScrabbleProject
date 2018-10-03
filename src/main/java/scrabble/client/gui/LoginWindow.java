@@ -55,6 +55,7 @@ public class LoginWindow implements Runnable {
 
     public void showDialog(String res) {
         JOptionPane.showMessageDialog(null, res);
+        closeWindow();
     }
 
     public void closeWindow() {
