@@ -141,6 +141,8 @@ public class GameProcess {
                     //remove disconnected users
                     db.remove(currentUserID);
                     userList.remove(userIndexSearch(currentUserID));
+
+                    userListToClient();
                 }
                 break;
             default:
@@ -319,16 +321,21 @@ public class GameProcess {
     }
 
     private void start(int currentUserID) {
-        if (teamsInWait.contains(currentUserID) && !gameStart) {
+        if (teamsInWait.contains(teams.get(currentUserID)) && !gameStart) {
             //lack check for connected players
             gameStart = true;
             boardInitiation();
             gameHost = currentUserID;
-            teamStatusUpdate(onlineCheck(teamsInWait.get(gameHost)), "in-game");
-            addPlayers(teamsInWait.get(gameHost));
+            teamStatusUpdate(onlineCheck(teams.get(gameHost)), "in-game");
+
+            //playerID assigned here
+            addPlayers(teams.get(gameHost));
             whoseTurn = 1;
 
             boardUpdate(playersID);
+
+            //broadcast to all online users to update status
+            userListToClient();
         } else {
             error(currentUserID);
         }
@@ -405,6 +412,9 @@ public class GameProcess {
 
             //broadcast to all members of a team
             playerUpdate(teamList, hostID, isAccept );
+
+            //broadcast to all users to update status
+            userListToClient();
         } else {
             int size = teams.get(hostID).size();
             Users[] teamList = teams.get(hostID).toArray(new Users[size]);
@@ -481,6 +491,7 @@ public class GameProcess {
     private void addPlayers(ArrayList<Users> readyUser) {
         int sequence = INITIAL_SEQ;
         playerList = new ArrayList(readyUser.size());
+        playersID = new int[readyUser.size()];
         for (Users member : readyUser) {
             playerList.add(new Player(member, sequence));
             playersID[sequence - 1] = member.getUserID();

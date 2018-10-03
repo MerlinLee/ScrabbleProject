@@ -9,7 +9,7 @@ import scrabble.protocols.ScrabbleProtocol;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-public class GuiSender extends Thread {
+public class GuiSender{
 
     private static GuiSender instance = null;
 
