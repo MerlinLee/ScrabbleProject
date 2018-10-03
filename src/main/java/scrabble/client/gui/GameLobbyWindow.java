@@ -140,11 +140,13 @@ public class GameLobbyWindow implements Runnable {
                     showDialog("You must have more than one player");
                 }
                 else {
+                    /*
                     String[] players = new String[playerList.getRowCount()];
                     for (int i = 0; i < playerList.getRowCount(); i++) {
                         players[i] = playerList.getValueAt(i, 0).toString();
                     }
-                    GuiController.get().startGame(players);
+                    */
+                    GuiController.get().startGame();
                 }
             }
         });
@@ -158,7 +160,7 @@ public class GameLobbyWindow implements Runnable {
             public void windowClosing(WindowEvent e)
             {
                 super.windowClosing(e);
-                GuiController.get().logoutGame();;
+                GuiController.get().logoutGame();
                 frame.dispose();
                 System.exit(0);
             }
@@ -172,9 +174,10 @@ public class GameLobbyWindow implements Runnable {
         }
     }
 
-    int getIndexInUserList(String id) {
+    int getIndexInUserList(int id) {
+        String strId = Integer.toString(id);
         for (int i = 0; i < userList.getRowCount(); i++) {
-            if (userList.getValueAt(i, 0).toString().equals(id)) {
+            if (userList.getValueAt(i, 0).toString().equals(strId)) {
                 return i;
             }
         }
@@ -220,10 +223,18 @@ public class GameLobbyWindow implements Runnable {
         }
     }
 
+    //update playerList and update related players in userList
     void updatePlayerList(Player[] playerList) {
         clearPlayerList();
-        for (Player player : playerList)
-            addToUserList(player.getUser().getUserID(), player.getUser().getUserName(), player.getUser().getStatus());
+        for (Player player : playerList) {
+            addToPlayerList(player.getUser().getUserID(), player.getUser().getUserName(), player.getUser().getStatus());
+            updatePlayerInUserList(player);
+        }
+    }
+
+    void updatePlayerInUserList(Player player) {
+        int index = getIndexInUserList(player.getUser().getUserID());
+        userList.setValueAt(player.getUser().getStatus(), index, 2);
     }
 
     void addToPlayerList(int id, String name, String status) {
@@ -242,9 +253,8 @@ public class GameLobbyWindow implements Runnable {
         }
     }
 
-    void refuseInvite(int id) {
-        String strId = Integer.toString(id);
-        int index = getIndexInUserList(strId);
+    void showRefuseInvite(int id) {
+        int index = getIndexInUserList(id);
         showDialog(userList.getValueAt(index, 1) + "has refused you.");
     }
 }

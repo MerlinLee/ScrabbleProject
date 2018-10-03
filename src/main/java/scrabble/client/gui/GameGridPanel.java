@@ -300,4 +300,20 @@ public class GameGridPanel extends JPanel{
             return false;
         }
     }
+
+    String getWord(int[] startPosition, int[] endPosition) {
+        String s = new String();
+        for (int i = startPosition[0]; i <= endPosition[0]; i++)
+            for (int j = startPosition[1]; j <= endPosition[1]; j++)
+                s = s + getCharacter(i,j);
+        return s;
+    }
+
+    void updateBoard(char[][] board) {
+        for (int i = 0; i < GRID_SIZE; i++) {
+            for (int j = 0; j < GRID_SIZE; j++) {
+                grid[i][j].setText(Character.toString(board[i][j]));
+            }
+        }
+    }
 }

@@ -14,8 +14,6 @@ import javax.swing.JButton;
 
 public class LoginWindow implements Runnable {
 
-    private ClientController clientManager;
-
     private JFrame frame;
     private JTextField userName;
     private JTextField ip;
@@ -33,9 +31,6 @@ public class LoginWindow implements Runnable {
         return LoginWindowHolder.INSTANCE;
     }
 
-    void setClient(ClientController client) {
-        clientManager = client;
-    }
 
     /**
      * @wbp.parser.entryPoint
@@ -99,7 +94,9 @@ public class LoginWindow implements Runnable {
                 String address = ip.getText();
                 String portStr = port.getText();
                 String userNameStr = userName.getText();
-                clientManager.openSocket(address, portStr, userNameStr);
+                //clientManager.openSocket(address, portStr, userNameStr);
+                GuiController.get().setUserName(userNameStr);
+                GuiController.get().loginGame();
             }
         });
     }
