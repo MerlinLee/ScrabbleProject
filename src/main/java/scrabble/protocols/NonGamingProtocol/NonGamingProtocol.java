@@ -1,5 +1,6 @@
 package scrabble.protocols.NonGamingProtocol;
 
+import scrabble.protocols.BooleanUtils;
 import scrabble.protocols.ScrabbleProtocol;
 
 /**
@@ -13,6 +14,15 @@ public class NonGamingProtocol extends ScrabbleProtocol {
     // from server: userUpdate, invite, inviteACK --- (possibly inviteMore)
     private String command;
     private String[] userList;
+
+    public boolean isInviteAccepted() {
+        return inviteAccepted;
+    }
+
+    public void setInviteAccepted(boolean inviteAccepted) {
+        this.inviteAccepted = inviteAccepted;
+    }
+
     private boolean inviteAccepted;
     private int hostID;
 
@@ -24,17 +34,17 @@ public class NonGamingProtocol extends ScrabbleProtocol {
         this.hostID = hostID;
     }
 
-    public boolean isInviteAccepted() {
-        return inviteAccepted;
-    }
 
-    public void setInviteAccepted(boolean inviteAccepted) {
-        this.inviteAccepted = inviteAccepted;
-    }
+
+
+
+
+
 
     public String getCommand() {
         return command;
     }
+
 
     public void setCommand(String command) {
         this.command = command;
@@ -52,5 +62,8 @@ public class NonGamingProtocol extends ScrabbleProtocol {
         super.setTAG("NonGamingProtocol");
         this.command = command;
         this.userList = userList;
+    }
+
+    public NonGamingProtocol() {
     }
 }
