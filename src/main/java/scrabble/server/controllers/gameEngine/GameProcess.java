@@ -431,7 +431,7 @@ public class GameProcess {
     private void makeEnvelope(int currentUserID, String peerName) {
         if (db.contains(peerName)) {
             String command = "invite";
-            String[] inviteInitiator = new String[]{db.get(currentUserID)};
+            Users[] inviteInitiator = new Users[]{userList.get(userIndexSearch(currentUserID))};
             int recipient = ID_PLACEHOLDER;
             for (Users user : userList) {
                 if (user.getUserName().equals(peerName)) {
@@ -439,7 +439,7 @@ public class GameProcess {
                     break;
                 }
             }
-            String envelope = JSON.toJSONString(new NonGamingProtocol(command, inviteInitiator));
+            String envelope = JSON.toJSONString(new NonGamingResponse(inviteInitiator, command));
             Pack inviteEnvelope = new Pack(recipient, envelope);
             EnginePutMsg.getInstance().putMsgToCenter(inviteEnvelope);
         }
