@@ -73,6 +73,7 @@ public class PlayerPanel extends JPanel {
 
     void updatePlayerList(Player[] players) {
         for (Player player : players) {
+            System.out.printf("name: %s seq: %d",player.getUser().getUserName(), player.getInGameSequence());
             int id = player.getUser().getUserID();
             int index = getIndexInPlayerList(id);
             if (index != -1) {
