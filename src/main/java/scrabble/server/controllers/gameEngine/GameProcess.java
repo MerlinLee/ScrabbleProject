@@ -245,16 +245,18 @@ public class GameProcess {
     }
 
     public void waitVoting(){
-        while (numVoted != (playerList.size()-1)){
+        System.out.println("START WAITING: "+numVoted);
+        while (numVoted != (playerList.size())){
            Pack temp;
            try{
                temp = queue.take();
+               System.out.println(temp.getMsg());
                switchProtocols(temp.getUserId(), temp.getMsg());
            }catch(InterruptedException e){
                e.printStackTrace();
             }
-
         }
+        System.out.println("WAITING END: "+numVoted);
     }
 
     private void playerVoteResponse(boolean isVote){

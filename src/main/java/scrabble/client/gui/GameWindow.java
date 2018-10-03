@@ -81,7 +81,7 @@ public class GameWindow implements Runnable {
                     System.err.println("sendPass: " + gridPanel.getCharacter(lastMove[0], lastMove[1]));
                     GuiController.get().sendPass(lastMove, gridPanel.getCharacter(lastMove[0], lastMove[1]));
                     gridPanel.drawUneditable(lastMove[0], lastMove[1]);
-                    gridPanel.delLastMoveValue();
+//                    gridPanel.delLastMoveValue();
                 }
                 else {
                     // No Placing
@@ -97,7 +97,7 @@ public class GameWindow implements Runnable {
                 int[] lastMove = gridPanel.getLastMove();
                 gridPanel.drawUneditable(lastMove[0], lastMove[1]);
                 gridPanel.getSelectArea();
-                gridPanel.delLastMoveValue();
+//                gridPanel.delLastMoveValue();
                 gridPanel.setAllowDrag(false);
                 System.err.println("set to false 2");
             }

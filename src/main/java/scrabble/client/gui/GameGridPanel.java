@@ -68,9 +68,11 @@ public class GameGridPanel extends JPanel{
     }
 
     public char getCharacter(int i, int j) {
+        char brick = ' ';
         if (isInGrid(i, j))
-            return grid[i][j].getText().charAt(0);
-        return '?';
+            brick =  grid[i][j].getText().charAt(0);
+        return brick;
+
     }
 
     public void setAllowDrag(boolean flag) {
@@ -279,6 +281,7 @@ public class GameGridPanel extends JPanel{
 
     public void drawUneditable(int i, int j) {
         JButton btn = grid[i][j];
+//        System.err.println(btn.getText()+"MMMMMerlin");
         Border roundedBorder = new LineBorder(Color.GRAY, 2, true);
         btn.setBorder(roundedBorder);
         btn.setForeground(Color.DARK_GRAY);
