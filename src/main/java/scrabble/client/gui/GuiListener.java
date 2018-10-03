@@ -90,15 +90,17 @@ public class GuiListener {
     private void processInviteACK(String str) {
         InviteACK respond = JSON.parseObject(str, InviteACK.class);
         String command = respond.getCommand();
+        Users[] users = respond.getTeamList();
         switch (command) {
             case "inviteACK":
                 boolean ac = respond.isAccept();
                 if (!ac) {
                     GuiController.get().showInviteACK(respond.getId());
                 }
+
+                GuiController.get().updatePlayerListInLobby(users);
                 break;
             case "playerUpdate":
-                Users[] users = respond.getTeamList();
                 GuiController.get().updatePlayerListInLobby(users);
                 break;
         }
