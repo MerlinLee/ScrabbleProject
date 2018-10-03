@@ -246,10 +246,10 @@ public class GameLobbyWindow implements Runnable {
         int confirmed = JOptionPane.showConfirmDialog(null, inviterName+" ask you to join a game, yes or no?",
                 "Invite", JOptionPane.YES_NO_OPTION);
         if (confirmed == JOptionPane.YES_OPTION) {
-            GuiController.get().sendInviteResponse(true, inviterId);
+            GuiController.get().sendInviteResponse(true, inviterId,inviterName);
         }
         else {
-            GuiController.get().sendInviteResponse(false, inviterId);
+            GuiController.get().sendInviteResponse(false, inviterId,inviterName);
         }
     }
 
