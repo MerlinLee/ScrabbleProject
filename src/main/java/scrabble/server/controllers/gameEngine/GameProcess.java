@@ -37,7 +37,7 @@ public class GameProcess {
     private int numPass;
     private int gameLoopStartSeq;
 
-    private char[][] board = new char[BOARD_SIZE][BOARD_SIZE];
+    private char[][] board;
 
 //    private int currentUserID;
 //    private String msg;
@@ -132,24 +132,29 @@ public class GameProcess {
                 playerVoteResponse(gamingOperationProtocol.isVote());
                 break;
             case "disconnect":
-                if (gameStart == true){
-                win(currentUserID);
-                    //reset gameEndCheck parameters
-                    numPass = 0;
-                    gameLoopStartSeq = 0;
-                }else{
-                    //remove disconnected users
-                    db.remove(currentUserID);
-                    userList.remove(userIndexSearch(currentUserID));
-
-                    userListToClient();
-                }
+                disconnect(currentUserID);
                 break;
             default:
                 break;
 
         }
 
+    }
+
+    private void disconnect(int currentUserID){
+        if (gameStart == true){
+            win(currentUserID);
+            //reset gameEndCheck parameters
+            numPass = 0;
+            gameLoopStartSeq = 0;
+        }else{
+            //remove disconnected users
+            if(db.containsKey(currentUserID)) {
+                db.remove(currentUserID);
+                userList.remove(userIndexSearch(currentUserID));
+            }
+            userListToClient();
+        }
     }
 
 
@@ -204,6 +209,7 @@ public class GameProcess {
         //initial check gameEnd conditions (1. if every player had a turn -- sequence loop check  2. num of direct pass)
         if (!gameEndCheck(currentUserID)) {
             if (bp.getPosition() != null) {
+                board[bp.getPosition()[0]][bp.getPosition()[1]] = Character.toUpperCase(bp.getbrick());
                 gameTurnControl();
                 boardUpdate(currentUserID);
             } else {
@@ -313,6 +319,7 @@ public class GameProcess {
     }
 
     private void boardInitiation(){
+        board = new char[BOARD_SIZE][BOARD_SIZE];
         for (int i = 0 ; i<BOARD_SIZE; i++){
             for(int j = 0; j < BOARD_SIZE; j++){
                 board[i][j] = ' ';
@@ -324,6 +331,8 @@ public class GameProcess {
         if (teamsInWait.contains(teams.get(currentUserID)) && !gameStart) {
             //lack check for connected players
             gameStart = true;
+
+            //initiate game board
             boardInitiation();
             gameHost = currentUserID;
             teamStatusUpdate(onlineCheck(teams.get(gameHost)), "in-game");
@@ -552,6 +561,7 @@ public class GameProcess {
         gameStart = false;
         playersID = null;
         playerList = null;
+
         boardInitiation();
         teamsInWait.remove(teams.get(gameHost));
         teams.remove(gameHost, teams.get(gameHost));
