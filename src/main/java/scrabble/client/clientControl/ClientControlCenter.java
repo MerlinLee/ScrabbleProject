@@ -22,6 +22,9 @@ public class ClientControlCenter implements Runnable{
     private final BlockingQueue<String> toGui;
     private final BlockingQueue<String> fromGui;
     private final BlockingQueue<String> toNet;
+//    private LoginWindow loginWindow;
+
+
     private volatile static ClientControlCenter clientControlCenter;
     private boolean flag = true;
     private ThreadFactory threadForSocket;
@@ -65,7 +68,7 @@ public class ClientControlCenter implements Runnable{
         pool.execute(new ClientCenterGetMsg(fromNet,toGui,fromGui,toNet));
         pool.execute(new ClientCenterPutMsg(fromNet,toGui,fromGui,toNet));
         pool.execute(LoginWindow.get());
-        //开启gui
+//        //开启gui
 //        loginWindow = LoginWindow.get();
 //        loginWindow.setClient(this);
 //        Thread loginThread = new Thread(loginWindow);
