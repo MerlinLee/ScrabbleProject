@@ -84,6 +84,11 @@ public class GuiListener {
                 players = respond.getPlayerList();
                 GuiController.get().showWinners(players);
                 break;
+            case "start":
+                GuiController.get().runGameWindow();
+                break;
+                default:
+                    break;
         }
     }
 
