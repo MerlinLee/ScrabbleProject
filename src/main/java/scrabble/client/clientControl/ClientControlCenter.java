@@ -64,6 +64,7 @@ public class ClientControlCenter implements Runnable{
         initialClient();
         pool.execute(new ClientCenterGetMsg(fromNet,toGui,fromGui,toNet));
         pool.execute(new ClientCenterPutMsg(fromNet,toGui,fromGui,toNet));
+        pool.execute(LoginWindow.get());
         //开启gui
 //        loginWindow = LoginWindow.get();
 //        loginWindow.setClient(this);
