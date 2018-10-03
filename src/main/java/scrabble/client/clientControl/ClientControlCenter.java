@@ -41,7 +41,7 @@ public class ClientControlCenter implements Runnable{
         pool = new ThreadPoolExecutor(10,50,0L,TimeUnit.MILLISECONDS,
                 new LinkedBlockingQueue<Runnable>(1024),threadForSocket,new ThreadPoolExecutor.AbortPolicy());
 //        pool.execute(ClientNet.getInstance(fromNet,toNet));
-        pool.execute(Gui.getInstance(toGui,fromGui));
+//        pool.execute(Gui.getInstance(toGui,fromGui));
         logger.info(tag+" Initial Server Competed");
     }
 
