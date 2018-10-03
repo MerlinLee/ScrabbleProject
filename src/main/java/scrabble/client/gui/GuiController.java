@@ -165,8 +165,9 @@ public class GuiController {
         gameLobbyWindow.showInviteMessage(inviterId, inviterName);
     }
 
-    void sendInviteResponse(boolean ack, int inviterId) {
+    void sendInviteResponse(boolean ack, int inviterId,String userList_1) {
         String[] userList = new String[1];
+        userList[0]=userList_1;
         NonGamingProtocol nonGamingProtocol = new NonGamingProtocol("inviteResponse", userList);
         nonGamingProtocol.setInviteAccepted(ack);
         nonGamingProtocol.setHostID(inviterId);

@@ -21,7 +21,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 
 public class GameLobbyWindow implements Runnable {
-
+    private Users[] usersList_1;
     private JFrame frame;
     private JTable userList;
     private JTable playerList;
@@ -207,6 +207,7 @@ public class GameLobbyWindow implements Runnable {
 
     void updateUserList(Users[] userList) {
         clearUserList();
+        this.usersList_1=userList;
         for (Users user : userList){
             addToUserList(user.getUserID(), user.getUserName(), user.getStatus());
         }
@@ -242,10 +243,10 @@ public class GameLobbyWindow implements Runnable {
         int confirmed = JOptionPane.showConfirmDialog(null, inviterName+" ask you to join a game, yes or no?",
                 "Invite", JOptionPane.YES_NO_OPTION);
         if (confirmed == JOptionPane.YES_OPTION) {
-            GuiController.get().sendInviteResponse(true, inviterId);
+            GuiController.get().sendInviteResponse(true, inviterId,inviterName);
         }
         else {
-            GuiController.get().sendInviteResponse(false, inviterId);
+            GuiController.get().sendInviteResponse(false, inviterId,inviterName);
         }
     }
 
