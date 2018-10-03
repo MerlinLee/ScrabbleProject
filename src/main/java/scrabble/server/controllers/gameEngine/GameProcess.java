@@ -390,31 +390,30 @@ public class GameProcess {
             Users temp = userList.get(userIndexSearch(db.get(currentUserID)));
             teams.get(hostID).add(temp);
             temp.setStatus("ready");
-
-            inviteACK(command, currentUserID, hostID, isAccept, teams.get(hostID)); //ACK to inviteInitiator
-
+            int size = teams.get(hostID).size();
+            Users[] teamList = teams.get(hostID).toArray(new Users[size]);
+            inviteACK(command, currentUserID, hostID, isAccept, teamList); //ACK to inviteInitiator
 
             //broadcast to all members of a team
-            playerUpdate(teams.get(hostID), hostID, isAccept );
-//            for (Users peer : teams.get(hostID)) {
-//                userListToClient(peer.getUserID());
-//            }
+            playerUpdate(teamList, hostID, isAccept );
         } else {
-            inviteACK(command, currentUserID, hostID, isAccept,teams.get(hostID));
+            int size = teams.get(hostID).size();
+            Users[] teamList = teams.get(hostID).toArray(new Users[size]);
+            inviteACK(command, currentUserID, hostID, isAccept, teamList);
         }
     }
 
-    private void playerUpdate(ArrayList<Users> teamList, int hostID, boolean isAccept){
+    private void playerUpdate(Users[] teamList, int hostID, boolean isAccept){
         String command = "playerUpdate";
-        for (int i = 0; i<teamList.size(); i++){
-            if (teamList.get(i).getUserID() != hostID){
-                inviteACK(command,hostID, teamList.get(i).getUserID(), isAccept, teamList);
+        for (int i = 0; i<teamList.length; i++){
+            if (teamList[i].getUserID() != hostID){
+                inviteACK(command,hostID, teamList[i].getUserID(), isAccept, teamList);
             }
         }
     }
 
 
-    private void inviteACK(String command, int currentUserID, int hostID, boolean isAccept, ArrayList<Users> teamList) {
+    private void inviteACK(String command, int currentUserID, int hostID, boolean isAccept, Users[] teamList) {
         Pack ACK = new Pack(hostID, JSON.toJSONString(new InviteACK(currentUserID, command, isAccept, teamList)));
         ACK.setRecipient(null);  //peer-to-peer
         EnginePutMsg.getInstance().putMsgToCenter(ACK);
