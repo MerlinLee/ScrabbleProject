@@ -135,6 +135,7 @@ public class GameLobbyWindow implements Runnable {
         frame.getContentPane().add(btnStart);
 
         btnStart.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent arg0) {
                 if (playerList.getRowCount() < 1) {
                     showDialog("You must have more than one player");

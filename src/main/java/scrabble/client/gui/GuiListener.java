@@ -19,7 +19,7 @@ import java.util.concurrent.BlockingQueue;
 
 public class GuiListener {
 
-    private static GuiListener instance = null;
+    private volatile static GuiListener instance;
     private BlockingQueue<String> queue;
 
     private GuiListener() {
@@ -28,7 +28,9 @@ public class GuiListener {
 
     public static synchronized GuiListener get() {
         if (instance == null) {
-            instance = new GuiListener();
+            synchronized (GuiListener.class){
+                instance = new GuiListener();
+            }
         }
         return instance;
     }

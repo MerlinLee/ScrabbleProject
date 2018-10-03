@@ -19,11 +19,13 @@ public class GuiController {
     private GameWindow gameWindow;
     private GameLobbyWindow gameLobbyWindow;
 
-    private static GuiController instance = null;
+    private volatile static GuiController instance;
 
     public static synchronized GuiController get() {
         if (instance == null) {
-            instance = new GuiController();
+            synchronized (GuiController.class){
+                instance = new GuiController();
+            }
         }
         return instance;
     }
