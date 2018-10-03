@@ -1,5 +1,6 @@
 package scrabble.client.gui;
 
+import scrabble.Models.Player;
 import scrabble.Models.Users;
 
 import java.awt.EventQueue;
@@ -14,6 +15,7 @@ import javax.swing.JPanel;
 import java.awt.Color;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
 
 public class GameWindow implements Runnable {
 
@@ -69,28 +71,35 @@ public class GameWindow implements Runnable {
         frame.add(passBtn);
         frame.add(voteBtn);
 
-        gridPanel.setAllowDrag(true);
+//      gridPanel.setAllowDrag(true);
 
         passBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
-                int[] lastMove = new int[2];
-                lastMove = gridPanel.getLastMove();
-                GuiController.get().sendPass(lastMove, gridPanel.getCharacter(lastMove[0], lastMove[1]));
-                gridPanel.drawUneditable(lastMove[0], lastMove[1]);
-                gridPanel.delLastMoveValue();
+                int[] lastMove = gridPanel.getLastMove();
+                if (lastMove[0] != -1 && lastMove[1] != -1) {
+                    // Placing but pass
+                    System.err.println("sendPass: " + gridPanel.getCharacter(lastMove[0], lastMove[1]));
+                    GuiController.get().sendPass(lastMove, gridPanel.getCharacter(lastMove[0], lastMove[1]));
+                    gridPanel.drawUneditable(lastMove[0], lastMove[1]);
+                    gridPanel.delLastMoveValue();
+                }
+                else {
+                    // No Placing
+                    GuiController.get().sendPass(lastMove, '0');
+                }
                 gridPanel.setAllowDrag(false);
+                System.err.println("set to false 3");
             }
         });
 
         voteBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
-                int[] lastMove = new int[2];
-                int[] selectArea = new int[4];
-                lastMove = gridPanel.getLastMove();
+                int[] lastMove = gridPanel.getLastMove();
                 gridPanel.drawUneditable(lastMove[0], lastMove[1]);
                 gridPanel.getSelectArea();
                 gridPanel.delLastMoveValue();
                 gridPanel.setAllowDrag(false);
+                System.err.println("set to false 2");
             }
         });
 
@@ -99,13 +108,14 @@ public class GameWindow implements Runnable {
             public void windowClosing(WindowEvent e)
             {
                 super.windowClosing(e);
-                GuiController.get().quitGame();
+                //GuiController.get().quitGame();
                 frame.dispose();
             }
         });
     }
 
     void startOneTurn() {
+        System.err.println("set to true 1");
         gridPanel.setAllowDrag(true);
     }
 
@@ -118,5 +128,40 @@ public class GameWindow implements Runnable {
     void sendSelect(int[] lastMove, int sx, int sy, int ex, int ey) {
         char c = gridPanel.getCharacter(lastMove[0], lastMove[1]);
         GuiController.get().sendVote(lastMove, c, sx, sy, ex, ey);
+    }
+
+    void updatePlayerList(Player[] playerList) {
+        playerPanel.updatePlayerList(playerList);
+    }
+
+    void updateBoard(char[][] board) {
+        gridPanel.updateBoard(board);
+    }
+
+    void showDialog(String res) {
+        JOptionPane.showMessageDialog(null, res);
+    }
+
+    void showVoteRequest(int inviterId, int[] startPosition, int[] endPosition) {
+        String inviterName = PlayerPanel.get().getPlayerName(inviterId);
+        String word = GameGridPanel.get().getWord(startPosition, endPosition);
+        int confirmed = JOptionPane.showConfirmDialog(null, inviterName+"'s Vote:%n" + "Do you agree " + word + " is a word?"
+                ,"Vote", JOptionPane.YES_NO_OPTION);
+        if (confirmed == JOptionPane.YES_OPTION) {
+            GuiController.get().sendVoteResponse(true);
+        }
+        else {
+            GuiController.get().sendVoteResponse(false);
+        }
+    }
+
+    void showWinners(Player[] players) {
+        String message = new String();
+        message = "Winner:%n";
+        for (Player player: players) {
+            message = message + player.getUser().getUserName() + "  ";
+        }
+        showDialog(message);
+        frame.dispose();
     }
 }

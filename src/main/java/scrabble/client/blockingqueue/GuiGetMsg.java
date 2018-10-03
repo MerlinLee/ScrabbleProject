@@ -1,5 +1,6 @@
 package scrabble.client.blockingqueue;
 
+import scrabble.client.gui.GuiController;
 import scrabble.client.gui.GuiListener;
 import scrabble.protocols.Pack;
 import scrabble.server.controllers.gameEngine.GameProcess;
@@ -21,6 +22,8 @@ public class GuiGetMsg implements Runnable{
             String temp;
             try {
                 temp = fromCenter.take();
+//                GuiController.get().receiveMsgFromCenter(temp);
+                GuiListener.get().addMessage(temp);
                 System.out.println(temp);
             } catch (InterruptedException e) {
                 e.printStackTrace();

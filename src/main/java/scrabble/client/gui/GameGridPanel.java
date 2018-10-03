@@ -30,10 +30,11 @@ public class GameGridPanel extends JPanel{
     private int[] lastMove = new int[2];
     private int vHead, vTail, vJ, hHead, hTail, hI;
     private int num = 0;
-    private int curScore;
 
     private boolean allowDrag = false;
     private boolean allowSelectHead = false;
+
+    private char[][] bbb = new char[GRID_SIZE][GRID_SIZE];
 
     public static class GameGridPanelHolder {
         private static final GameGridPanel INSTANCE = new GameGridPanel();
@@ -64,10 +65,6 @@ public class GameGridPanel extends JPanel{
 
     public int[] getLastMove() {
         return lastMove;
-    }
-
-    int getCurScore() {
-        return curScore;
     }
 
     public char getCharacter(int i, int j) {
@@ -110,9 +107,12 @@ public class GameGridPanel extends JPanel{
         }
     }
 
+    // grid[i][j] ~ grid[iend][j]
+    // grid[x][y] ~ grid[x][yend]
     public void headBlink(int i, int j, int x, int y, int iend, int yend) {
+        Timer timer1, timer2;
 
-        Timer timer1 = new Timer(500, new ActionListener() {
+        timer1 = new Timer(500, new ActionListener() {
             private int counter = 0;
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -122,62 +122,124 @@ public class GameGridPanel extends JPanel{
                 } else {
                     grid[i][j].setBackground(new Color(224, 255, 255));
                 }
+                System.out.printf("Blink1: %d %d", i, j);
+                System.out.println();
             }
         });
+        timer1.start();
 
-
-        Timer timer2 = new Timer(500, new ActionListener() {
+        timer2 = new Timer(500, new ActionListener() {
             private int counter = 0;
             @Override
             public void actionPerformed(ActionEvent e) {
                 counter++;
                 if (counter % 2 == 0) {
                     grid[x][y].setBackground(new Color(143, 188, 143));
-                } else {
+                }
+                else {
                     grid[x][y].setBackground(new Color(240, 255, 240));
                 }
+                System.out.printf("Blink2: %d %d", x, y);
+                System.out.println();
             }
         });
-
-        timer1.start();
         timer2.start();
 
-        grid[i][j].addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent arg0) {
-                if (allowSelectHead) {
-                    System.out.printf("%d %d", i, j);
-                    GameWindow.get().sendSelect(lastMove, i, j, iend, j);
-                    curScore = iend - i + 1;
+        if (i == iend) {
+            grid[i][j].addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent arg0) {
+                    if (allowSelectHead) {
+                        GameWindow.get().sendSelect(lastMove, i, j, iend, j); //行起点，列，行终点，列
+                        timer1.stop();
+                        timer2.stop();
+                        allowSelectHead = false;
+                        resetToDefault();
+                    }
                 }
-                timer1.stop();
-                allowSelectHead = false;
-                resetToDefault();
+            });
+            for (int col = y; col <= yend; col++) {
+                if (i == x && col == j)	continue;
+                grid[x][col].addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent arg0) {
+                        if (allowSelectHead) {
+                            GameWindow.get().sendSelect(lastMove, x, y, x, yend); //行起点，列，行终点，列
+                            timer1.stop();
+                            timer2.stop();
+                            allowSelectHead = false;
+                            resetToDefault();
+                        }
+                    }
+                });
             }
-        });
-        grid[x][y].addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent arg0) {
-                if (allowSelectHead) {
-                    System.out.printf("%d %d", x, y);
-                    GameWindow.get().sendSelect(lastMove, x, y, x, yend);
-                    curScore = yend - y + 1;
+            return;
+        }
+        if (y == yend) {
+            grid[x][y].addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent arg0) {
+                    if (allowSelectHead) {
+                        GameWindow.get().sendSelect(lastMove, x, y, x, yend); //行起点，列，行终点，列
+                        timer1.stop();
+                        timer2.stop();
+                        allowSelectHead = false;
+                        resetToDefault();
+                    }
                 }
-                timer2.stop();
-                allowSelectHead = false;
-                resetToDefault();
+            });
+            for (int row = i; row <= iend; row++) {
+                if (row == x && j == y)	continue;
+                grid[row][j].addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent arg0) {
+                        if (allowSelectHead) {
+                            GameWindow.get().sendSelect(lastMove, i, j, iend, j); //行起点，列，行终点，列
+                            timer1.stop();
+                            timer2.stop();
+                            allowSelectHead = false;
+                            resetToDefault();
+                        }
+                    }
+                });
             }
-        });
+            return;
+        }
+
+        for (int row = i; row <= iend; row++) {
+            grid[row][j].addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent arg0) {
+                    if (allowSelectHead) {
+                        GameWindow.get().sendSelect(lastMove, i, j, iend, j); //行起点，列，行终点，列
+                        timer1.stop();
+                        timer2.stop();
+                        allowSelectHead = false;
+                        resetToDefault();
+                    }
+                }
+            });
+        }
+
+        for (int col = y; col <= yend; col++) {
+            grid[x][col].addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent arg0) {
+                    if (allowSelectHead) {
+                        GameWindow.get().sendSelect(lastMove, x, y, x, yend); //行，列起点，行，列终点
+                        timer1.stop();
+                        timer2.stop();
+                        allowSelectHead = false;
+                        resetToDefault();
+                    }
+                }
+            });
+        }
     }
 
     public void getSelectArea() {
-        allowSelectHead = true;
         int i = lastMove[0], j = lastMove[1];
         if (!isInGrid(i, j))		return;
-        while (i >= 0 && grid[i][j].getText() != " ") {
+        while (i >= 0 && ! grid[i][j].getText().equals(" ")) {
             i--;
         }
         vHead = i+1;
         i = lastMove[0];
-        while (i < GRID_SIZE && grid[i][j].getText() != " ") {
+        while (i < GRID_SIZE && !grid[i][j].getText().equals(" ")) {
             i++;
         }
         vTail = i-1;
@@ -186,12 +248,12 @@ public class GameGridPanel extends JPanel{
 
         i = lastMove[0];
         j = lastMove[1];
-        while (j >= 0 && grid[i][j].getText() != " ") {
+        while (j >= 0 && !grid[i][j].getText().equals(" ")) {
             j--;
         }
         hHead = j+1;
         j = lastMove[1];
-        while (j < GRID_SIZE && grid[i][j].getText() != " ") {
+        while (j < GRID_SIZE && !grid[i][j].getText().equals(" ")) {
             j++;
         }
         hTail = j-1;
@@ -203,13 +265,17 @@ public class GameGridPanel extends JPanel{
         btn.setOpaque(true);
         btn.setBorderPainted(false);
 
+        // Allow to select vote area
+        allowSelectHead = true;
         headBlink(vHead, vJ, hI, hHead, vTail, hTail);
     }
 
+    /*
     private void delOutline(int i, int j) {
         JButton btn = grid[i][j];
         btn.setBorder(UIManager.getBorder("Button.border"));
     }
+    */
 
     public void drawUneditable(int i, int j) {
         JButton btn = grid[i][j];
@@ -258,7 +324,7 @@ public class GameGridPanel extends JPanel{
         }
 
         public boolean isEmpty(int i, int j) {
-            if (i >= 0 && i < GRID_SIZE && j >=0 && j < GRID_SIZE && grid[i][j].getText() != " ") {
+            if (i >= 0 && i < GRID_SIZE && j >=0 && j < GRID_SIZE && !grid[i][j].getText().equals(" ")) {
                 return false;
             }
             return true;
@@ -267,13 +333,28 @@ public class GameGridPanel extends JPanel{
         @Override
         public boolean canImport(TransferSupport support) {
             boolean flag = support.isDataFlavorSupported(DataFlavor.stringFlavor) && allowDrag;
+            System.err.print("Flag to allowDrag: ");
+            if (flag) {
+                System.err.println("True");
+            }
+            else
+                System.err.println("False");
             Component comp = support.getComponent();
-            if (((JButton) comp).getText() != " ") {
+            if (!((JButton) comp).getText().equals(" ")) {
                 flag = false;
+                System.err.println("Flag to false 1");
+                System.err.println("in grid" + (int)((JButton) comp).getText().charAt(0));
+                System.err.println("length" + ((JButton) comp).getText().length());
+                System.err.println("ppp" + (int)" ".charAt(0));
             }
             if (isEmpty(rowIndex-1, colIndex) && isEmpty(rowIndex, colIndex-1) && isEmpty(rowIndex+1, colIndex) && isEmpty(rowIndex, colIndex+1) && num!=0) {
                 flag = false;
+                System.err.println("Flag to false 2");
             }
+            if (flag == true)
+                System.err.println("can!");
+            else
+                System.err.println("cannot!");
             return flag;
         }
 
@@ -283,11 +364,13 @@ public class GameGridPanel extends JPanel{
                 Object str = t.getTransferData(DataFlavor.stringFlavor);
                 if (str instanceof String) {
                     if (comp instanceof JButton) {
-                        if (((JButton) comp).getText() == " ") {
+                        if (((JButton) comp).getText().equals(" ")) {
                             ((JButton) comp).setText(str.toString());
                             ++num;
                             lastMove[0] = rowIndex;
                             lastMove[1] = colIndex;
+                            allowDrag = false;
+                            System.err.println("set to false");
                             //GameWindow.get().placingChar(lastMove, str.toString().charAt(0));
                             drawCurOutline(rowIndex, colIndex);
                             return true;
@@ -298,6 +381,23 @@ public class GameGridPanel extends JPanel{
                 exp.printStackTrace();
             }
             return false;
+        }
+    }
+
+    String getWord(int[] startPosition, int[] endPosition) {
+        String s = new String();
+        for (int i = startPosition[0]; i <= endPosition[0]; i++)
+            for (int j = startPosition[1]; j <= endPosition[1]; j++)
+                s = s + getCharacter(i,j);
+        return s;
+    }
+
+    void updateBoard(char[][] board) {
+        bbb = board;
+        for (int i = 0; i < GRID_SIZE; i++) {
+            for (int j = 0; j < GRID_SIZE; j++) {
+                grid[i][j].setText(Character.toString(board[i][j]));
+            }
         }
     }
 }

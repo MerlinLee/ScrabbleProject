@@ -17,18 +17,20 @@ public class NetSendMsg implements Runnable {
     }
     @Override
     public void run() {
-        if(message.getRecipient()==null){
-            if(message.getUserId()==0){
-                sendBroadcastMsg(message.getMsg());
+
+            if(message.getRecipient()==null){
+                if(message.getUserId()==0){
+                    sendBroadcastMsg(message.getMsg());
+                }else {
+                    sendToPeer(message.getMsg(),message.getUserId());
+                }
             }else {
-                sendToPeer(message.getMsg(),message.getUserId());
+                int peerNum = message.getRecipient().length;
+                for(int i=0;i<peerNum;i++){
+                    sendToPeer(message.getMsg(),message.getRecipient()[i]);
+                }
             }
-        }else {
-            int peerNum = message.getRecipient().length;
-            for(int i=0;i<peerNum;i++){
-                sendToPeer(message.getMsg(),message.getRecipient()[i]);
-            }
-        }
+
     }
 
     private void sendBroadcastMsg(String msg){
@@ -50,8 +52,8 @@ public class NetSendMsg implements Runnable {
             PrintWriter printWriter = new PrintWriter(new DataOutputStream(client.getOutputStream()));
             printWriter.println(msg);
             printWriter.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            System.out.println("Welcome back!");
         }
     }
 }

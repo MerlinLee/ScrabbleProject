@@ -1,13 +1,15 @@
 package scrabble.client.gui;
 
 import com.alibaba.fastjson.JSON;
+import scrabble.client.blockingqueue.GuiGetMsg;
+import scrabble.client.blockingqueue.GuiPutMsg;
 import scrabble.protocols.NonGamingProtocol.NonGamingProtocol;
 import scrabble.protocols.ScrabbleProtocol;
 
 import java.io.PrintWriter;
 import java.net.Socket;
 
-public class GuiSender extends Thread {
+public class GuiSender {
 
     private static GuiSender instance = null;
 
@@ -30,6 +32,7 @@ public class GuiSender extends Thread {
             //System.out.println(JSON.toJSONString(protocol));
             //output.println(json);
             //output.flush();
+            GuiPutMsg.getInstance().putMsgToCenter(json);
         } catch (Exception e) {
             System.out.println(e.toString());
         }

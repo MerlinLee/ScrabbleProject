@@ -37,7 +37,7 @@ public class GameProcess {
     private int numPass;
     private int gameLoopStartSeq;
 
-    private char[][] board = new char[BOARD_SIZE][BOARD_SIZE];
+    private char[][] board;
 
 //    private int currentUserID;
 //    private String msg;
@@ -132,18 +132,29 @@ public class GameProcess {
                 playerVoteResponse(gamingOperationProtocol.isVote());
                 break;
             case "disconnect":
-                if (gameStart == true){
-                win(currentUserID);
-                }
-                //reset gameEndCheck parameters
-                numPass = 0;
-                gameLoopStartSeq = 0;
+                disconnect(currentUserID);
                 break;
             default:
                 break;
 
         }
 
+    }
+
+    private void disconnect(int currentUserID){
+        if (gameStart == true){
+            win(currentUserID);
+            //reset gameEndCheck parameters
+            numPass = 0;
+            gameLoopStartSeq = 0;
+        }else{
+            //remove disconnected users
+            if(db.containsKey(currentUserID)) {
+                db.remove(currentUserID);
+                userList.remove(userIndexSearch(currentUserID));
+            }
+            userListToClient();
+        }
     }
 
 
@@ -179,7 +190,7 @@ public class GameProcess {
         int[] end = gamingOperationProtocol.getEndPosition();
 
         voteInitiator = currentUserID;
-        board[bp.getPosition()[0]][bp.getPosition()[1]] = Character.toUpperCase(bp.getbrick());
+        board[bp.getPosition()[0]][bp.getPosition()[1]] = Character.toUpperCase(bp.getBrick().charAt(0));
         boardUpdate(currentUserID);
         voteOperation(currentUserID, start, end);
         waitVoting();
@@ -198,6 +209,7 @@ public class GameProcess {
         //initial check gameEnd conditions (1. if every player had a turn -- sequence loop check  2. num of direct pass)
         if (!gameEndCheck(currentUserID)) {
             if (bp.getPosition() != null) {
+                board[bp.getPosition()[0]][bp.getPosition()[1]] = Character.toUpperCase(bp.getBrick().charAt(0));
                 gameTurnControl();
                 boardUpdate(currentUserID);
             } else {
@@ -260,19 +272,19 @@ public class GameProcess {
         EnginePutMsg.getInstance().putMsgToCenter(vote);
     }
 
-    private void nonGamingOperationExecutor(int currentUserID, String command, String[] userList, boolean isAccept, int hostID) {
+    private void nonGamingOperationExecutor(int currentUserID, String command, String[] peerList, boolean isAccept, int hostID) {
         switch (command.trim()) {
             case "start":
                 start(currentUserID);
                 break;
             case "login":
-                login(currentUserID, userList[0]);
+                login(currentUserID, peerList[0]);
                 break;
             case "logout":
                 logout(currentUserID);
                 break;
             case "inviteOperation":
-                inviteOperation(currentUserID, userList);
+                inviteOperation(currentUserID, peerList);
                 break;
             case "inviteResponse":
                 inviteResponse(currentUserID, hostID, isAccept);
@@ -306,22 +318,50 @@ public class GameProcess {
         return index;
     }
 
+    private void boardInitiation(){
+        board = new char[BOARD_SIZE][BOARD_SIZE];
+        for (int i = 0 ; i<BOARD_SIZE; i++){
+            for(int j = 0; j < BOARD_SIZE; j++){
+                board[i][j] = ' ';
+            }
+        }
+    }
 
     private void start(int currentUserID) {
-        if (teamsInWait.contains(currentUserID) && !gameStart) {
+        if (teamsInWait.contains(teams.get(currentUserID)) && !gameStart) {
+            //lack check for connected players
             gameStart = true;
+
+            //initiate game board
+            boardInitiation();
             gameHost = currentUserID;
-            teamStatusUpdate(teamsInWait.get(gameHost), "in-game");
-            addPlayers(teamsInWait.get(gameHost));
+            teamStatusUpdate(onlineCheck(teams.get(gameHost)), "in-game");
+
+            //playerID assigned here
+            addPlayers(teams.get(gameHost));
             whoseTurn = 1;
-            boardUpdate(currentUserID);
+
+            boardUpdate(playersID);
+
+            //broadcast to all online users to update status
+            userListToClient();
         } else {
             error(currentUserID);
         }
     }
 
+    private ArrayList<Users> onlineCheck(ArrayList<Users> team){
+        for (Users member : team){
+            if(!db.contains(member.getUserName())){
+                team.remove(member);
+            }
+        }
+        return team;
+    }
+
     private void login(int currentUserID, String userName) {
-        if (!db.contains(userName)) {
+        // same username, replicated login requests not allowed
+        if (!db.contains(userName) && db.get(currentUserID) == null) {
             db.put(currentUserID, userName);
             userList.add(new Users(currentUserID, userName));
             //send currentUserList back to client
@@ -333,15 +373,18 @@ public class GameProcess {
     }
 
     private void logout(int currentUserID) {
-        if (gameStart) {
-            win(currentUserID);
-            userList.remove(userIndexSearch(currentUserID));
-            db.remove(currentUserID);
-        } else {
-            userList.remove(userIndexSearch(currentUserID));
-            db.remove(currentUserID);
+        if (db.get(currentUserID)!=null) {
+            if (gameStart) {
+                win(currentUserID);
+                userList.remove(userIndexSearch(currentUserID));
+                db.remove(currentUserID);
+            } else {
+                userList.remove(userIndexSearch(currentUserID));
+                db.remove(currentUserID);
+            }
+        }else{
+            error(currentUserID);
         }
-
     }
 
 
@@ -362,29 +405,44 @@ public class GameProcess {
             }
         }else{
             //error
+            error(currentUserID);
         }
     }
 
     private void inviteResponse(int currentUserID, int hostID, boolean isAccept) {
+        String command = "inviteACK";
         if (isAccept) {
             Users temp = userList.get(userIndexSearch(db.get(currentUserID)));
             teams.get(hostID).add(temp);
             temp.setStatus("ready");
+            int size = teams.get(hostID).size();
+            Users[] teamList = teams.get(hostID).toArray(new Users[size]);
+            inviteACK(command, currentUserID, hostID, isAccept, teamList); //ACK to inviteInitiator
 
-            inviteACK(currentUserID,hostID, isAccept); //ACK to inviteInitiator
             //broadcast to all members of a team
-            for (Users peer : teams.get(hostID)) {
-                userListToClient(peer.getUserID());
-            }
+            playerUpdate(teamList, hostID, isAccept );
+
+            //broadcast to all users to update status
+            userListToClient();
         } else {
-            inviteACK(currentUserID,hostID, isAccept);
+            int size = teams.get(hostID).size();
+            Users[] teamList = teams.get(hostID).toArray(new Users[size]);
+            inviteACK(command, currentUserID, hostID, isAccept, teamList);
+        }
+    }
+
+    private void playerUpdate(Users[] teamList, int hostID, boolean isAccept){
+        String command = "playerUpdate";
+        for (int i = 0; i<teamList.length; i++){
+            if (teamList[i].getUserID() != hostID){
+                inviteACK(command,hostID, teamList[i].getUserID(), isAccept, teamList);
+            }
         }
     }
 
 
-    private void inviteACK(int currentUserID, int hostID, boolean isAccept) {
-        String command = "inviteACK";
-        Pack ACK = new Pack(hostID, JSON.toJSONString(new InviteACK(currentUserID, command, isAccept)));
+    private void inviteACK(String command, int currentUserID, int hostID, boolean isAccept, Users[] teamList) {
+        Pack ACK = new Pack(hostID, JSON.toJSONString(new InviteACK(currentUserID, command, isAccept, teamList)));
         ACK.setRecipient(null);  //peer-to-peer
         EnginePutMsg.getInstance().putMsgToCenter(ACK);
     }
@@ -401,7 +459,7 @@ public class GameProcess {
     private void makeEnvelope(int currentUserID, String peerName) {
         if (db.contains(peerName)) {
             String command = "invite";
-            String[] inviteInitiator = new String[]{db.get(currentUserID)};
+            Users[] inviteInitiator = new Users[]{userList.get(userIndexSearch(currentUserID))};
             int recipient = ID_PLACEHOLDER;
             for (Users user : userList) {
                 if (user.getUserName().equals(peerName)) {
@@ -409,7 +467,7 @@ public class GameProcess {
                     break;
                 }
             }
-            String envelope = JSON.toJSONString(new NonGamingProtocol(command, inviteInitiator));
+            String envelope = JSON.toJSONString(new NonGamingResponse(inviteInitiator, command));
             Pack inviteEnvelope = new Pack(recipient, envelope);
             EnginePutMsg.getInstance().putMsgToCenter(inviteEnvelope);
         }
@@ -442,6 +500,7 @@ public class GameProcess {
     private void addPlayers(ArrayList<Users> readyUser) {
         int sequence = INITIAL_SEQ;
         playerList = new ArrayList(readyUser.size());
+        playersID = new int[readyUser.size()];
         for (Users member : readyUser) {
             playerList.add(new Player(member, sequence));
             playersID[sequence - 1] = member.getUserID();
@@ -454,9 +513,25 @@ public class GameProcess {
         String command = "update";
 //            Player[] playerArr = playerList.toArray(new Player[playerList.size()]);
         if (playerList != null) {
-            Pack update = new Pack(currentUserID, JSON.toJSONString(new GamingSync(command, playerList, whoseTurn, board)));
+            int size = playerList.size();
+            Player[] temp = playerList.toArray(new Player[size]);
+            Pack update = new Pack(currentUserID, JSON.toJSONString(new GamingSync(command, temp, whoseTurn, board)));
             update.setRecipient(playersID);
             EnginePutMsg.getInstance().putMsgToCenter(update);
+        }
+
+    }
+
+    private void boardUpdate(int[] playersID) {
+        String command = "start";
+//            Player[] playerArr = playerList.toArray(new Player[playerList.size()]);
+        if (playerList != null) {
+            int size = playerList.size();
+            Player[] temp = playerList.toArray(new Player[size]);
+            Pack update = new Pack(ID_PLACEHOLDER, JSON.toJSONString(new GamingSync(command, temp, whoseTurn, board)));
+            update.setRecipient(playersID);
+            EnginePutMsg.getInstance().putMsgToCenter(update);
+            boardUpdate(ID_PLACEHOLDER);
         }
 
     }
@@ -472,10 +547,11 @@ public class GameProcess {
         for (int j = 0; j < i; j++) {
             int numWin = playerList.get(j).getUser().getNumWin();
             playerList.get(j).getUser().setNumWin(++numWin);
-
             winner.add(playerList.get(j));
         }
-        Pack win = new Pack(currentUserID, JSON.toJSONString(new GamingSync(command, winner, whoseTurn, board)));
+        int size = winner.size();
+        Player[] temp = winner.toArray(new Player[size]);
+        Pack win = new Pack(currentUserID, JSON.toJSONString(new GamingSync(command, temp, whoseTurn, board)));
         win.setRecipient(playersID);   //multi-cast
         EnginePutMsg.getInstance().putMsgToCenter(win);
         teamStatusUpdate(teams.get(gameHost), "available");
@@ -485,12 +561,11 @@ public class GameProcess {
         gameStart = false;
         playersID = null;
         playerList = null;
-        board = new char[BOARD_SIZE][BOARD_SIZE];
+
+        boardInitiation();
         teamsInWait.remove(teams.get(gameHost));
         teams.remove(gameHost, teams.get(gameHost));
         gameHost = ID_PLACEHOLDER;
     }
-
-
 
 }

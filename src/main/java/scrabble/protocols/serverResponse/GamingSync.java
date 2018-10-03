@@ -10,17 +10,18 @@ public class GamingSync extends ScrabbleProtocol {
 //    private int userID;     -----overlapped with Player
     private String FLAG;
 
-    public ArrayList<Player> getPlayerList() {
+    public Player[] getPlayerList() {
         return playerList;
     }
 
-    public void setPlayerList(ArrayList<Player> playerList) {
+    public void setPlayerList(Player[] playerList) {
         this.playerList = playerList;
     }
 
     public int getNextTurn() {
         return nextTurn;
     }
+
 
     public void setNextTurn(int nextTurn) {
         this.nextTurn = nextTurn;
@@ -82,7 +83,7 @@ public class GamingSync extends ScrabbleProtocol {
     /*Contain score....
     *
     * */
-    private ArrayList<Player> playerList;  //previously be Users[] currentUserList
+    private Player[] playerList;  //previously be Users[] currentUserList
 
     // new add  -- 9.28
     private char[][] board = new char[20][20];
@@ -92,7 +93,7 @@ public class GamingSync extends ScrabbleProtocol {
     // whose turn??  int turn
     private int nextTurn;
 
-    public GamingSync(String command, ArrayList<Player> playerList,int nextTurn, char[][] board) {
+    public GamingSync(String command, Player[] playerList,int nextTurn, char[][] board) {
         super.setTAG("GamingSync");
         this.nextTurn = nextTurn;
         this.command = command;
