@@ -7,6 +7,7 @@ import scrabble.protocols.GamingProtocol.BrickPlacing;
 import scrabble.protocols.GamingProtocol.GamingOperationProtocol;
 import scrabble.protocols.NonGamingProtocol.NonGamingProtocol;
 import scrabble.protocols.ScrabbleProtocol;
+import scrabble.protocols.serverResponse.InviteACK;
 import scrabble.protocols.serverResponse.NonGamingResponse;
 
 import java.net.Socket;
@@ -186,6 +187,9 @@ public class GuiController {
             case "NonGamingProtocol":
                 switchMethods(JSON.parseObject(msg,NonGamingProtocol.class));
                 break;
+                case "InviteACK":
+                    switchMethods(JSON.parseObject(msg,InviteACK.class));
+                    break;
                 default:
                     break;
         }
@@ -210,6 +214,15 @@ public class GuiController {
     private void switchMethods(NonGamingProtocol protocol){
         if(protocol.getCommand().equals("invite")){
             showInviteMessage(0,protocol.getUserList()[0]);
+        }
+    }
+
+    private void switchMethods(InviteACK inviteACK){
+        if(inviteACK.getCommand().equals("playerUpdate")){
+            inviteACK.getTeamList().toArray();
+            Users[] users = new Users[inviteACK.getTeamList().size()];
+            users = inviteACK.getTeamList().toArray(users);
+            GameLobbyWindow.get().updatePlayerList(users);
         }
     }
 }

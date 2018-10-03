@@ -22,7 +22,8 @@ public class GuiGetMsg implements Runnable{
             String temp;
             try {
                 temp = fromCenter.take();
-                GuiController.get().receiveMsgFromCenter(temp);
+//                GuiController.get().receiveMsgFromCenter(temp);
+                GuiListener.get().addMessage(temp);
                 System.out.println(temp);
             } catch (InterruptedException e) {
                 e.printStackTrace();

@@ -225,10 +225,10 @@ public class GameLobbyWindow implements Runnable {
         }
     }
 
-    void updatePlayerList(Player[] playerList) {
+    void updatePlayerList(Users[] playerList) {
         clearPlayerList();
-        for (Player player : playerList){
-            addToUserList(player.getUser().getUserID(), player.getUser().getUserName(), player.getUser().getStatus());
+        for (Users player : playerList){
+            addToUserList(player.getUserID(), player.getUserName(), player.getStatus());
         }
 
     }
