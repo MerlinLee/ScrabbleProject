@@ -18,7 +18,7 @@ public class NetGetMsg implements Runnable {
         this.clientName = clientName;
         threadForSocket = new ThreadFactoryBuilder()
                 .setNameFormat("NetGetMsg-pool-%d").build();
-        pool = new ThreadPoolExecutor(3,10,0L, TimeUnit.MILLISECONDS,
+        pool = new ThreadPoolExecutor(10,10,0L, TimeUnit.MILLISECONDS,
                 new LinkedBlockingQueue<Runnable>(1024),threadForSocket,new ThreadPoolExecutor.AbortPolicy());
     }
 

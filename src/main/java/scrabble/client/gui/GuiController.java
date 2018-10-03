@@ -152,10 +152,11 @@ public class GuiController {
         selfArray[0] = username;
         NonGamingProtocol nonGamingProtocol = new NonGamingProtocol("login", selfArray);
         GuiSender.get().sendToCenter(nonGamingProtocol);
+        runGameLobbyWindow();
     }
 
     void invitePlayers(String[] players) {
-        NonGamingProtocol nonGamingProtocol = new NonGamingProtocol("invite", players);
+        NonGamingProtocol nonGamingProtocol = new NonGamingProtocol("inviteOperation", players);
         GuiSender.get().sendToCenter(nonGamingProtocol);
     }
 

@@ -46,6 +46,9 @@ public class NetThread implements Runnable {
                 }else {
                     break;
                 }
+                if(client.isConnected()==false||client.isClosed()==true){
+                    break;
+                }
             }
 
         }catch (Exception e){
