@@ -68,7 +68,7 @@ public class GuiController {
         lobbyThread.start();
     }
 
-    private void runGameWindow() {
+    public void runGameWindow() {
         gameWindow = GameWindow.get();
         Thread gameThread = new Thread(gameWindow);
         gameThread.start();
@@ -178,7 +178,7 @@ public class GuiController {
         String[] emptyArray = new String[1];
         NonGamingProtocol nonGamingProtocol = new NonGamingProtocol("start", emptyArray);
         GuiSender.get().sendToCenter(nonGamingProtocol);
-        runGameWindow();
+//        runGameWindow();
     }
 
     void sendPass(int[] lastMove, char c) {
