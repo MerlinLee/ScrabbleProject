@@ -2,9 +2,7 @@ package scrabble.server.controllers.net;
 
 import scrabble.protocols.Pack;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.Socket;
 import java.util.Enumeration;
 import java.util.Hashtable;

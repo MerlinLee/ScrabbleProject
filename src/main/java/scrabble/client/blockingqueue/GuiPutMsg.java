@@ -1,21 +1,49 @@
 package scrabble.client.blockingqueue;
 
+import scrabble.client.Gui;
 import scrabble.protocols.Pack;
 
 import java.util.concurrent.BlockingQueue;
 
-public class GuiPutMsg implements Runnable{
-    public GuiPutMsg(BlockingQueue<Pack> toCenter) {
+public class GuiPutMsg {
+    public GuiPutMsg(){}
+    public GuiPutMsg(BlockingQueue<String> toCenter) {
         this.toCenter = toCenter;
     }
 
-    private BlockingQueue<Pack> toCenter;
-    @Override
-    public void run() {
-//        try {
-//            toCenter.put(new Pack(1,""));
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
+    private BlockingQueue<String> toCenter;
+
+
+    //Singleton GameEngine
+    private volatile static GuiPutMsg guiPutMsg;
+    public static GuiPutMsg getInstance(){
+        if (guiPutMsg == null ){
+            synchronized (GuiPutMsg.class){
+                if (guiPutMsg == null){
+                    guiPutMsg = new GuiPutMsg();
+                }
+            }
+        }
+        return guiPutMsg;
+    }
+
+    public static GuiPutMsg getInstance(BlockingQueue<String> toCenter){
+        if (guiPutMsg == null ){
+            synchronized (GuiPutMsg.class){
+                if (guiPutMsg == null){
+                    guiPutMsg = new GuiPutMsg(toCenter);
+                }
+            }
+        }
+        return guiPutMsg;
+    }
+
+
+    public void putMsgToCenter(String msg){
+        try{
+            toCenter.put(msg);
+        }catch (InterruptedException e){
+            e.printStackTrace();
+        }
     }
 }

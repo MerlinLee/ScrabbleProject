@@ -20,6 +20,7 @@ import java.util.concurrent.BlockingQueue;
 public class GuiListener {
 
     private static GuiListener instance = null;
+    private BlockingQueue<String> queue;
 
     private GuiListener() {
 
@@ -30,6 +31,9 @@ public class GuiListener {
             instance = new GuiListener();
         }
         return instance;
+    }
+    public void addBlockingQueue(BlockingQueue queue){
+        this.queue = queue;
     }
 
     public void addMessage(String str) {

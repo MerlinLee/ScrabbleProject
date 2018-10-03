@@ -10,23 +10,27 @@ import scrabble.protocols.Pack;
 import java.util.Scanner;
 import java.util.concurrent.*;
 
-public class Gui implements Runnable{
-    private BlockingQueue<Pack> fromCenter;
-    private BlockingQueue<Pack> toCenter;
+public class Gui implements Runnable {
+    private BlockingQueue<String> fromCenter;
+    private BlockingQueue<String> toCenter;
     private boolean flag = true;
     private ThreadFactory threadForSocket;
     private ExecutorService pool;
-    public Gui(BlockingQueue<Pack> toGui, BlockingQueue<Pack> fromGui) {
+
+    public Gui(BlockingQueue<String> toGui, BlockingQueue<String> fromGui) {
         this.fromCenter = toGui;
         this.toCenter = fromGui;
     }
 
     private volatile static Gui gui;
-    public Gui(){}
-    public static Gui getInstance(){
-        if (gui == null ){
-            synchronized (Gui.class){
-                if (gui == null){
+
+    public Gui() {
+    }
+
+    public static Gui getInstance() {
+        if (gui == null) {
+            synchronized (Gui.class) {
+                if (gui == null) {
                     gui = new Gui();
                 }
             }
@@ -34,10 +38,10 @@ public class Gui implements Runnable{
         return gui;
     }
 
-    public static Gui getInstance(BlockingQueue<Pack> toGui, BlockingQueue<Pack> fromGui){
-        if (gui == null ){
-            synchronized (Gui.class){
-                if (gui == null){
+    public static Gui getInstance(BlockingQueue<String> toGui, BlockingQueue<String> fromGui) {
+        if (gui == null) {
+            synchronized (Gui.class) {
+                if (gui == null) {
                     gui = new Gui(toGui, fromGui);
                 }
             }
@@ -45,7 +49,7 @@ public class Gui implements Runnable{
         return gui;
     }
 
-    public void test() {
+    public void sendMsg() {
         String msg = null;
         Pack pack;
         Scanner scanner = new Scanner(System.in);
@@ -54,41 +58,88 @@ public class Gui implements Runnable{
             switch (scanner.nextLine()) {
                 case "GamingOperationProtocol":
                     msg = scanner.nextLine();
-                    pack = new Pack(-1, msg);
+
                     try {
-                        toCenter.put(pack);
+                        toCenter.put(msg);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
+                   // String trash = scanner.nextLine();
+                   // getMsg();
                     break;
                 case "NonGamingProtocol":
                     msg = scanner.nextLine();
-                    String[] user = new String[1];
-                    user[0]=msg;
-                    pack = new Pack(-1, JSON.toJSONString(new NonGamingProtocol("login",user)));
+                    String[] temp = msg.split(",");
+                    String[] user = null;
+                    NonGamingProtocol ngp = new NonGamingProtocol(temp[0], user);
+
+                    switch (temp[0]) {
+                        case "login":
+                            user = new String[]{temp[1]};
+                            ngp.setUserList(user);
+                            break;
+                        case "start":
+                            break;
+                        case "logout":
+                            break;
+                        case "invite":
+                            user = new String[temp.length-1];
+                            for (int i=0; i< user.length;i++) {
+                                user[i] = temp[i+1];
+                            }
+                            ngp.setUserList(user);
+                            break;
+                        case "inviteResponse":
+                            ngp.setHostID(1); //previous Pack's hostID
+                            if (temp[1].equals("yes")){
+                            ngp.setInviteAccepted(true);}
+                            else{
+                                ngp.setInviteAccepted(false);
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+
                     try {
-                        toCenter.put(pack);
+                        toCenter.put(JSON.toJSONString(ngp));
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
+                    //getMsg(); // 阻塞， 分开
                     break;
                 default:
                     break;
             }
         }
     }
+
+    private void getMsg() {
+        String pack = null;
+
+        try {
+            pack = fromCenter.take();
+//            System.out.println(pack.getMsg());
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+
     @Override
     public void run() {
         threadForSocket = new ThreadFactoryBuilder()
                 .setNameFormat("ControlCenter-pool-%d").build();
-        pool = new ThreadPoolExecutor(2,10,0L, TimeUnit.MILLISECONDS,
-                new LinkedBlockingQueue<Runnable>(1024),threadForSocket,new ThreadPoolExecutor.AbortPolicy());
+        pool = new ThreadPoolExecutor(2, 10, 0L, TimeUnit.MILLISECONDS,
+                new LinkedBlockingQueue<Runnable>(1024), threadForSocket, new ThreadPoolExecutor.AbortPolicy());
         pool.execute(new GuiGetMsg(fromCenter));
-        pool.execute(new GuiPutMsg(toCenter));
-        test();
+        GuiPutMsg.getInstance(toCenter);
+        sendMsg();
+
     }
 
-    public void shutdown(){
+    public void shutdown() {
         flag = false;
     }
 }

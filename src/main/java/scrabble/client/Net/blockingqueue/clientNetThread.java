@@ -14,7 +14,7 @@ public class clientNetThread implements Runnable {
     private Hashtable clientDataHash;
     private Hashtable clientNameHash;
     private boolean isClientClosed = false;
-    private final BlockingQueue<Pack> toNetPutMsg;
+    private final BlockingQueue<String> toNetPutMsg;
 
     public clientNetThread(Socket server, BlockingQueue toNetPutMsg) {
         this.server = server;
@@ -29,10 +29,14 @@ public class clientNetThread implements Runnable {
 
             inputStream = new BufferedReader(new InputStreamReader(server.getInputStream()));
             while (true){
-                String message = inputStream.readLine();
-                Pack msg = new Pack(-1,message);
-                System.out.println(message);
-                toNetPutMsg.put(msg);
+                if(server.isClosed()==false&&server.isConnected()==true){
+                    String message = inputStream.readLine();
+//                Pack msg = new Pack(-1,message);
+                    //System.out.println(message);
+                    toNetPutMsg.put(message);
+                }else {
+                    closeClient();
+                }
             }
 
         }catch (Exception e){
@@ -43,5 +47,7 @@ public class clientNetThread implements Runnable {
             }
         }
     }
-    private void closeClient(){}
+    private void closeClient(){
+        System.out.println("System shutdown!");
+    }
 }
