@@ -93,7 +93,7 @@ public class ClientNet implements Runnable {
         }
         threadForSocket = new ThreadFactoryBuilder()
                 .setNameFormat("Net-pool-%d").build();
-        pool = new ThreadPoolExecutor(3,10,0L,TimeUnit.MILLISECONDS,
+        pool = new ThreadPoolExecutor(3,50,0L,TimeUnit.MILLISECONDS,
                 new LinkedBlockingQueue<Runnable>(1024),threadForSocket,new ThreadPoolExecutor.AbortPolicy());
         pool.execute(new clientNetGetMsg(fromCenter,socket));
         pool.execute(new clientNetPutMsg(toCenter,toNetPutMsg));
