@@ -164,8 +164,9 @@ public class GuiController {
         gameLobbyWindow.showInviteMessage(inviterId, inviterName);
     }
 
-    void sendInviteResponse(boolean ack, int inviterId) {
+    void sendInviteResponse(boolean ack, int inviterId, String username) {
         String[] userList = new String[1];
+        userList[0]=username;
         NonGamingProtocol nonGamingProtocol = new NonGamingProtocol("inviteResponse", userList);
         nonGamingProtocol.setInviteAccepted(ack);
         nonGamingProtocol.setHostID(inviterId);
@@ -191,8 +192,8 @@ public class GuiController {
         }
     }
 
-    private void findMyId(Users[] usersLisr){
-        for(Users users:usersLisr){
+    private void findMyId(Users[] usersList){
+        for(Users users:usersList){
             if(users.getUserName().equals(this.username)){
                 this.id=String.valueOf(users.getUserID());
             }

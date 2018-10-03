@@ -264,19 +264,19 @@ public class GameProcess {
         EnginePutMsg.getInstance().putMsgToCenter(vote);
     }
 
-    private void nonGamingOperationExecutor(int currentUserID, String command, String[] userList, boolean isAccept, int hostID) {
+    private void nonGamingOperationExecutor(int currentUserID, String command, String[] peerList, boolean isAccept, int hostID) {
         switch (command.trim()) {
             case "start":
                 start(currentUserID);
                 break;
             case "login":
-                login(currentUserID, userList[0]);
+                login(currentUserID, peerList[0]);
                 break;
             case "logout":
                 logout(currentUserID);
                 break;
             case "inviteOperation":
-                inviteOperation(currentUserID, userList);
+                inviteOperation(currentUserID, peerList);
                 break;
             case "inviteResponse":
                 inviteResponse(currentUserID, hostID, isAccept);
@@ -484,7 +484,9 @@ public class GameProcess {
         String command = "update";
 //            Player[] playerArr = playerList.toArray(new Player[playerList.size()]);
         if (playerList != null) {
-            Pack update = new Pack(currentUserID, JSON.toJSONString(new GamingSync(command, playerList, whoseTurn, board)));
+            int size = playerList.size();
+            Player[] temp = playerList.toArray(new Player[size]);
+            Pack update = new Pack(currentUserID, JSON.toJSONString(new GamingSync(command, temp, whoseTurn, board)));
             update.setRecipient(playersID);
             EnginePutMsg.getInstance().putMsgToCenter(update);
         }
@@ -504,7 +506,9 @@ public class GameProcess {
             playerList.get(j).getUser().setNumWin(++numWin);
             winner.add(playerList.get(j));
         }
-        Pack win = new Pack(currentUserID, JSON.toJSONString(new GamingSync(command, winner, whoseTurn, board)));
+        int size = winner.size();
+        Player[] temp = winner.toArray(new Player[size]);
+        Pack win = new Pack(currentUserID, JSON.toJSONString(new GamingSync(command, temp, whoseTurn, board)));
         win.setRecipient(playersID);   //multi-cast
         EnginePutMsg.getInstance().putMsgToCenter(win);
         teamStatusUpdate(teams.get(gameHost), "available");
