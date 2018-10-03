@@ -10,6 +10,10 @@ public class InviteACK extends ScrabbleProtocol {
     private int userID;
     private Users[] teamList;
 
+    public InviteACK() {
+    }
+
+
     public String getCommand() {
         return command;
     }
