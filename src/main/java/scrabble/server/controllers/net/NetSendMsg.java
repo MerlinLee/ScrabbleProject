@@ -17,7 +17,7 @@ public class NetSendMsg implements Runnable {
     }
     @Override
     public void run() {
-        if(client.isClosed()==false&&client.isConnected()==true){
+
             if(message.getRecipient()==null){
                 if(message.getUserId()==0){
                     sendBroadcastMsg(message.getMsg());
@@ -30,7 +30,7 @@ public class NetSendMsg implements Runnable {
                     sendToPeer(message.getMsg(),message.getRecipient()[i]);
                 }
             }
-        }
+
     }
 
     private void sendBroadcastMsg(String msg){
@@ -53,7 +53,7 @@ public class NetSendMsg implements Runnable {
             printWriter.println(msg);
             printWriter.flush();
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Welcome back!");
         }
     }
 }
