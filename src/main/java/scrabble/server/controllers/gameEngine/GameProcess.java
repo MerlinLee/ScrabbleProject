@@ -522,6 +522,7 @@ public class GameProcess {
             Pack update = new Pack(ID_PLACEHOLDER, JSON.toJSONString(new GamingSync(command, temp, whoseTurn, board)));
             update.setRecipient(playersID);
             EnginePutMsg.getInstance().putMsgToCenter(update);
+            boardUpdate(ID_PLACEHOLDER);
         }
 
     }
