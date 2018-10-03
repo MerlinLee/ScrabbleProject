@@ -94,7 +94,7 @@ public class GuiController {
         gameLobbyWindow.showRefuseInvite(id);
     }
 
-    void updateUserList(Users[] userList) {
+    synchronized void updateUserList(Users[] userList) {
         // Set user id when first update userList
         if (id.equals("None")) {
             for (Users user: userList) {
@@ -107,11 +107,11 @@ public class GuiController {
         gameLobbyWindow.updateUserList(userList);
     }
 
-    void updatePlayerListInLobby(Users[] users) {
+    synchronized void updatePlayerListInLobby(Users[] users) {
         gameLobbyWindow.updatePlayerList(users);
     }
 
-    void updatePlayerListInGame(Player[] playerList) {
+    synchronized void updatePlayerListInGame(Player[] playerList) {
         // Set user seq when first update playerList
         if (seq == -1) {
             for (Player player: playerList) {
@@ -194,7 +194,7 @@ public class GuiController {
         // Placing but pass
         if (lastMove[0] != -1 && lastMove[1] != -1) {
             brickPlacing.setPosition(lastMove);
-            brickPlacing.setBrick(Character.toString(c));
+            brickPlacing.setBrick(String.valueOf(c));
             System.err.println("sendbrick: " + c);
         }
         System.err.println("brickSelf: " + brickPlacing.getBrick());
@@ -208,14 +208,14 @@ public class GuiController {
 
     void sendVote(int[] lastMove, char c, int sx, int sy, int ex, int ey) {
         BrickPlacing brickPlacing = new BrickPlacing();
-        brickPlacing.setBrick(Character.toString(c));
+        brickPlacing.setBrick(String.valueOf(c));
         brickPlacing.setPosition(lastMove);
         int[] startPosition = new int[2];
         startPosition[0] = sx;
-        startPosition[0] = sy;
+        startPosition[1] = sy;
         int[] endPosition = new int[2];
         endPosition[0] = ex;
-        endPosition[0] = ey;
+        endPosition[1] = ey;
         GamingOperationProtocol gamingProtocol = new GamingOperationProtocol("vote", true, brickPlacing, startPosition, endPosition);
         GuiSender.get().sendToCenter(gamingProtocol);
     }

@@ -38,7 +38,7 @@ public class GuiListener {
         this.queue = queue;
     }
 
-    public void addMessage(String str) {
+    public synchronized void addMessage(String str) {
         //System.out.println(str);
         ScrabbleProtocol scrabbleProtocol = JSON.parseObject(str, ScrabbleProtocol.class);
         String tag = scrabbleProtocol.getTAG();
