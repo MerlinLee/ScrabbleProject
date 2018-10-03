@@ -15,19 +15,29 @@ import javax.swing.JTextField;
 import javax.swing.JButton;
 
 public class LoginWindow implements Runnable {
+    public ClientControlCenter getCenter() {
+        return center;
+    }
 
+    public void setCenter(ClientControlCenter center) {
+        this.center = center;
+    }
+
+    private ClientControlCenter center;
     private JFrame frame;
     private JTextField userName;
     private JTextField ip;
     private JTextField port;
 
+    public LoginWindow() {
+    }
+
     public static class LoginWindowHolder {
         private static final LoginWindow INSTANCE = new LoginWindow();
     }
 
-    private LoginWindow() {
 
-    }
+
 
     public static final LoginWindow get() {
         return LoginWindowHolder.INSTANCE;
@@ -97,7 +107,7 @@ public class LoginWindow implements Runnable {
                 String address = ip.getText();
                 String portStr = port.getText();
                 String userNameStr = userName.getText();
-                ClientControlCenter.getInstance().openNet(address, Integer.parseInt(portStr), userNameStr);
+                center.openNet(address, Integer.parseInt(portStr), userNameStr);
                 showDialog(userNameStr);
                 //clientManager.openSocket(address, portStr, userNameStr);
                 GuiController.get().setUserName(userNameStr);
