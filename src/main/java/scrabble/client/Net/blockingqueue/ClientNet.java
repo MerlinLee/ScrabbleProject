@@ -21,11 +21,16 @@ public class ClientNet implements Runnable {
     private boolean flag = true;
     private ThreadFactory threadForSocket;
     private ExecutorService pool;
+    private String ipAddr;
+    private int portNum;
+    private String userName;
 
-    public ClientNet(BlockingQueue fromNet, BlockingQueue toNet) {
+    public ClientNet(BlockingQueue fromNet, BlockingQueue toNet,String ipAddr, int portNum,String userName) {
         this.toCenter = fromNet;
         this.fromCenter = toNet;
         toNetPutMsg = new LinkedBlockingQueue<>();
+        this.ipAddr=ipAddr;
+        this.portNum=portNum;
     }
 
     private ServerSocket server;
@@ -49,11 +54,11 @@ public class ClientNet implements Runnable {
         return net;
     }
 
-    public static ClientNet getInstance (BlockingQueue fromNet, BlockingQueue toNet){
+    public static ClientNet getInstance (BlockingQueue fromNet, BlockingQueue toNet,String ipAddr, int portNum,String userName){
         if (net == null){
             synchronized (ClientNet.class){
                 if (net == null){
-                    net = new ClientNet(fromNet,toNet);
+                    net = new ClientNet(fromNet,toNet,ipAddr,portNum,userName);
                 }
             }
         }
@@ -82,13 +87,13 @@ public class ClientNet implements Runnable {
     public void run() {
         Socket socket = null;
         try {
-            socket = new Socket("localhost", 6666);
+            socket = new Socket(ipAddr, portNum);
         } catch (IOException e) {
             e.printStackTrace();
         }
         threadForSocket = new ThreadFactoryBuilder()
                 .setNameFormat("Net-pool-%d").build();
-        pool = new ThreadPoolExecutor(3,10,0L,TimeUnit.MILLISECONDS,
+        pool = new ThreadPoolExecutor(3,50,0L,TimeUnit.MILLISECONDS,
                 new LinkedBlockingQueue<Runnable>(1024),threadForSocket,new ThreadPoolExecutor.AbortPolicy());
         pool.execute(new clientNetGetMsg(fromCenter,socket));
         pool.execute(new clientNetPutMsg(toCenter,toNetPutMsg));

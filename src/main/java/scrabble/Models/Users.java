@@ -4,6 +4,10 @@ public class Users {
     private int userID;
     private String userName;
 
+    public Users() {
+    }
+
+
     public int getUserID() {
         return userID;
     }

@@ -1,20 +1,25 @@
 package scrabble.client.gui;
 
 import com.alibaba.fastjson.JSON;
+import scrabble.Models.Player;
 import scrabble.Models.Users;
+import scrabble.client.Gui;
 import scrabble.protocols.Pack;
 import scrabble.protocols.ScrabbleProtocol;
+import scrabble.protocols.serverResponse.GamingSync;
 import scrabble.protocols.serverResponse.InviteACK;
 import scrabble.protocols.serverResponse.NonGamingResponse;
+import scrabble.protocols.serverResponse.VoteRequest;
 
 import java.io.BufferedReader;
 import java.net.Socket;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.concurrent.BlockingQueue;
 
 public class GuiListener {
 
-    private static GuiListener instance = null;
+    private volatile static GuiListener instance;
     private BlockingQueue<String> queue;
 
     private GuiListener() {
@@ -23,7 +28,9 @@ public class GuiListener {
 
     public static synchronized GuiListener get() {
         if (instance == null) {
-            instance = new GuiListener();
+            synchronized (GuiListener.class){
+                instance = new GuiListener();
+            }
         }
         return instance;
     }
@@ -31,7 +38,7 @@ public class GuiListener {
         this.queue = queue;
     }
 
-    public void addMessage(String str) {
+    public synchronized void addMessage(String str) {
         //System.out.println(str);
         ScrabbleProtocol scrabbleProtocol = JSON.parseObject(str, ScrabbleProtocol.class);
         String tag = scrabbleProtocol.getTAG();
@@ -40,22 +47,75 @@ public class GuiListener {
                 processNonGamingResonse(str);
                 break;
             case "InviteACK":
-                InviteACK inviteRespond = JSON.parseObject(str, InviteACK.class);
-                int iid = inviteRespond.getId();
-                boolean ac = inviteRespond.isAccept();
-                GuiController.get().showInviteRespond(iid, ac);
+                processInviteACK(str);
                 break;
             case "GamingSync":
+                processGamingSync(str);
                 break;
             case "VoteRequest":
+                processVoteRequest(str);
+                break;
+        }
+    }
+
+    private void processVoteRequest(String str) {
+        VoteRequest respond = JSON.parseObject(str, VoteRequest.class);
+        int id = respond.getVoteInitiator();
+        int[] startPosition = respond.getStartPosition();
+        int[] endPosition = respond.getEndPosition();
+        GuiController.get().showVoteRequest(id, startPosition, endPosition);
+    }
+
+    private void processGamingSync(String str) {
+        GamingSync respond = JSON.parseObject(str, GamingSync.class);
+        String command = respond.getCommand();
+        char[][] board;
+        Player[] players;
+        switch (command) {
+            case "update":
+                players = respond.getPlayerList();
+                GuiController.get().updatePlayerListInGame(players);
+                int nextTurn = respond.getNextTurn();
+                GuiController.get().checkIfStartATurn(nextTurn);
+                board = respond.getBoard();
+                GuiController.get().updateBoard(board);
+                break;
+            case "win":
+                board = respond.getBoard();
+                GuiController.get().updateBoard(board);
+                players = respond.getPlayerList();
+                GuiController.get().showWinners(players);
+                break;
+            case "start":
+                GuiController.get().runGameWindow();
+                break;
+                default:
+                    break;
+        }
+    }
+
+    private void processInviteACK(String str) {
+        InviteACK respond = JSON.parseObject(str, InviteACK.class);
+        String command = respond.getCommand();
+        Users[] users = respond.getTeamList();
+        switch (command) {
+            case "inviteACK":
+                boolean ac = respond.isAccept();
+                if (!ac) {
+                    GuiController.get().showInviteACK(respond.getId());
+                }
+
+                GuiController.get().updatePlayerListInLobby(users);
+                break;
+            case "playerUpdate":
+                GuiController.get().updatePlayerListInLobby(users);
                 break;
         }
     }
 
     private void processNonGamingResonse(String str) {
         NonGamingResponse respond = JSON.parseObject(str, NonGamingResponse.class);
-        String command;
-        command = respond.getCommand();
+        String command = respond.getCommand();
         switch (command) {
             case "userUpdate":
                 Users[] users = respond.getUsersList();
@@ -67,8 +127,8 @@ public class GuiListener {
                 GuiController.get().showInviteMessage(inviterId, inviterName);
                 break;
         }
-        Users[] users = respond.getUsersList();
+        //Users[] users = respond.getUsersList();
         //String status = respond.getStatus();
-        GuiController.get().showLoginRespond(users, "Free");
+        //GuiController.get().showLoginRespond(users, "Free");
     }
 }
