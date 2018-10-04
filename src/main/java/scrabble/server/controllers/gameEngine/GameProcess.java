@@ -134,9 +134,9 @@ public class GameProcess {
                 }
                 break;
             case "voteResponse":
-                if (gameStart){
-                numVoted++;
-                playerVoteResponse(gamingOperationProtocol.isVote());
+                if (gameStart) {
+                    numVoted++;
+                    playerVoteResponse(gamingOperationProtocol.isVote());
                 }
                 break;
             case "disconnect":
@@ -149,9 +149,9 @@ public class GameProcess {
 
     }
 
-    private synchronized void userRemove(Users user){
-        if(userList.contains(user)){
-            db.remove(user.getUserID(),user.getUserName());
+    private synchronized void userRemove(Users user) {
+        if (userList.contains(user)) {
+            db.remove(user.getUserID(), user.getUserName());
             userList.remove(user);
         }
     }
@@ -169,7 +169,7 @@ public class GameProcess {
             //reset gameEndCheck parameters
             numPass = 0;
 //            gameLoopStartSeq = 0;
-        } else if (db.containsKey(currentUserID)){
+        } else if (db.containsKey(currentUserID)) {
             //remove disconnected users
             userRemove(userList.get(userIndexSearch(currentUserID)));
 //            if (db.containsKey(currentUserID)) {
@@ -177,7 +177,7 @@ public class GameProcess {
 //                userList.remove(userIndexSearch(currentUserID));
 //            }
             userListToClient();
-        }else{
+        } else {
             //Not exist
         }
     }
@@ -188,10 +188,11 @@ public class GameProcess {
             //success
             int i;
             int index = playerIndexSearch(voteInitiator);
+            int currentPoints = playerList.get(index).getPoints();
             if (start[0] == end[0]) {
-                playerList.get(index).setPoints(end[1] - start[1] + 1);
+                playerList.get(index).setPoints(end[1] - start[1] + 1+ currentPoints);
             } else if (start[1] == end[1]) {
-                playerList.get(index).setPoints(end[0] - start[0] + 1);
+                playerList.get(index).setPoints(end[0] - start[0] + 1+ currentPoints);
             }
         } else {
             //failure
@@ -333,7 +334,7 @@ public class GameProcess {
                 }
 
             default:
-                error(currentUserID,"Unknown Error");
+                error(currentUserID, "Unknown Error");
                 break;
         }
     }
@@ -379,10 +380,13 @@ public class GameProcess {
             //initiate game board
             boardInitiation();
             gameHost = currentUserID;
+            ArrayList<Users> team = null;
+            try {
+                team = onlineCheck(teams.get(gameHost));
+            } catch (Exception e) {
 
-            ArrayList<Users> team = onlineCheck(teams.get(gameHost));
+            }
             teamStatusUpdate(team, "in-game");
-
             //playerID assigned here
             addPlayers(team);
             whoseTurn = 1;
@@ -441,16 +445,16 @@ public class GameProcess {
         // initial check the status of user if he or she feels like inviting others
         // also check if he or she has already created a team
         if (userList.get(userIndexSearch(currentUserID)).getStatus().equals("available") || teams.containsKey(currentUserID)) {
-           if (!teams.containsKey(currentUserID)) {
-               ArrayList<Users> team = new ArrayList<>();  // allow multiple teams in wait
-               team.add(userList.get(userIndexSearch(currentUserID)));
-               userList.get(userIndexSearch(currentUserID)).setStatus("ready"); // status changed when team created
-               int hostID = currentUserID;
-               teamsInWait.add(team);
-               teams.put(hostID, team);
-           }
+            if (!teams.containsKey(currentUserID)) {
+                ArrayList<Users> team = new ArrayList<>();  // allow multiple teams in wait
+                team.add(userList.get(userIndexSearch(currentUserID)));
+                userList.get(userIndexSearch(currentUserID)).setStatus("ready"); // status changed when team created
+                int hostID = currentUserID;
+                teamsInWait.add(team);
+                teams.put(hostID, team);
+            }
 
-           //make envelope and start inviting
+            //make envelope and start inviting
             for (String peer : peerList) {
                 if (userList.get(userIndexSearch(peer.trim())).getStatus().equals("available")) {
                     makeEnvelope(currentUserID, peer);
@@ -502,7 +506,7 @@ public class GameProcess {
 
 
     private void error(int currentUserID, String msg) {
-         // switch error types
+        // switch error types
         int errorType = 500; //switch -- (possibly more error types)
         Pack errorMsg = new Pack(currentUserID, JSON.toJSONString(new ErrorProtocol(msg, errorType)));
         EnginePutMsg.getInstance().putMsgToCenter(errorMsg);
