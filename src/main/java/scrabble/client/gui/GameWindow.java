@@ -104,7 +104,7 @@ public class GameWindow implements Runnable {
                 int[] lastMove = gridPanel.getLastMove();
                 gridPanel.drawUneditable(lastMove[0], lastMove[1]);
                 gridPanel.getSelectArea();
-                gridPanel.delLastMoveValue();
+//                gridPanel.delLastMoveValue();
                 gridPanel.setAllowDrag(false);
                 System.err.println("set to false 2");
             }

@@ -152,6 +152,7 @@ public class GameGridPanel extends JPanel{
                 public void actionPerformed(ActionEvent arg0) {
                     if (allowSelectHead) {
                         GameWindow.get().sendSelect(lastMove, i, j, iend, j); //行起点，列，行终点，列
+                        get().delLastMoveValue();
                         timer1.stop();
                         timer2.stop();
                         allowSelectHead = false;
@@ -165,6 +166,7 @@ public class GameGridPanel extends JPanel{
                     public void actionPerformed(ActionEvent arg0) {
                         if (allowSelectHead) {
                             GameWindow.get().sendSelect(lastMove, x, y, x, yend); //行起点，列，行终点，列
+                            get().delLastMoveValue();
                             timer1.stop();
                             timer2.stop();
                             allowSelectHead = false;
@@ -180,6 +182,7 @@ public class GameGridPanel extends JPanel{
                 public void actionPerformed(ActionEvent arg0) {
                     if (allowSelectHead) {
                         GameWindow.get().sendSelect(lastMove, x, y, x, yend); //行起点，列，行终点，列
+                        get().delLastMoveValue();
                         timer1.stop();
                         timer2.stop();
                         allowSelectHead = false;
@@ -193,6 +196,7 @@ public class GameGridPanel extends JPanel{
                     public void actionPerformed(ActionEvent arg0) {
                         if (allowSelectHead) {
                             GameWindow.get().sendSelect(lastMove, i, j, iend, j); //行起点，列，行终点，列
+                            get().delLastMoveValue();
                             timer1.stop();
                             timer2.stop();
                             allowSelectHead = false;
@@ -209,6 +213,7 @@ public class GameGridPanel extends JPanel{
                 public void actionPerformed(ActionEvent arg0) {
                     if (allowSelectHead) {
                         GameWindow.get().sendSelect(lastMove, i, j, iend, j); //行起点，列，行终点，列
+                        get().delLastMoveValue();
                         timer1.stop();
                         timer2.stop();
                         allowSelectHead = false;
@@ -223,6 +228,7 @@ public class GameGridPanel extends JPanel{
                 public void actionPerformed(ActionEvent arg0) {
                     if (allowSelectHead) {
                         GameWindow.get().sendSelect(lastMove, x, y, x, yend); //行，列起点，行，列终点
+                        get().delLastMoveValue();
                         timer1.stop();
                         timer2.stop();
                         allowSelectHead = false;
