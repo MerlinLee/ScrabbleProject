@@ -65,5 +65,6 @@ public class NonGamingProtocol extends ScrabbleProtocol {
     }
 
     public NonGamingProtocol() {
+        super.setTAG("NonGamingProtocol");
     }
 }
