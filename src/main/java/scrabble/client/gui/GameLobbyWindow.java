@@ -229,12 +229,13 @@ public class GameLobbyWindow implements Runnable {
     void updateUserList(Users[] userList) {
         clearUserList();
         for (Users user : userList)
-            addToUserList(user.getUserID(), user.getUserName(), user.getStatus());
+            addToUserList(user.getUserID(), user.getUserName(), user.getStatus(), user.getNumWin());
     }
 
-    void addToUserList(int id, String name, String status) {
+    void addToUserList(int id, String name, String status, int numWin) {
         String strId = Integer.toString(id);
-        userTableModel.addRow(new Object[]{strId, name, status});
+        String strNumWin = Integer.toString(numWin);
+        userTableModel.addRow(new Object[]{strId, name, status, strNumWin});
     }
 
     void clearPlayerList() {

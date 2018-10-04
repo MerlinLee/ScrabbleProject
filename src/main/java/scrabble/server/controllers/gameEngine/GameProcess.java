@@ -357,6 +357,7 @@ public class GameProcess {
                 }
                 Users[] temp = team.toArray(new Users[team.size()]);
 
+                teamUpdate(currentUserID);
                 teamUpdate(temp, hostID, false);
                 userListToClient();
             } else {
@@ -518,6 +519,11 @@ public class GameProcess {
         for (int i = 0; i < teamList.length; i++) {
                 inviteACK(command, hostID, teamList[i].getUserID(), isAccept, teamList);
         }
+    }
+
+    private void teamUpdate(int currentUserID){
+        String command = "teamUpdate";
+        inviteACK(command, currentUserID, currentUserID, false, null);
     }
 
 
