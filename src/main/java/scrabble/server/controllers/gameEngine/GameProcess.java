@@ -171,6 +171,12 @@ public class GameProcess {
         }else{
             //failure
         }
+
+        //reset agree/disagree num
+        voteInitiator = ID_PLACEHOLDER;
+        numVoted = 0;
+        agree = 0;
+        disagree = 0;
     }
 
     //search player instance according to userID
@@ -189,6 +195,10 @@ public class GameProcess {
         int[] start = gamingOperationProtocol.getStartPosition();
         int[] end = gamingOperationProtocol.getEndPosition();
 
+        //reset gameEndCheck parameters
+        numPass = 0;
+        gameLoopStartSeq = 0;
+
         voteInitiator = currentUserID;
         board[bp.getPosition()[0]][bp.getPosition()[1]] = Character.toUpperCase(bp.getBrick().charAt(0));
         boardUpdate(currentUserID);
@@ -199,9 +209,9 @@ public class GameProcess {
         gameTurnControl();
         boardUpdate(currentUserID);
 
-        //reset gameEndCheck parameters
-        numPass = 0;
-        gameLoopStartSeq = 0;
+//        //reset waitVoting blocking parameters
+//        numVoted = 0;
+//        voteInitiator=ID_PLACEHOLDER;
     }
 
     private void hasNotVote(int currentUserID, GamingOperationProtocol gamingOperationProtocol){
