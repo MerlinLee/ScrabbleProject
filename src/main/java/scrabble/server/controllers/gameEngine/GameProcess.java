@@ -421,21 +421,25 @@ public class GameProcess {
 
     private void inviteOperation(int currentUserID, String[] peerList) {
         // initial check the status of user if he or she feels like inviting others
-        if (userList.get(userIndexSearch(currentUserID)).getStatus().equals("available")) {
-            ArrayList<Users> team = new ArrayList<>();  // allow multiple teams in wait
-            team.add(userList.get(userIndexSearch(currentUserID)));
-            userList.get(userIndexSearch(currentUserID)).setStatus("ready"); // status changed when team created
-            int hostID = currentUserID;
-            teamsInWait.add(team);
-            teams.put(hostID, team);
+        // also check if he or she has already created a team
+        if (userList.get(userIndexSearch(currentUserID)).getStatus().equals("available") || teams.containsKey(currentUserID)) {
+           if (!teams.containsKey(currentUserID)) {
+               ArrayList<Users> team = new ArrayList<>();  // allow multiple teams in wait
+               team.add(userList.get(userIndexSearch(currentUserID)));
+               userList.get(userIndexSearch(currentUserID)).setStatus("ready"); // status changed when team created
+               int hostID = currentUserID;
+               teamsInWait.add(team);
+               teams.put(hostID, team);
+           }
 
+           //make envelope and start inviting
             for (String peer : peerList) {
                 if (userList.get(userIndexSearch(peer.trim())).getStatus().equals("available")) {
                     makeEnvelope(currentUserID, peer);
                 }
             }
         } else {
-            //error
+            //error, no access error
             error(currentUserID);
         }
     }
