@@ -44,6 +44,8 @@ public class NetThread implements Runnable {
                     String message = inputStream.readLine();
                     if(message!=null||!message.equals("")){
                         toNetPutMsg.put(new Pack(clientID,message));
+                    }else {
+                        flag=false;
                     }
                 }else {
                     flag=false;
