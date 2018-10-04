@@ -184,7 +184,7 @@ public class GameProcess {
 
 
     private void voteResult(int[] start, int[] end) {
-        if ((double) agree / disagree >= 0.5) {
+        if ((double) agree / numVoted > 0.5) {
             //success
             int i;
             int index = playerIndexSearch(voteInitiator);
@@ -348,6 +348,7 @@ public class GameProcess {
                 teamUpdate(member.getUserID());
             }
             teamStatusUpdate(teams.get(currentUserID), "available");
+            userListToClient();
             teamsInWait.remove(teams.get(currentUserID));
             teams.remove(currentUserID);
         } else {
