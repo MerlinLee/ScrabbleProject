@@ -123,8 +123,12 @@ public class GuiListener {
 
                 GuiController.get().updatePlayerListInLobby(users);
                 break;
-            case "playerUpdate":
+            case "teamUpdate":
+                if (users != null){
                 GuiController.get().updatePlayerListInLobby(users);
+                }else{
+                    GameLobbyWindow.get().clearPlayerList();
+                }
                 break;
         }
     }

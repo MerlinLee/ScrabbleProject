@@ -190,9 +190,9 @@ public class GameProcess {
             int index = playerIndexSearch(voteInitiator);
             int currentPoints = playerList.get(index).getPoints();
             if (start[0] == end[0]) {
-                playerList.get(index).setPoints(end[1] - start[1] + 1+ currentPoints);
+                playerList.get(index).setPoints(end[1] - start[1] + 1 + currentPoints);
             } else if (start[1] == end[1]) {
-                playerList.get(index).setPoints(end[0] - start[0] + 1+ currentPoints);
+                playerList.get(index).setPoints(end[0] - start[0] + 1 + currentPoints);
             }
         } else {
             //failure
@@ -332,13 +332,38 @@ public class GameProcess {
                 if (gameStart == true) {
                     win(currentUserID);
                 }
-
+            case "leave":
+                leaveTeam(currentUserID, hostID);
+                break;
             default:
                 error(currentUserID, "Unknown Error");
                 break;
         }
     }
 
+    private void leaveTeam(int currentUserID, int hostID) {
+        int index = userIndexSearch(currentUserID);
+        if (currentUserID == hostID) {
+            teamUpdate(null, hostID, false);
+            teamStatusUpdate(teams.get(hostID), "available");
+            teamsInWait.remove(teams.get(hostID));
+            teams.remove(hostID);
+        } else {
+            if (teams.containsKey(hostID)) {
+                ArrayList<Users> team = teams.get(hostID);
+                if (team.contains(userList.get(index))) {
+                    team.remove(userList.get(index));
+                    userList.get(index).setStatus("available");
+                }
+                Users[] temp = team.toArray(new Users[team.size()]);
+
+                teamUpdate(temp, hostID, false);
+                userListToClient();
+            } else {
+                error(currentUserID, "Unknown team");
+            }
+        }
+    }
 
     //search the index of a user at local memory
     private int userIndexSearch(String userName) {
@@ -400,7 +425,7 @@ public class GameProcess {
         }
     }
 
-    private  synchronized ArrayList<Users> onlineCheck(ArrayList<Users> team) {
+    private synchronized ArrayList<Users> onlineCheck(ArrayList<Users> team) {
         for (Users member : team) {
             if (!userList.contains(member)) {
                 team.remove(member);
@@ -477,7 +502,7 @@ public class GameProcess {
             inviteACK(command, currentUserID, hostID, isAccept, teamList); //ACK to inviteInitiator
 
             //broadcast to all members of a team
-            playerUpdate(teamList, hostID, isAccept);
+            teamUpdate(teamList, hostID, isAccept);
 
             //broadcast to all users to update status
             userListToClient();
@@ -488,12 +513,10 @@ public class GameProcess {
         }
     }
 
-    private void playerUpdate(Users[] teamList, int hostID, boolean isAccept) {
-        String command = "playerUpdate";
+    private void teamUpdate(Users[] teamList, int hostID, boolean isAccept) {
+        String command = "teamUpdate";
         for (int i = 0; i < teamList.length; i++) {
-            if (teamList[i].getUserID() != hostID) {
                 inviteACK(command, hostID, teamList[i].getUserID(), isAccept, teamList);
-            }
         }
     }
 
@@ -595,7 +618,7 @@ public class GameProcess {
     private void win(int currentUserID) {
         String command = "win";
         Collections.sort(playerList);
-        int hi = playerList.size()-1;
+        int hi = playerList.size() - 1;
         int i = hi - 1;
         if (playerList.get(hi).getPoints() == playerList.get(i).getPoints()) {
             i--;

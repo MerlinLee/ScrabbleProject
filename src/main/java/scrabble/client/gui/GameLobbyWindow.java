@@ -19,6 +19,7 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.table.TableColumn;
 
 public class GameLobbyWindow implements Runnable {
 
@@ -76,11 +77,9 @@ public class GameLobbyWindow implements Runnable {
         frame.setBounds(100, 100, 460, 420);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.getContentPane().setLayout(null);
-
         userList = new JTable(userTableModel);
         userList.setBounds(20, 40, 200, 300);
         frame.getContentPane().add(userList);
-
         JScrollPane spUserList = new JScrollPane(userList);
         spUserList.setBounds(20, 40, 200, 300);
         spUserList.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
