@@ -343,11 +343,13 @@ public class GameProcess {
 
     private void leaveTeam(int currentUserID, int hostID) {
         int index = userIndexSearch(currentUserID);
-        if (currentUserID == hostID) {
-            teamUpdate(null, hostID, false);
-            teamStatusUpdate(teams.get(hostID), "available");
-            teamsInWait.remove(teams.get(hostID));
-            teams.remove(hostID);
+        if (hostID == 0 ) {
+            for (Users member: teams.get(currentUserID)){
+                teamUpdate(member.getUserID());
+            }
+            teamStatusUpdate(teams.get(currentUserID), "available");
+            teamsInWait.remove(teams.get(currentUserID));
+            teams.remove(currentUserID);
         } else {
             if (teams.containsKey(hostID)) {
                 ArrayList<Users> team = teams.get(hostID);
