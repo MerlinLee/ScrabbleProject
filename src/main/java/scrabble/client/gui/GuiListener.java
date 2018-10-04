@@ -88,8 +88,21 @@ public class GuiListener {
                 GuiController.get().updateBoard(board);
                 players = respond.getPlayerList();
                 GuiController.get().showWinners(players);
+
+                //remove team
+                GameLobbyWindow.get().clearPlayerList();
                 break;
             case "start":
+                // update team status
+                players = respond.getPlayerList();
+                Users[] users = new Users[players.length];
+                int i =0;
+                for (Player user : players){
+                    users[i] = user.getUser();
+                    i++;
+                }
+                GuiController.get().updatePlayerListInLobby(users);
+                //
                 GuiController.get().runGameWindow();
                 break;
             default:
