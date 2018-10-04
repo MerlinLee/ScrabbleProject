@@ -173,5 +173,7 @@ public class GameWindow implements Runnable {
         frame.dispose();
     }
 
-
+    public void setGameTurnTitle(String title){
+        frame.setTitle(title);
+    }
 }

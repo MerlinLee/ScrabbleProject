@@ -152,6 +152,7 @@ public class GuiController {
 
     void checkIfStartATurn(int seq) {
         System.err.println("this = "+ this.seq + "    " + "The turn = " + seq);
+        GameWindow.get().setGameTurnTitle("Current turn: "+seq);
         if (this.seq == seq) {
             System.err.println("My turn");
             gameWindow.startOneTurn();
