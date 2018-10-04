@@ -25,7 +25,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class GameProcess {
     private final int ID_PLACEHOLDER = -1;
     private final int BOARD_SIZE = 20;
-    private final int INITIAL_SEQ= 1;
+    private final int INITIAL_SEQ = 1;
 
     private int gameHost = ID_PLACEHOLDER;
     private boolean gameStart = false;
@@ -77,7 +77,7 @@ public class GameProcess {
         return gameProcess;
     }
 
-    public void addBlockingQueue(BlockingQueue queue){
+    public void addBlockingQueue(BlockingQueue queue) {
         this.queue = queue;
     }
 
@@ -90,8 +90,8 @@ public class GameProcess {
 
     public void switchProtocols(int currentUserID, String msg) {
         ScrabbleProtocol temp = null;
-        if(!msg.equals("null")){
-             temp = JSON.parseObject(msg, ScrabbleProtocol.class);
+        if (!msg.equals("null")) {
+            temp = JSON.parseObject(msg, ScrabbleProtocol.class);
             String type = temp.getTAG();
             switch (type) {
                 case "NonGamingProtocol":
@@ -113,7 +113,7 @@ public class GameProcess {
         String[] userList = nonGamingProtocol.getUserList();
         boolean isAccept = nonGamingProtocol.isInviteAccepted();
         int hostID = nonGamingProtocol.getHostID();
-        nonGamingOperationExecutor(currentUserID,command, userList, isAccept, hostID);
+        nonGamingOperationExecutor(currentUserID, command, userList, isAccept, hostID);
     }
 
     private void gamingOperation(int currentUserID, GamingOperationProtocol gamingOperationProtocol) {
@@ -121,10 +121,14 @@ public class GameProcess {
         String command = gamingOperationProtocol.getCommand();
         switch (command) {
             case "vote":
-                if (gamingOperationProtocol.isVote()){
-                    hasVote(currentUserID, gamingOperationProtocol);
-                }else {
-                    hasNotVote(currentUserID, gamingOperationProtocol);
+                if (whoseTurn != currentUserID) {
+                    if (gamingOperationProtocol.isVote()) {
+                        hasVote(currentUserID, gamingOperationProtocol);
+                    } else {
+                        hasNotVote(currentUserID, gamingOperationProtocol);
+                    }
+                } else {
+                    //ignore
                 }
                 break;
             case "voteResponse":
@@ -141,21 +145,21 @@ public class GameProcess {
 
     }
 
-    private void disconnect(int currentUserID){
-        if (gameStart == true){
+    private void disconnect(int currentUserID) {
+        if (gameStart == true) {
             win(currentUserID);
 
             //remove disconnected users
-            if(db.containsKey(currentUserID)) {
+            if (db.containsKey(currentUserID)) {
                 db.remove(currentUserID);
                 userList.remove(userIndexSearch(currentUserID));
             }
             //reset gameEndCheck parameters
             numPass = 0;
 //            gameLoopStartSeq = 0;
-        }else{
+        } else {
             //remove disconnected users
-            if(db.containsKey(currentUserID)) {
+            if (db.containsKey(currentUserID)) {
                 db.remove(currentUserID);
                 userList.remove(userIndexSearch(currentUserID));
             }
@@ -164,17 +168,17 @@ public class GameProcess {
     }
 
 
-    private void voteResult(int[] start, int[] end){
-        if ((double)agree/disagree >= 0.5){
+    private void voteResult(int[] start, int[] end) {
+        if ((double) agree / disagree >= 0.5) {
             //success
             int i;
             int index = playerIndexSearch(voteInitiator);
-                if (start[0]==end[0]){
-                    playerList.get(index).setPoints(end[1]-start[1]+1);
-                }else if (start[1]==end[1]){
-                    playerList.get(index).setPoints(end[0]-start[0]+1);
-                }
-        }else{
+            if (start[0] == end[0]) {
+                playerList.get(index).setPoints(end[1] - start[1] + 1);
+            } else if (start[1] == end[1]) {
+                playerList.get(index).setPoints(end[0] - start[0] + 1);
+            }
+        } else {
             //failure
         }
 
@@ -186,17 +190,17 @@ public class GameProcess {
     }
 
     //search player instance according to userID
-    private int playerIndexSearch(int currentUserID){
+    private int playerIndexSearch(int currentUserID) {
         int index;
-        for (index = 0; index<playerList.size();index++){
-            if(playerList.get(index).getUser().getUserID()==currentUserID){
+        for (index = 0; index < playerList.size(); index++) {
+            if (playerList.get(index).getUser().getUserID() == currentUserID) {
                 break;
             }
         }
         return index;
     }
 
-    private void hasVote(int currentUserID, GamingOperationProtocol gamingOperationProtocol){
+    private void hasVote(int currentUserID, GamingOperationProtocol gamingOperationProtocol) {
         BrickPlacing bp = gamingOperationProtocol.getBrickPlacing();
         int[] start = gamingOperationProtocol.getStartPosition();
         int[] end = gamingOperationProtocol.getEndPosition();
@@ -211,7 +215,7 @@ public class GameProcess {
         voteOperation(currentUserID, start, end);
         waitVoting();
 
-        voteResult(start,end);
+        voteResult(start, end);
         gameTurnControl();
         boardUpdate(currentUserID);
 
@@ -220,70 +224,71 @@ public class GameProcess {
 //        voteInitiator=ID_PLACEHOLDER;
     }
 
-    private void hasNotVote(int currentUserID, GamingOperationProtocol gamingOperationProtocol){
+    private void hasNotVote(int currentUserID, GamingOperationProtocol gamingOperationProtocol) {
         BrickPlacing bp = gamingOperationProtocol.getBrickPlacing();
         //initial check gameEnd conditions (1. if every player had a turn -- sequence loop check  2. num of direct pass)
-            if (bp.getPosition() != null) {
-                //reset gameEndCheck parameters
-                numPass = 0;
+        if (bp.getBrick() != null) {
+            //reset gameEndCheck parameters
+            numPass = 0;
 
-                board[bp.getPosition()[0]][bp.getPosition()[1]] = Character.toUpperCase(bp.getBrick().charAt(0));
+            board[bp.getPosition()[0]][bp.getPosition()[1]] = Character.toUpperCase(bp.getBrick().charAt(0));
+            gameTurnControl();
+            boardUpdate(currentUserID);
+        } else {
+            numPass++;
+            if (!gameEndCheck()) {
                 gameTurnControl();
                 boardUpdate(currentUserID);
             } else {
-                numPass++;
-                if(!gameEndCheck()) {
-                    gameTurnControl();
-                    boardUpdate(currentUserID);
-                }else{
-                    win(currentUserID);
-                    //reset gameEndCheck parameters
-                    numPass = 0;
-                }
+                win(currentUserID);
+                //reset gameEndCheck parameters
+                numPass = 0;
             }
         }
+    }
 
 
-    private boolean gameEndCheck(){
+    private boolean gameEndCheck() {
 //        int index = playerIndexSearch(currentUserID);
-        if(numPass == playerList.size()){
-           return true;  // game should be terminated
-        }else{
+        if (numPass == playerList.size()) {
+            return true;  // game should be terminated
+        } else {
             return false;  // game should continue
         }
     }
-    private void gameTurnControl(){
-        if(whoseTurn< playerList.size()){
-            whoseTurn ++;
-        }else{
+
+    private void gameTurnControl() {
+        if (whoseTurn < playerList.size()) {
+            whoseTurn++;
+        } else {
             whoseTurn = 1;
         }
     }
 
-    public void waitVoting(){
-        System.out.println("START WAITING: "+numVoted);
-        while (numVoted != (playerList.size())){
-           Pack temp;
-           try{
-               temp = queue.take();
-               System.out.println(temp.getMsg());
-               switchProtocols(temp.getUserId(), temp.getMsg());
-           }catch(InterruptedException e){
-               e.printStackTrace();
+    public void waitVoting() {
+        System.out.println("START WAITING: " + numVoted);
+        while (numVoted != (playerList.size())) {
+            Pack temp;
+            try {
+                temp = queue.take();
+                System.out.println(temp.getMsg());
+                switchProtocols(temp.getUserId(), temp.getMsg());
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
-        System.out.println("WAITING END: "+numVoted);
+        System.out.println("WAITING END: " + numVoted);
     }
 
-    private void playerVoteResponse(boolean isVote){
-        if (isVote){
+    private void playerVoteResponse(boolean isVote) {
+        if (isVote) {
             agree++;
-        }else{
+        } else {
             disagree++;
         }
     }
 
-    private void voteOperation(int voteInitiator, int[] start, int[] end){
+    private void voteOperation(int voteInitiator, int[] start, int[] end) {
         String command = "voteRequest";
         Pack vote = new Pack(voteInitiator, JSON.toJSONString(new VoteRequest(command, start, end, voteInitiator)));
         vote.setRecipient(playersID);
@@ -308,7 +313,7 @@ public class GameProcess {
                 inviteResponse(currentUserID, hostID, isAccept);
                 break;
             case "quit":
-                if (gameStart == true){
+                if (gameStart == true) {
                     win(currentUserID);
                 }
 
@@ -342,10 +347,10 @@ public class GameProcess {
         return index;
     }
 
-    private void boardInitiation(){
+    private void boardInitiation() {
         board = new char[BOARD_SIZE][BOARD_SIZE];
-        for (int i = 0 ; i<BOARD_SIZE; i++){
-            for(int j = 0; j < BOARD_SIZE; j++){
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            for (int j = 0; j < BOARD_SIZE; j++) {
                 board[i][j] = ' ';
             }
         }
@@ -375,9 +380,9 @@ public class GameProcess {
         }
     }
 
-    private ArrayList<Users> onlineCheck(ArrayList<Users> team){
-        for (Users member : team){
-            if(!db.contains(member.getUserName())){
+    private ArrayList<Users> onlineCheck(ArrayList<Users> team) {
+        for (Users member : team) {
+            if (!db.contains(member.getUserName())) {
                 team.remove(member);
             }
         }
@@ -398,7 +403,7 @@ public class GameProcess {
     }
 
     private void logout(int currentUserID) {
-        if (db.get(currentUserID)!=null) {
+        if (db.get(currentUserID) != null) {
             if (gameStart) {
                 userList.remove(userIndexSearch(currentUserID));
                 db.remove(currentUserID);
@@ -408,7 +413,7 @@ public class GameProcess {
                 db.remove(currentUserID);
                 userListToClient();
             }
-        }else{
+        } else {
             error(currentUserID);
         }
     }
@@ -429,7 +434,7 @@ public class GameProcess {
                     makeEnvelope(currentUserID, peer);
                 }
             }
-        }else{
+        } else {
             //error
             error(currentUserID);
         }
@@ -446,7 +451,7 @@ public class GameProcess {
             inviteACK(command, currentUserID, hostID, isAccept, teamList); //ACK to inviteInitiator
 
             //broadcast to all members of a team
-            playerUpdate(teamList, hostID, isAccept );
+            playerUpdate(teamList, hostID, isAccept);
 
             //broadcast to all users to update status
             userListToClient();
@@ -457,11 +462,11 @@ public class GameProcess {
         }
     }
 
-    private void playerUpdate(Users[] teamList, int hostID, boolean isAccept){
+    private void playerUpdate(Users[] teamList, int hostID, boolean isAccept) {
         String command = "playerUpdate";
-        for (int i = 0; i<teamList.length; i++){
-            if (teamList[i].getUserID() != hostID){
-                inviteACK(command,hostID, teamList[i].getUserID(), isAccept, teamList);
+        for (int i = 0; i < teamList.length; i++) {
+            if (teamList[i].getUserID() != hostID) {
+                inviteACK(command, hostID, teamList[i].getUserID(), isAccept, teamList);
             }
         }
     }

@@ -131,6 +131,7 @@ public class GuiController {
                 }
             }
         }
+
         synchronized (gameLobbyWindow){
             gameWindow.updatePlayerList(playerList);
         }
