@@ -28,13 +28,14 @@ public class GuiListener {
 
     public static synchronized GuiListener get() {
         if (instance == null) {
-            synchronized (GuiListener.class){
+            synchronized (GuiListener.class) {
                 instance = new GuiListener();
             }
         }
         return instance;
     }
-    public void addBlockingQueue(BlockingQueue queue){
+
+    public void addBlockingQueue(BlockingQueue queue) {
         this.queue = queue;
     }
 
@@ -54,6 +55,8 @@ public class GuiListener {
                 break;
             case "VoteRequest":
                 processVoteRequest(str);
+                break;
+            default:
                 break;
         }
     }
@@ -89,8 +92,8 @@ public class GuiListener {
             case "start":
                 GuiController.get().runGameWindow();
                 break;
-                default:
-                    break;
+            default:
+                break;
         }
     }
 

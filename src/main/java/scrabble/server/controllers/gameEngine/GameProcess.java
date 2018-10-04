@@ -144,9 +144,15 @@ public class GameProcess {
     private void disconnect(int currentUserID){
         if (gameStart == true){
             win(currentUserID);
+
+            //remove disconnected users
+            if(db.containsKey(currentUserID)) {
+                db.remove(currentUserID);
+                userList.remove(userIndexSearch(currentUserID));
+            }
             //reset gameEndCheck parameters
             numPass = 0;
-            gameLoopStartSeq = 0;
+//            gameLoopStartSeq = 0;
         }else{
             //remove disconnected users
             if(db.containsKey(currentUserID)) {
@@ -197,7 +203,7 @@ public class GameProcess {
 
         //reset gameEndCheck parameters
         numPass = 0;
-        gameLoopStartSeq = 0;
+//        gameLoopStartSeq = 0;
 
         voteInitiator = currentUserID;
         board[bp.getPosition()[0]][bp.getPosition()[1]] = Character.toUpperCase(bp.getBrick().charAt(0));
@@ -217,30 +223,30 @@ public class GameProcess {
     private void hasNotVote(int currentUserID, GamingOperationProtocol gamingOperationProtocol){
         BrickPlacing bp = gamingOperationProtocol.getBrickPlacing();
         //initial check gameEnd conditions (1. if every player had a turn -- sequence loop check  2. num of direct pass)
-        if (!gameEndCheck(currentUserID)) {
             if (bp.getPosition() != null) {
+                //reset gameEndCheck parameters
+                numPass = 0;
+
                 board[bp.getPosition()[0]][bp.getPosition()[1]] = Character.toUpperCase(bp.getBrick().charAt(0));
                 gameTurnControl();
                 boardUpdate(currentUserID);
             } else {
-                int index = playerIndexSearch(currentUserID);
-                gameLoopStartSeq = playerList.get(index).getInGameSequence();
                 numPass++;
-                gameTurnControl();
-                boardUpdate(currentUserID);
+                if(!gameEndCheck()) {
+                    gameTurnControl();
+                    boardUpdate(currentUserID);
+                }else{
+                    win(currentUserID);
+                    //reset gameEndCheck parameters
+                    numPass = 0;
+                }
             }
-        }else {
-            win(currentUserID);
-
-            //reset gameEndCheck parameters
-            numPass = 0;
-            gameLoopStartSeq = 0;
         }
-    }
 
-    private boolean gameEndCheck(int currentUserID){
-        int index = playerIndexSearch(currentUserID);
-        if((playerList.get(index).getInGameSequence() == gameLoopStartSeq) && (numPass == playerList.size())){
+
+    private boolean gameEndCheck(){
+//        int index = playerIndexSearch(currentUserID);
+        if(numPass == playerList.size()){
            return true;  // game should be terminated
         }else{
             return false;  // game should continue
@@ -301,11 +307,17 @@ public class GameProcess {
             case "inviteResponse":
                 inviteResponse(currentUserID, hostID, isAccept);
                 break;
+            case "quit":
+                if (gameStart == true){
+                    win(currentUserID);
+                }
+
             default:
                 error(currentUserID);
                 break;
         }
     }
+
 
     //search the index of a user at local memory
     private int userIndexSearch(String userName) {
@@ -347,6 +359,7 @@ public class GameProcess {
             //initiate game board
             boardInitiation();
             gameHost = currentUserID;
+
             teamStatusUpdate(onlineCheck(teams.get(gameHost)), "in-game");
 
             //playerID assigned here
@@ -387,12 +400,13 @@ public class GameProcess {
     private void logout(int currentUserID) {
         if (db.get(currentUserID)!=null) {
             if (gameStart) {
-                win(currentUserID);
                 userList.remove(userIndexSearch(currentUserID));
                 db.remove(currentUserID);
+                win(currentUserID);
             } else {
                 userList.remove(userIndexSearch(currentUserID));
                 db.remove(currentUserID);
+                userListToClient();
             }
         }else{
             error(currentUserID);
@@ -573,6 +587,7 @@ public class GameProcess {
         gameStart = false;
         playersID = null;
         playerList = null;
+        whoseTurn = INITIAL_SEQ;
 
         boardInitiation();
         teamsInWait.remove(teams.get(gameHost));
