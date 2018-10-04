@@ -52,7 +52,7 @@ public class GameWindow implements Runnable {
         frame.setSize(860, 740);
         frame.setResizable(false);
         frame.setLocationRelativeTo(null);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.getContentPane().setLayout(null);
 
         gridPanel.setBounds(20, 20, 600, 600);
