@@ -96,6 +96,7 @@ public class GameGridPanel extends JPanel{
     }
 
     public void resetToDefault() {
+        get().delLastMoveValue();
         for (int i = vHead; i <= vTail; i++) {
             grid[i][vJ].setBackground(UIManager.getColor("Button.background"));
             grid[i][vJ].setOpaque(false);
