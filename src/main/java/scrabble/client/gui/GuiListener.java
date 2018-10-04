@@ -135,7 +135,10 @@ public class GuiListener {
         switch (command) {
             case "userUpdate":
                 Users[] users = respond.getUsersList();
-                GuiController.get().updateUserList(users);
+                synchronized (GuiController.get()){
+                    GuiController.get().updateUserList(users);
+                }
+
                 break;
             case "invite":
                 int inviterId = respond.getUsersList()[0].getUserID();
