@@ -123,7 +123,7 @@ public class GuiListener {
 
                 GuiController.get().updatePlayerListInLobby(users);
                 break;
-            case "playerUpdate":
+            case "teamUpdate":
                 GuiController.get().updatePlayerListInLobby(users);
                 break;
         }
