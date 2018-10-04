@@ -129,7 +129,7 @@ public class GuiListener {
         }
     }
 
-    private void processNonGamingResonse(String str) {
+    private synchronized void processNonGamingResonse(String str) {
         NonGamingResponse respond = JSON.parseObject(str, NonGamingResponse.class);
         String command = respond.getCommand();
         switch (command) {
