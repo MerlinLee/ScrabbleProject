@@ -124,8 +124,11 @@ public class GuiController {
                 }
             }
         }
-        gameWindow.updatePlayerList(playerList);
-    }
+        synchronized (gameLobbyWindow){
+            gameWindow.updatePlayerList(playerList);
+        }
+        }
+
 
     void showInviteMessage(int inviterId, String inviterName) {
         gameLobbyWindow.showInviteMessage(inviterId, inviterName);
