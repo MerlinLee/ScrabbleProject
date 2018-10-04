@@ -64,12 +64,12 @@ public class GamingSync extends ScrabbleProtocol {
         this.FLAG = FLAG;
     }
 
-    public boolean[] getIsSuccess() {
-        return isSuccess;
+    public boolean getVoteSuccess() {
+        return voteSuccess;
     }
 
-    public void setIsSuccess(boolean[] isSuccess) {
-        this.isSuccess = isSuccess;
+    public void setVoteSuccess(boolean[] isSuccess) {
+        this.voteSuccess = voteSuccess;
     }
 
 //    public Users[] getCurrentUsersList() {
@@ -82,7 +82,7 @@ public class GamingSync extends ScrabbleProtocol {
 
     //first cell is about successful packet transmission
     //Second cell is about vote result.
-    private boolean[] isSuccess = new boolean[2];
+    private boolean voteSuccess;
 
     /*Contain score....
     *
@@ -97,11 +97,12 @@ public class GamingSync extends ScrabbleProtocol {
     // whose turn??  int turn
     private int nextTurn;
 
-    public GamingSync(String command, Player[] playerList,int nextTurn, char[][] board) {
+    public GamingSync(String command, Player[] playerList,int nextTurn, char[][] board, boolean voteSuccess) {
         super.setTAG("GamingSync");
         this.nextTurn = nextTurn;
         this.command = command;
         this.playerList = playerList;
         this.board = board;
+        this.voteSuccess = voteSuccess;
     }
 }

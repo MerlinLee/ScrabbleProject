@@ -59,6 +59,7 @@ public class PlayerPanel extends JPanel {
         String name = player.getUser().getUserName();
         String score = Integer.toString(player.getPoints());
         playerTableModel.addRow(new Object[]{strId, name, score});
+        //logic error
         if (player.getPoints() != 0) {
             GameWindow.get().showDialog("The vote is successful!");
         }
@@ -85,7 +86,7 @@ public class PlayerPanel extends JPanel {
                     playerList.setValueAt(Integer.toString(player.getPoints()), index, 2);
                 }
                 else {
-                    addToPlayerList(player);
+//                    addToPlayerList(player);
                 }
             }
         }

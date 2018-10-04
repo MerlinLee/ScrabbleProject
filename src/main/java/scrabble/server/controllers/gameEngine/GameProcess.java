@@ -34,6 +34,7 @@ public class GameProcess {
     private int agree;
     private int disagree;
     private int voteInitiator;
+    private boolean voteSuccess;
     private int numPass;
     private int gameLoopStartSeq;
 
@@ -187,6 +188,7 @@ public class GameProcess {
         if ((double) agree / numVoted > 0.5) {
             //success
             int i;
+            voteSuccess = true;
             int index = playerIndexSearch(voteInitiator);
             int currentPoints = playerList.get(index).getPoints();
             if (start[0] == end[0]) {
@@ -196,6 +198,7 @@ public class GameProcess {
             }
         } else {
             //failure
+            voteSuccess = false;
         }
 
         //reset agree/disagree num
@@ -235,9 +238,8 @@ public class GameProcess {
         gameTurnControl();
         boardUpdate(currentUserID);
 
-//        //reset waitVoting blocking parameters
-//        numVoted = 0;
-//        voteInitiator=ID_PLACEHOLDER;
+        //reset voteSuccess
+        voteSuccess = false;
     }
 
     private void hasNotVote(int currentUserID, GamingOperationProtocol gamingOperationProtocol) {
@@ -343,8 +345,9 @@ public class GameProcess {
 
     private void leaveTeam(int currentUserID, int hostID) {
         int index = userIndexSearch(currentUserID);
-        if (hostID == 0 ) {
-            for (Users member: teams.get(currentUserID)){
+        if (currentUserID == hostID) {
+            //team host leaves
+            for (Users member : teams.get(currentUserID)) {
                 teamUpdate(member.getUserID());
             }
             teamStatusUpdate(teams.get(currentUserID), "available");
@@ -352,6 +355,7 @@ public class GameProcess {
             teamsInWait.remove(teams.get(currentUserID));
             teams.remove(currentUserID);
         } else {
+            // other team members leave
             if (teams.containsKey(hostID)) {
                 ArrayList<Users> team = teams.get(hostID);
                 if (team.contains(userList.get(index))) {
@@ -404,7 +408,6 @@ public class GameProcess {
     private void start(int currentUserID) {
         // a game can be started only when team exists (same as Host check) and there is no game in process
         if (teamsInWait.contains(teams.get(currentUserID)) && !gameStart) {
-            gameStart = true;
 
             //initiate game board
             boardInitiation();
@@ -417,10 +420,13 @@ public class GameProcess {
             }
             teamStatusUpdate(team, "in-game");
             //playerID assigned here
-            addPlayers(team);
-            whoseTurn = 1;
-
-            boardUpdate(playersID);
+            if (addPlayers(team)){
+                gameStart = true;
+                whoseTurn = 1;
+                boardUpdate(playersID);
+            }else{
+                error(currentUserID, "Start Failed! Active team members should be no less than 2");
+            }
 
             //broadcast to all online users to update status
             userListToClient();
@@ -431,10 +437,11 @@ public class GameProcess {
 
     private synchronized ArrayList<Users> onlineCheck(ArrayList<Users> team) {
         for (Users member : team) {
-            if (!userList.contains(member)) {
+            if (member == null || (!userList.contains(member))) {
                 team.remove(member);
             }
         }
+        teamUpdate(team.toArray(new Users[team.size()]), ID_PLACEHOLDER, false);
         return team;
     }
 
@@ -520,11 +527,11 @@ public class GameProcess {
     private void teamUpdate(Users[] teamList, int hostID, boolean isAccept) {
         String command = "teamUpdate";
         for (int i = 0; i < teamList.length; i++) {
-                inviteACK(command, hostID, teamList[i].getUserID(), isAccept, teamList);
+            inviteACK(command, hostID, teamList[i].getUserID(), isAccept, teamList);
         }
     }
 
-    private void teamUpdate(int currentUserID){
+    private void teamUpdate(int currentUserID) {
         String command = "teamUpdate";
         inviteACK(command, currentUserID, currentUserID, false, null);
     }
@@ -578,21 +585,28 @@ public class GameProcess {
     }
 
     private void teamStatusUpdate(ArrayList<Users> user, String status) {
-        for (Users member : user) {
-            if (member != null) {
-                member.setStatus(status);
+        if (user != null) {
+            for (Users member : user) {
+                if (member != null) {
+                    member.setStatus(status);
+                }
             }
         }
     }
 
-    private void addPlayers(ArrayList<Users> readyUser) {
-        int sequence = INITIAL_SEQ;
-        playerList = new ArrayList(readyUser.size());
-        playersID = new int[readyUser.size()];
-        for (Users member : readyUser) {
-            playerList.add(new Player(member, sequence));
-            playersID[sequence - 1] = member.getUserID();
-            sequence++;
+    private boolean addPlayers(ArrayList<Users> readyUser) {
+        if (readyUser.size() >= 2) {
+            int sequence = INITIAL_SEQ;
+            playerList = new ArrayList<>();
+            playersID = new int[readyUser.size()];
+            for (Users member : readyUser) {
+                playerList.add(new Player(member, sequence));
+                playersID[sequence - 1] = member.getUserID();
+                sequence++;
+            }
+            return true;
+        } else {
+            return false;
         }
 
     }
@@ -603,7 +617,7 @@ public class GameProcess {
         if (playerList != null) {
             int size = playerList.size();
             Player[] temp = playerList.toArray(new Player[size]);
-            Pack update = new Pack(currentUserID, JSON.toJSONString(new GamingSync(command, temp, whoseTurn, board)));
+            Pack update = new Pack(currentUserID, JSON.toJSONString(new GamingSync(command, temp, whoseTurn, board, voteSuccess)));
             update.setRecipient(playersID);
             EnginePutMsg.getInstance().putMsgToCenter(update);
         }
@@ -616,7 +630,7 @@ public class GameProcess {
         if (playerList != null) {
             int size = playerList.size();
             Player[] temp = playerList.toArray(new Player[size]);
-            Pack update = new Pack(ID_PLACEHOLDER, JSON.toJSONString(new GamingSync(command, temp, whoseTurn, board)));
+            Pack update = new Pack(ID_PLACEHOLDER, JSON.toJSONString(new GamingSync(command, temp, whoseTurn, board,voteSuccess)));
             update.setRecipient(playersID);
             EnginePutMsg.getInstance().putMsgToCenter(update);
             boardUpdate(ID_PLACEHOLDER);
@@ -640,7 +654,7 @@ public class GameProcess {
         }
         int size = winner.size();
         Player[] temp = winner.toArray(new Player[size]);
-        Pack win = new Pack(currentUserID, JSON.toJSONString(new GamingSync(command, temp, whoseTurn, board)));
+        Pack win = new Pack(currentUserID, JSON.toJSONString(new GamingSync(command, temp, whoseTurn, board, voteSuccess)));
         win.setRecipient(playersID);   //multi-cast
         EnginePutMsg.getInstance().putMsgToCenter(win);
         teamStatusUpdate(teams.get(gameHost), "available");
@@ -653,9 +667,11 @@ public class GameProcess {
         whoseTurn = INITIAL_SEQ;
 
         boardInitiation();
-        teamsInWait.remove(teams.get(gameHost));
-        teams.remove(gameHost, teams.get(gameHost));
-        gameHost = ID_PLACEHOLDER;
+        if(teams.containsKey(gameHost)) {
+            teamsInWait.remove(teams.get(gameHost));
+            teams.remove(gameHost, teams.get(gameHost));
+            gameHost = ID_PLACEHOLDER;
+        }
     }
 
 }

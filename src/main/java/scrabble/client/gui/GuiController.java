@@ -13,11 +13,14 @@ import java.util.ArrayList;
 
 public class GuiController {
     public GuiController() {
-        this.revievePack=-1;
+        this.revievePack = -1;
     }
 
     private int revievePack;
     private String username;
+
+
+    private String status;
     private int seq = -1;
     private String id = new String("None");
 
@@ -28,7 +31,7 @@ public class GuiController {
 
     public static synchronized GuiController get() {
         if (instance == null) {
-            synchronized (GuiController.class){
+            synchronized (GuiController.class) {
                 instance = new GuiController();
             }
         }
@@ -43,12 +46,21 @@ public class GuiController {
         loginThread.start();
     }
     */
+    public String getStatus() {
+        return status;
+    }
 
-    public void sendQuitMsg(){
-        String command = "quit";
-        NonGamingProtocol nonGamingProtocol = new NonGamingProtocol();
-        nonGamingProtocol.setCommand(command);
-        GuiSender.get().sendToCenter(nonGamingProtocol);
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public void sendQuitMsg() {
+        if (this.getStatus().equals("in-game")) {
+            String command = "quit";
+            NonGamingProtocol nonGamingProtocol = new NonGamingProtocol();
+            nonGamingProtocol.setCommand(command);
+            GuiSender.get().sendToCenter(nonGamingProtocol);
+        }
     }
 
     void setUserName(String username) {
@@ -108,19 +120,25 @@ public class GuiController {
     synchronized void updateUserList(Users[] userList) {
         // Set user id when first update userList
         if (id.equals("None")) {
-            for (Users user: userList) {
+            for (Users user : userList) {
                 if (user.getUserName().equals(this.username)) {
                     setId(user.getUserID());
                     break;
                 }
             }
         }
-        if(revievePack==-1){
+        if (revievePack == -1) {
             runGameLobbyWindow();
             revievePack++;
         }
 //        gameLobbyWindow.updateUserList(userList);
-        synchronized (gameLobbyWindow){
+        synchronized (gameLobbyWindow) {
+            for (Users user : userList) {
+                if (user.getUserName().equals(this.username)) {
+                    setStatus(user.getStatus());
+                    break;
+                }
+            }
             gameLobbyWindow.updateUserList(userList);
         }
     }
@@ -133,7 +151,7 @@ public class GuiController {
         GameWindow.get().setPlayers(playerList);
         // Set user seq when first update playerList
         if (seq == -1) {
-            for (Player player: playerList) {
+            for (Player player : playerList) {
                 if (player.getUser().getUserName().equals(this.username)) {
                     setSeq(player.getInGameSequence());
                     break;
@@ -141,10 +159,10 @@ public class GuiController {
             }
         }
 
-        synchronized (gameLobbyWindow){
+        synchronized (gameLobbyWindow) {
             gameWindow.updatePlayerList(playerList);
         }
-        }
+    }
 
 
     void showInviteMessage(int inviterId, String inviterName) {
@@ -152,7 +170,7 @@ public class GuiController {
     }
 
     void checkIfStartATurn(int seq) {
-        System.err.println("this = "+ this.seq + "    " + "The turn = " + seq);
+        System.err.println("this = " + this.seq + "    " + "The turn = " + seq);
         GameWindow.get().setGameTurnTitle(seq);
         if (this.seq == seq) {
             System.err.println("My turn");
@@ -185,12 +203,19 @@ public class GuiController {
     }
 
     void invitePlayers(String[] players) {
+        if (this.status.equals("available")){
         NonGamingProtocol nonGamingProtocol = new NonGamingProtocol("inviteOperation", players);
         GuiSender.get().sendToCenter(nonGamingProtocol);
+
+        // set self as current host
+            this.currentHostID = Integer.valueOf(this.id);
+        }
     }
 
     void sendInviteResponse(boolean ack, int inviterId) {
-        this.currentHostID = inviterId;
+        if (ack) {
+            this.currentHostID = inviterId;
+        }
         String[] userList = new String[1];
         NonGamingProtocol nonGamingProtocol = new NonGamingProtocol("inviteResponse", userList);
         nonGamingProtocol.setInviteAccepted(ack);
@@ -231,17 +256,22 @@ public class GuiController {
     }
 
     void sendVote(int[] lastMove, char c, int sx, int sy, int ex, int ey) {
-        BrickPlacing brickPlacing = new BrickPlacing();
-        brickPlacing.setBrick(String.valueOf(c));
-        brickPlacing.setPosition(lastMove);
-        int[] startPosition = new int[2];
-        startPosition[0] = sx;
-        startPosition[1] = sy;
-        int[] endPosition = new int[2];
-        endPosition[0] = ex;
-        endPosition[1] = ey;
-        GamingOperationProtocol gamingProtocol = new GamingOperationProtocol("vote", true, brickPlacing, startPosition, endPosition);
-        GuiSender.get().sendToCenter(gamingProtocol);
+        if (lastMove != null && c != ' ') {
+            BrickPlacing brickPlacing = new BrickPlacing();
+            brickPlacing.setBrick(String.valueOf(c));
+            brickPlacing.setPosition(lastMove);
+            int[] startPosition = new int[2];
+            startPosition[0] = sx;
+            startPosition[1] = sy;
+            int[] endPosition = new int[2];
+            endPosition[0] = ex;
+            endPosition[1] = ey;
+            GamingOperationProtocol gamingProtocol = new GamingOperationProtocol("vote", true, brickPlacing, startPosition, endPosition);
+            GuiSender.get().sendToCenter(gamingProtocol);
+
+            // lock the board after sending vote
+            GameGridPanel.get().setAllowDrag(false);
+        }
     }
 
     void sendVoteResponse(boolean vote) {
@@ -251,11 +281,13 @@ public class GuiController {
         GuiSender.get().sendToCenter(gamingProtocol);
     }
 
-    public void sendLeaveMsg(){
-        NonGamingProtocol nonGamingProtocol = new NonGamingProtocol();
-        nonGamingProtocol.setCommand("leave");
-        nonGamingProtocol.setHostID(currentHostID);
-        GuiSender.get().sendToCenter(nonGamingProtocol);
+    public void sendLeaveMsg() {
+        if (this.getStatus().equals("ready")) {
+            NonGamingProtocol nonGamingProtocol = new NonGamingProtocol();
+            nonGamingProtocol.setCommand("leave");
+            nonGamingProtocol.setHostID(currentHostID);
+            GuiSender.get().sendToCenter(nonGamingProtocol);
+        }
     }
 }
 
