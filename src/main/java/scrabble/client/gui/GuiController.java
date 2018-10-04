@@ -12,7 +12,11 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 public class GuiController {
+    public GuiController() {
+        this.revievePack=-1;
+    }
 
+    private int revievePack;
     private String username;
     private int seq = -1;
     private String id = new String("None");
@@ -111,6 +115,10 @@ public class GuiController {
                 }
             }
         }
+        if(revievePack==-1){
+            runGameLobbyWindow();
+            revievePack++;
+        }
 //        gameLobbyWindow.updateUserList(userList);
         synchronized (gameLobbyWindow){
             gameLobbyWindow.updateUserList(userList);
@@ -172,7 +180,6 @@ public class GuiController {
         selfArray[0] = username;
         NonGamingProtocol nonGamingProtocol = new NonGamingProtocol("login", selfArray);
         GuiSender.get().sendToCenter(nonGamingProtocol);
-        runGameLobbyWindow();
     }
 
     void invitePlayers(String[] players) {

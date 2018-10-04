@@ -4,6 +4,9 @@ public class Player implements Comparable<Player>{
     private Users user;
     private int inGameSequence;  // sequence for gaming turns control
 
+    public Player() {
+    }
+
     public int getInGameSequence() {
         return inGameSequence;
     }

@@ -10,6 +10,10 @@ public class GamingSync extends ScrabbleProtocol {
 //    private int userID;     -----overlapped with Player
     private String FLAG;
 
+    public GamingSync() {
+        super.setTAG("GamingSync");
+    }
+
     public Player[] getPlayerList() {
         return playerList;
     }
