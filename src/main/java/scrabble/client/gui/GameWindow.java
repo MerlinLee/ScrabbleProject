@@ -153,7 +153,7 @@ public class GameWindow implements Runnable {
     void showVoteRequest(int inviterId, int[] startPosition, int[] endPosition) {
         String inviterName = PlayerPanel.get().getPlayerName(inviterId);
         String word = GameGridPanel.get().getWord(startPosition, endPosition);
-        int confirmed = JOptionPane.showConfirmDialog(null, inviterName+"'s Vote:%n" + "Do you agree " + word + " is a word?"
+        int confirmed = JOptionPane.showConfirmDialog(null, inviterName+"'s Vote: "+'\n'+ "Do you agree " + word + " is a word?"
                 ,"Vote", JOptionPane.YES_NO_OPTION);
         if (confirmed == JOptionPane.YES_OPTION) {
             GuiController.get().sendVoteResponse(true);
@@ -165,9 +165,9 @@ public class GameWindow implements Runnable {
 
     void showWinners(Player[] players) {
         String message = new String();
-        message = "Winner:%n";
+        message = "Winner";
         for (Player player: players) {
-            message = message + player.getUser().getUserName() + "  ";
+            message = message + '\n' + player.getUser().getUserName() + "  ";
         }
         showDialog(message);
         frame.dispose();

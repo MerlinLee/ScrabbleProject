@@ -48,6 +48,7 @@ public class GameLobbyWindow implements Runnable {
         userTableModel.addColumn("Id");
         userTableModel.addColumn("Name");
         userTableModel.addColumn("Status");
+        userTableModel.addColumn("Win");
         playerTableModel.addColumn("Id");
         playerTableModel.addColumn("Name");
         playerTableModel.addColumn("Status");
@@ -211,12 +212,13 @@ public class GameLobbyWindow implements Runnable {
     void updateUserList(Users[] userList) {
         clearUserList();
         for (Users user : userList)
-            addToUserList(user.getUserID(), user.getUserName(), user.getStatus());
+            addToUserList(user.getUserID(), user.getUserName(), user.getStatus(), user.getNumWin());
     }
 
-    void addToUserList(int id, String name, String status) {
+    void addToUserList(int id, String name, String status, int numWin) {
         String strId = Integer.toString(id);
-        userTableModel.addRow(new Object[]{strId, name, status});
+        String strNumWin = Integer.toString(numWin);
+        userTableModel.addRow(new Object[]{strId, name, status, strNumWin});
     }
 
     void clearPlayerList() {
@@ -246,7 +248,7 @@ public class GameLobbyWindow implements Runnable {
     }
 
     void showInviteMessage(int inviterId, String inviterName) {
-        int confirmed = JOptionPane.showConfirmDialog(null, inviterName+" ask you to join a game, yes or no?",
+        int confirmed = JOptionPane.showConfirmDialog(null, inviterName +" ask you to join a game, yes or no?",
                 "Invite", JOptionPane.YES_NO_OPTION);
         if (confirmed == JOptionPane.YES_OPTION) {
             GuiController.get().sendInviteResponse(true, inviterId);

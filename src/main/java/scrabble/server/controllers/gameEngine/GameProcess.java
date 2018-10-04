@@ -400,7 +400,7 @@ public class GameProcess {
         }
     }
 
-    private ArrayList<Users> onlineCheck(ArrayList<Users> team) {
+    private  synchronized ArrayList<Users> onlineCheck(ArrayList<Users> team) {
         for (Users member : team) {
             if (!userList.contains(member)) {
                 team.remove(member);
@@ -595,12 +595,13 @@ public class GameProcess {
     private void win(int currentUserID) {
         String command = "win";
         Collections.sort(playerList);
-        int i = 1;
-        if (playerList.get(0).getPoints() == playerList.get(i).getPoints()) {
-            i++;
+        int hi = playerList.size()-1;
+        int i = hi - 1;
+        if (playerList.get(hi).getPoints() == playerList.get(i).getPoints()) {
+            i--;
         }
-        ArrayList<Player> winner = new ArrayList<>(i);
-        for (int j = 0; j < i; j++) {
+        ArrayList<Player> winner = new ArrayList<>();
+        for (int j = hi; j > i; j--) {
             int numWin = playerList.get(j).getUser().getNumWin();
             playerList.get(j).getUser().setNumWin(++numWin);
             winner.add(playerList.get(j));
