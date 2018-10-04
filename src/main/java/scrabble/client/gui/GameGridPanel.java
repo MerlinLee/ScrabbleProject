@@ -33,6 +33,7 @@ public class GameGridPanel extends JPanel{
 
     private boolean allowDrag = false;
     private boolean allowSelectHead = false;
+    private int[] lastMove_bak = new int[2];
 
     private char[][] bbb = new char[GRID_SIZE][GRID_SIZE];
 
@@ -113,7 +114,7 @@ public class GameGridPanel extends JPanel{
     // grid[x][y] ~ grid[x][yend]
     public void headBlink(int i, int j, int x, int y, int iend, int yend) {
         Timer timer1, timer2;
-
+        lastMove_bak=lastMove;
         timer1 = new Timer(500, new ActionListener() {
             private int counter = 0;
             @Override
@@ -151,8 +152,7 @@ public class GameGridPanel extends JPanel{
             grid[i][j].addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent arg0) {
                     if (allowSelectHead) {
-                        GameWindow.get().sendSelect(lastMove, i, j, iend, j); //行起点，列，行终点，列
-                        get().delLastMoveValue();
+                        GameWindow.get().sendSelect(lastMove_bak, i, j, iend, j); //行起点，列，行终点，列
                         timer1.stop();
                         timer2.stop();
                         allowSelectHead = false;
@@ -165,8 +165,7 @@ public class GameGridPanel extends JPanel{
                 grid[x][col].addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent arg0) {
                         if (allowSelectHead) {
-                            GameWindow.get().sendSelect(lastMove, x, y, x, yend); //行起点，列，行终点，列
-                            get().delLastMoveValue();
+                            GameWindow.get().sendSelect(lastMove_bak, x, y, x, yend); //行起点，列，行终点，列
                             timer1.stop();
                             timer2.stop();
                             allowSelectHead = false;
@@ -181,8 +180,7 @@ public class GameGridPanel extends JPanel{
             grid[x][y].addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent arg0) {
                     if (allowSelectHead) {
-                        GameWindow.get().sendSelect(lastMove, x, y, x, yend); //行起点，列，行终点，列
-                        get().delLastMoveValue();
+                        GameWindow.get().sendSelect(lastMove_bak, x, y, x, yend); //行起点，列，行终点，列
                         timer1.stop();
                         timer2.stop();
                         allowSelectHead = false;
@@ -195,8 +193,7 @@ public class GameGridPanel extends JPanel{
                 grid[row][j].addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent arg0) {
                         if (allowSelectHead) {
-                            GameWindow.get().sendSelect(lastMove, i, j, iend, j); //行起点，列，行终点，列
-                            get().delLastMoveValue();
+                            GameWindow.get().sendSelect(lastMove_bak, i, j, iend, j); //行起点，列，行终点，列
                             timer1.stop();
                             timer2.stop();
                             allowSelectHead = false;
@@ -212,8 +209,7 @@ public class GameGridPanel extends JPanel{
             grid[row][j].addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent arg0) {
                     if (allowSelectHead) {
-                        GameWindow.get().sendSelect(lastMove, i, j, iend, j); //行起点，列，行终点，列
-                        get().delLastMoveValue();
+                        GameWindow.get().sendSelect(lastMove_bak, i, j, iend, j); //行起点，列，行终点，列
                         timer1.stop();
                         timer2.stop();
                         allowSelectHead = false;
@@ -227,8 +223,7 @@ public class GameGridPanel extends JPanel{
             grid[x][col].addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent arg0) {
                     if (allowSelectHead) {
-                        GameWindow.get().sendSelect(lastMove, x, y, x, yend); //行，列起点，行，列终点
-                        get().delLastMoveValue();
+                        GameWindow.get().sendSelect(lastMove_bak, x, y, x, yend); //行，列起点，行，列终点
                         timer1.stop();
                         timer2.stop();
                         allowSelectHead = false;
