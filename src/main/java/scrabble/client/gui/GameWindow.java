@@ -25,6 +25,16 @@ public class GameWindow implements Runnable {
     private PlayerPanel playerPanel = PlayerPanel.get();
     private JButton passBtn, voteBtn;
 
+    public Player[] getPlayers() {
+        return players;
+    }
+
+    public void setPlayers(Player[] players) {
+        this.players = players;
+    }
+
+    private Player[] players;
+
     public static class GameWindowHolder {
         private static final GameWindow INSTANCE = new GameWindow();
     }
@@ -153,7 +163,7 @@ public class GameWindow implements Runnable {
     void showVoteRequest(int inviterId, int[] startPosition, int[] endPosition) {
         String inviterName = PlayerPanel.get().getPlayerName(inviterId);
         String word = GameGridPanel.get().getWord(startPosition, endPosition);
-        int confirmed = JOptionPane.showConfirmDialog(null, inviterName+"'s Vote: "+'\n'+ "Do you agree " + word + " is a word?"
+        int confirmed = JOptionPane.showConfirmDialog(null, inviterName+"'s Vote:\n" + "Do you agree " + word + " is a word?"
                 ,"Vote", JOptionPane.YES_NO_OPTION);
         if (confirmed == JOptionPane.YES_OPTION) {
             GuiController.get().sendVoteResponse(true);
@@ -165,15 +175,21 @@ public class GameWindow implements Runnable {
 
     void showWinners(Player[] players) {
         String message = new String();
-        message = "Winner";
+        message = "Winner: \n";
         for (Player player: players) {
-            message = message + '\n' + player.getUser().getUserName() + "  ";
+            message = message + player.getUser().getUserName() + "  ";
         }
         showDialog(message);
         frame.dispose();
     }
 
-    public void setGameTurnTitle(String title){
-        frame.setTitle(title);
+    public void setGameTurnTitle(int title){
+        for (Player player : players){
+            if(player.getInGameSequence()==title){
+                frame.setTitle("Current player: "+player.getUser().getUserName());
+                break;
+            }
+        }
+
     }
 }

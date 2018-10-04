@@ -153,7 +153,7 @@ public class GameLobbyWindow implements Runnable {
             }
         });
 
-        lblNewLabel1 = new JLabel("Current Players:");
+        lblNewLabel1 = new JLabel("Current Team Members:");
         lblNewLabel1.setBounds(240, 20, 103, 16);
         frame.getContentPane().add(lblNewLabel1);
 

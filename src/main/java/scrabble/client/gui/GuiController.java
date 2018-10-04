@@ -130,6 +130,7 @@ public class GuiController {
     }
 
     synchronized void updatePlayerListInGame(Player[] playerList) {
+        GameWindow.get().setPlayers(playerList);
         // Set user seq when first update playerList
         if (seq == -1) {
             for (Player player: playerList) {
@@ -152,7 +153,7 @@ public class GuiController {
 
     void checkIfStartATurn(int seq) {
         System.err.println("this = "+ this.seq + "    " + "The turn = " + seq);
-        GameWindow.get().setGameTurnTitle("Current turn: "+seq);
+        GameWindow.get().setGameTurnTitle(seq);
         if (this.seq == seq) {
             System.err.println("My turn");
             gameWindow.startOneTurn();
