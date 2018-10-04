@@ -12,6 +12,7 @@ public class ErrorProtocol extends ScrabbleProtocol {
 
 
     public ErrorProtocol(String errorMsg, int errorType) {
+        super.setTAG("ErrorProtocol");
         this.errorMsg = errorMsg;
         this.errorType = errorType;
     }
