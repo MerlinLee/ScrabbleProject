@@ -121,7 +121,9 @@ public class GameProcess {
         String command = gamingOperationProtocol.getCommand();
         switch (command) {
             case "vote":
-                if (whoseTurn != currentUserID) {
+                if (whoseTurn == playerList
+                        .get(playerIndexSearch(currentUserID))
+                        .getInGameSequence()) {
                     if (gamingOperationProtocol.isVote()) {
                         hasVote(currentUserID, gamingOperationProtocol);
                     } else {
