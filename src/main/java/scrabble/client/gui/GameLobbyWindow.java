@@ -9,17 +9,10 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-import javax.swing.JFrame;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTextArea;
+import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.JList;
-import javax.swing.JOptionPane;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.table.TableColumn;
 
 public class GameLobbyWindow implements Runnable {
 
@@ -77,9 +70,22 @@ public class GameLobbyWindow implements Runnable {
         frame.setBounds(100, 100, 460, 420);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.getContentPane().setLayout(null);
+        DefaultTableCellRenderer renderer  =  new  DefaultTableCellRenderer();   //set column align center
+        renderer.setHorizontalAlignment(JTextField.CENTER);
+
         userList = new JTable(userTableModel);
+        userList.getColumnModel().getColumn(0).setCellRenderer(renderer);
+        userList.getColumnModel().getColumn(1).setCellRenderer(renderer);
+        userList.getColumnModel().getColumn(2).setCellRenderer(renderer);
+        userList.getColumnModel().getColumn(3).setCellRenderer(renderer);
         userList.setBounds(20, 40, 200, 300);
+        userList.getColumnModel().getColumn(0).setPreferredWidth(28);
+        userList.getColumnModel().getColumn(1).setPreferredWidth(72);
+        userList.getColumnModel().getColumn(2).setPreferredWidth(60);
+        userList.getColumnModel().getColumn(3).setPreferredWidth(40);
+//        userList.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         frame.getContentPane().add(userList);
+
         JScrollPane spUserList = new JScrollPane(userList);
         spUserList.setBounds(20, 40, 200, 300);
         spUserList.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
@@ -139,6 +145,13 @@ public class GameLobbyWindow implements Runnable {
         btnLeave.setBounds(350, 200, 90, 29);
         frame.getContentPane().add(btnLeave);
 
+        btnLeave.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                GuiController.get().sendLeaveMsg();
+            }
+        });
+
         btnStart.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
@@ -158,7 +171,7 @@ public class GameLobbyWindow implements Runnable {
         });
 
         lblNewLabel1 = new JLabel("Current Team Members:");
-        lblNewLabel1.setBounds(240, 20, 103, 16);
+        lblNewLabel1.setBounds(240, 20, 150, 16);
         frame.getContentPane().add(lblNewLabel1);
 
         frame.addWindowListener(new WindowAdapter()
@@ -216,13 +229,12 @@ public class GameLobbyWindow implements Runnable {
     void updateUserList(Users[] userList) {
         clearUserList();
         for (Users user : userList)
-            addToUserList(user.getUserID(), user.getUserName(), user.getStatus(), user.getNumWin());
+            addToUserList(user.getUserID(), user.getUserName(), user.getStatus());
     }
 
-    void addToUserList(int id, String name, String status, int numWin) {
+    void addToUserList(int id, String name, String status) {
         String strId = Integer.toString(id);
-        String strNumWin = Integer.toString(numWin);
-        userTableModel.addRow(new Object[]{strId, name, status, strNumWin});
+        userTableModel.addRow(new Object[]{strId, name, status});
     }
 
     void clearPlayerList() {
@@ -252,7 +264,7 @@ public class GameLobbyWindow implements Runnable {
     }
 
     void showInviteMessage(int inviterId, String inviterName) {
-        int confirmed = JOptionPane.showConfirmDialog(null, inviterName +" ask you to join a game, yes or no?",
+        int confirmed = JOptionPane.showConfirmDialog(null, inviterName+" ask you to join a game, yes or no?",
                 "Invite", JOptionPane.YES_NO_OPTION);
         if (confirmed == JOptionPane.YES_OPTION) {
             GuiController.get().sendInviteResponse(true, inviterId);

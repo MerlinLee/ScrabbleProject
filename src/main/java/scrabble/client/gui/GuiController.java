@@ -23,7 +23,7 @@ public class GuiController {
 
     private GameWindow gameWindow;
     private GameLobbyWindow gameLobbyWindow;
-
+    private int currentHostID;
     private volatile static GuiController instance;
 
     public static synchronized GuiController get() {
@@ -190,6 +190,7 @@ public class GuiController {
     }
 
     void sendInviteResponse(boolean ack, int inviterId) {
+        this.currentHostID = inviterId;
         String[] userList = new String[1];
         NonGamingProtocol nonGamingProtocol = new NonGamingProtocol("inviteResponse", userList);
         nonGamingProtocol.setInviteAccepted(ack);
@@ -248,6 +249,13 @@ public class GuiController {
         int[] empty = new int[2];
         GamingOperationProtocol gamingProtocol = new GamingOperationProtocol("voteResponse", vote, brickPlacing, empty, empty);
         GuiSender.get().sendToCenter(gamingProtocol);
+    }
+
+    public void sendLeaveMsg(){
+        NonGamingProtocol nonGamingProtocol = new NonGamingProtocol();
+        nonGamingProtocol.setCommand("leave");
+        nonGamingProtocol.setHostID(currentHostID);
+        GuiSender.get().sendToCenter(nonGamingProtocol);
     }
 }
 
