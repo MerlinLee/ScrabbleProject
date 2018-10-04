@@ -121,9 +121,9 @@ public class GameProcess {
         String command = gamingOperationProtocol.getCommand();
         switch (command) {
             case "vote":
-                if (whoseTurn == playerList
+                if (gameStart && (whoseTurn == playerList
                         .get(playerIndexSearch(currentUserID))
-                        .getInGameSequence()) {
+                        .getInGameSequence())) {
                     if (gamingOperationProtocol.isVote()) {
                         hasVote(currentUserID, gamingOperationProtocol);
                     } else {
@@ -134,8 +134,10 @@ public class GameProcess {
                 }
                 break;
             case "voteResponse":
+                if (gameStart){
                 numVoted++;
                 playerVoteResponse(gamingOperationProtocol.isVote());
+                }
                 break;
             case "disconnect":
                 disconnect(currentUserID);
@@ -147,25 +149,36 @@ public class GameProcess {
 
     }
 
+    private synchronized void userRemove(Users user){
+        if(userList.contains(user)){
+            db.remove(user.getUserID(),user.getUserName());
+            userList.remove(user);
+        }
+    }
+
     private void disconnect(int currentUserID) {
         if (gameStart == true) {
             win(currentUserID);
-
             //remove disconnected users
-            if (db.containsKey(currentUserID)) {
-                db.remove(currentUserID);
-                userList.remove(userIndexSearch(currentUserID));
-            }
+//            if (db.containsKey(currentUserID)) {
+//                db.remove(currentUserID);
+//                userList.remove(userIndexSearch(currentUserID));
+//            }
+            userRemove(userList.get(userIndexSearch(currentUserID)));
+
             //reset gameEndCheck parameters
             numPass = 0;
 //            gameLoopStartSeq = 0;
-        } else {
+        } else if (db.containsKey(currentUserID)){
             //remove disconnected users
-            if (db.containsKey(currentUserID)) {
-                db.remove(currentUserID);
-                userList.remove(userIndexSearch(currentUserID));
-            }
+            userRemove(userList.get(userIndexSearch(currentUserID)));
+//            if (db.containsKey(currentUserID)) {
+//                db.remove(currentUserID);
+//                userList.remove(userIndexSearch(currentUserID));
+//            }
             userListToClient();
+        }else{
+            //Not exist
         }
     }
 
@@ -320,7 +333,7 @@ public class GameProcess {
                 }
 
             default:
-                error(currentUserID);
+                error(currentUserID,"Unknown Error");
                 break;
         }
     }
@@ -359,18 +372,19 @@ public class GameProcess {
     }
 
     private void start(int currentUserID) {
+        // a game can be started only when team exists (same as Host check) and there is no game in process
         if (teamsInWait.contains(teams.get(currentUserID)) && !gameStart) {
-            //lack check for connected players
             gameStart = true;
 
             //initiate game board
             boardInitiation();
             gameHost = currentUserID;
 
-            teamStatusUpdate(onlineCheck(teams.get(gameHost)), "in-game");
+            ArrayList<Users> team = onlineCheck(teams.get(gameHost));
+            teamStatusUpdate(team, "in-game");
 
             //playerID assigned here
-            addPlayers(teams.get(gameHost));
+            addPlayers(team);
             whoseTurn = 1;
 
             boardUpdate(playersID);
@@ -378,13 +392,13 @@ public class GameProcess {
             //broadcast to all online users to update status
             userListToClient();
         } else {
-            error(currentUserID);
+            error(currentUserID, "Not authorized to start game");
         }
     }
 
     private ArrayList<Users> onlineCheck(ArrayList<Users> team) {
         for (Users member : team) {
-            if (!db.contains(member.getUserName())) {
+            if (!userList.contains(member)) {
                 team.remove(member);
             }
         }
@@ -399,7 +413,7 @@ public class GameProcess {
             //send currentUserList back to client
             userListToClient();
         } else {
-            error(currentUserID);
+            error(currentUserID, "User already Exists");
         }
 
     }
@@ -407,38 +421,44 @@ public class GameProcess {
     private void logout(int currentUserID) {
         if (db.get(currentUserID) != null) {
             if (gameStart) {
-                userList.remove(userIndexSearch(currentUserID));
-                db.remove(currentUserID);
+//                userList.remove(userIndexSearch(currentUserID));
+//                db.remove(currentUserID);
+                userRemove(userList.get(userIndexSearch(currentUserID)));
                 win(currentUserID);
             } else {
-                userList.remove(userIndexSearch(currentUserID));
-                db.remove(currentUserID);
+//                userList.remove(userIndexSearch(currentUserID));
+//                db.remove(currentUserID);
+                userRemove(userList.get(userIndexSearch(currentUserID)));
                 userListToClient();
             }
         } else {
-            error(currentUserID);
+            error(currentUserID, "No such user");
         }
     }
 
 
     private void inviteOperation(int currentUserID, String[] peerList) {
         // initial check the status of user if he or she feels like inviting others
-        if (userList.get(userIndexSearch(currentUserID)).getStatus().equals("available")) {
-            ArrayList<Users> team = new ArrayList<>();  // allow multiple teams in wait
-            team.add(userList.get(userIndexSearch(currentUserID)));
-            userList.get(userIndexSearch(currentUserID)).setStatus("ready"); // status changed when team created
-            int hostID = currentUserID;
-            teamsInWait.add(team);
-            teams.put(hostID, team);
+        // also check if he or she has already created a team
+        if (userList.get(userIndexSearch(currentUserID)).getStatus().equals("available") || teams.containsKey(currentUserID)) {
+           if (!teams.containsKey(currentUserID)) {
+               ArrayList<Users> team = new ArrayList<>();  // allow multiple teams in wait
+               team.add(userList.get(userIndexSearch(currentUserID)));
+               userList.get(userIndexSearch(currentUserID)).setStatus("ready"); // status changed when team created
+               int hostID = currentUserID;
+               teamsInWait.add(team);
+               teams.put(hostID, team);
+           }
 
+           //make envelope and start inviting
             for (String peer : peerList) {
                 if (userList.get(userIndexSearch(peer.trim())).getStatus().equals("available")) {
                     makeEnvelope(currentUserID, peer);
                 }
             }
         } else {
-            //error
-            error(currentUserID);
+            //error, no access error
+            error(currentUserID, "No Access to invite others");
         }
     }
 
@@ -481,9 +501,8 @@ public class GameProcess {
     }
 
 
-    private void error(int currentUserID) {
-        // userID already exists
-        String msg = "Error! This username already exists";  // switch error types
+    private void error(int currentUserID, String msg) {
+         // switch error types
         int errorType = 500; //switch -- (possibly more error types)
         Pack errorMsg = new Pack(currentUserID, JSON.toJSONString(new ErrorProtocol(msg, errorType)));
         EnginePutMsg.getInstance().putMsgToCenter(errorMsg);
