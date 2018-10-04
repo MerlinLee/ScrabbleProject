@@ -1,8 +1,6 @@
 package scrabble.client.gui;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.GridLayout;
+import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
@@ -48,6 +46,7 @@ public class GameGridPanel extends JPanel{
         for (int i = 0; i < GRID_SIZE; i++)
             for (int j = 0; j < GRID_SIZE; j++) {
                 grid[i][j] = new JButton(" ");
+                grid[i][j].setFont(new Font("Arial", Font.PLAIN, 2));
                 grid[i][j].setTransferHandler(new ReceiveTransferHandler(i, j));
                 //grid[i][j].addMouseListener(new RightClickListener(i, j));
                 add(grid[i][j]);
