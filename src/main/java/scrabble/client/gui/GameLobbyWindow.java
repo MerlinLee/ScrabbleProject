@@ -28,6 +28,7 @@ public class GameLobbyWindow implements Runnable {
 
     private JButton btnInvite;
     private JButton btnStart;
+    private JButton btnLeave;
 
     private NonEditableModel userTableModel = new NonEditableModel();
     private NonEditableModel playerTableModel = new NonEditableModel();
@@ -131,9 +132,13 @@ public class GameLobbyWindow implements Runnable {
         spPlayerList.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         frame.getContentPane().add(spPlayerList);
 
-        btnStart = new JButton("Start Game");
-        btnStart.setBounds(280, 200, 120, 29);
+        btnStart = new JButton("Start");
+        btnStart.setBounds(240, 200, 90, 29);
         frame.getContentPane().add(btnStart);
+
+        btnLeave = new JButton("Leave");
+        btnLeave.setBounds(350, 200, 90, 29);
+        frame.getContentPane().add(btnLeave);
 
         btnStart.addActionListener(new ActionListener() {
             @Override
