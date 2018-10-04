@@ -139,6 +139,13 @@ public class GameLobbyWindow implements Runnable {
         btnLeave.setBounds(350, 200, 90, 29);
         frame.getContentPane().add(btnLeave);
 
+        btnLeave.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                GuiController.get().sendLeaveMsg();
+            }
+        });
+
         btnStart.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
