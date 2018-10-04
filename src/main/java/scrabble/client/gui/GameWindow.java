@@ -48,6 +48,13 @@ public class GameWindow implements Runnable {
      */
     private void initialize() {
         frame = new JFrame();
+        frame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                GuiController.get().sendQuitMsg();
+
+            }
+        });
         frame.setTitle("Scrabble Game");
         frame.setSize(860, 740);
         frame.setResizable(false);
@@ -164,4 +171,6 @@ public class GameWindow implements Runnable {
         showDialog(message);
         frame.dispose();
     }
+
+
 }

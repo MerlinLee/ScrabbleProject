@@ -40,6 +40,13 @@ public class GuiController {
     }
     */
 
+    public void sendQuitMsg(){
+        String command = "quit";
+        NonGamingProtocol nonGamingProtocol = new NonGamingProtocol();
+        nonGamingProtocol.setCommand(command);
+        GuiSender.get().sendToCenter(nonGamingProtocol);
+    }
+
     void setUserName(String username) {
         this.username = username;
     }
