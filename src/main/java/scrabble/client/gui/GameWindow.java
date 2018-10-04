@@ -56,7 +56,7 @@ public class GameWindow implements Runnable {
 
             }
         });
-        frame.setTitle("Scrabble Game");
+        frame.setTitle("Scrabble Game "+GuiController.get().getUsername());
         frame.setSize(860, 740);
         frame.setResizable(false);
         frame.setLocationRelativeTo(null);

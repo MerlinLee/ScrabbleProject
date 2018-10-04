@@ -166,6 +166,8 @@ public class GameLobbyWindow implements Runnable {
                 System.exit(0);
             }
         });
+
+        frame.setTitle(GuiController.get().getUsername());
     }
 
     public class NonEditableModel extends DefaultTableModel {
