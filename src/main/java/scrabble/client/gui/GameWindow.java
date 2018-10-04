@@ -130,7 +130,7 @@ public class GameWindow implements Runnable {
         GuiController.get().sendVote(lastMove, c, sx, sy, ex, ey);
     }
 
-    void updatePlayerList(Player[] playerList) {
+    synchronized void updatePlayerList(Player[] playerList) {
         playerPanel.updatePlayerList(playerList);
     }
 

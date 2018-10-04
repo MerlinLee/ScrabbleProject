@@ -104,7 +104,10 @@ public class GuiController {
                 }
             }
         }
-        gameLobbyWindow.updateUserList(userList);
+//        gameLobbyWindow.updateUserList(userList);
+        synchronized (gameLobbyWindow){
+            gameLobbyWindow.updateUserList(userList);
+        }
     }
 
     synchronized void updatePlayerListInLobby(Users[] users) {
