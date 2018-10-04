@@ -11,6 +11,8 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
 import java.awt.BorderLayout;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 
@@ -102,18 +104,41 @@ public class LoginWindow implements Runnable {
         login.setBounds(130, 135, 90, 30);
         frame.getContentPane().add(login);
 
+        KeyListener keyListener = new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+                if (e.getKeyChar() == KeyEvent.VK_ENTER){
+                    loginAction();
+                }
+            }
+        };
+        login.addKeyListener(keyListener);
         login.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
-                String address = ip.getText();
-                String portStr = port.getText();
-                String userNameStr = userName.getText();
-                center.openNet(address, Integer.parseInt(portStr), userNameStr);
-                showDialog(userNameStr);
-                //clientManager.openSocket(address, portStr, userNameStr);
-                GuiController.get().setUserName(userNameStr);
-                GuiController.get().loginGame();
+                loginAction();
             }
         });
+    }
+
+    void loginAction(){
+        String address = ip.getText();
+        String portStr = port.getText();
+        String userNameStr = userName.getText();
+        center.openNet(address, Integer.parseInt(portStr), userNameStr);
+        showDialog(userNameStr);
+        //clientManager.openSocket(address, portStr, userNameStr);
+        GuiController.get().setUserName(userNameStr);
+        GuiController.get().loginGame();
     }
 }
