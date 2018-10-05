@@ -11,6 +11,7 @@ public class InviteACK extends ScrabbleProtocol {
     private Users[] teamList;
 
     public InviteACK() {
+        super.setTAG("InviteACK");
     }
 
 
