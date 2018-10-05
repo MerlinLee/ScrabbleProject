@@ -48,13 +48,6 @@ public class GamingSync extends ScrabbleProtocol {
     public void setBoard(char[][] board) {
         this.board = board;
     }
-//    public int getUserID() {
-//        return userID;
-//    }
-//
-//    public void setUserID(int userID) {
-//        this.userID = userID;
-//    }
 
     public String getFLAG() {
         return FLAG;
@@ -64,25 +57,17 @@ public class GamingSync extends ScrabbleProtocol {
         this.FLAG = FLAG;
     }
 
-    public boolean[] getIsSuccess() {
-        return isSuccess;
+    public boolean getVoteSuccess() {
+        return voteSuccess;
     }
 
-    public void setIsSuccess(boolean[] isSuccess) {
-        this.isSuccess = isSuccess;
+    public void setVoteSuccess(boolean voteSuccess) {
+        this.voteSuccess = voteSuccess;
     }
-
-//    public Users[] getCurrentUsersList() {
-//        return CurrentUsersList;
-//    }
-//
-//    public void setCurrentUsersList(Users[] currentUsersList) {
-//        CurrentUsersList = currentUsersList;
-//    }
 
     //first cell is about successful packet transmission
     //Second cell is about vote result.
-    private boolean[] isSuccess = new boolean[2];
+    private boolean voteSuccess;
 
     /*Contain score....
     *
@@ -90,18 +75,19 @@ public class GamingSync extends ScrabbleProtocol {
     private Player[] playerList;  //previously be Users[] currentUserList
 
     // new add  -- 9.28
-    private char[][] board = new char[20][20];
+    private char[][] board;
 
 
 
     // whose turn??  int turn
     private int nextTurn;
 
-    public GamingSync(String command, Player[] playerList,int nextTurn, char[][] board) {
+    public GamingSync(String command, Player[] playerList,int nextTurn, char[][] board, boolean voteSuccess) {
         super.setTAG("GamingSync");
         this.nextTurn = nextTurn;
         this.command = command;
         this.playerList = playerList;
         this.board = board;
+        this.voteSuccess = voteSuccess;
     }
 }

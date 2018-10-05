@@ -91,6 +91,9 @@ public class GuiListener {
 
                 //remove team
                 GameLobbyWindow.get().clearPlayerList();
+
+                //reset game parameters
+                GuiController.get().resetGame();
                 break;
             case "start":
                 // update team status

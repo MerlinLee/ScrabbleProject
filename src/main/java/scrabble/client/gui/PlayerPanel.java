@@ -1,6 +1,7 @@
 package scrabble.client.gui;
 
 import scrabble.Models.Player;
+import scrabble.client.Gui;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -59,9 +60,10 @@ public class PlayerPanel extends JPanel {
         String name = player.getUser().getUserName();
         String score = Integer.toString(player.getPoints());
         playerTableModel.addRow(new Object[]{strId, name, score});
-        if (player.getPoints() != 0) {
-            GameWindow.get().showDialog("The vote is successful!");
-        }
+        //logic error
+//        if (player.getPoints() != 0) {
+//            GameWindow.get().showDialog("The vote is successful!");
+//        }
     }
 
     public class NonEditableModel extends DefaultTableModel {
