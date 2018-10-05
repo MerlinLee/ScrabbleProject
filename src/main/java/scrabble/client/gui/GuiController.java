@@ -203,7 +203,7 @@ public class GuiController {
     }
 
     void invitePlayers(String[] players) {
-        if (this.status.equals("available")){
+        if (this.status.equals("available") || this.id.equals(Integer.toString(currentHostID))){
         NonGamingProtocol nonGamingProtocol = new NonGamingProtocol("inviteOperation", players);
         GuiSender.get().sendToCenter(nonGamingProtocol);
 
@@ -288,6 +288,10 @@ public class GuiController {
             nonGamingProtocol.setHostID(currentHostID);
             GuiSender.get().sendToCenter(nonGamingProtocol);
         }
+    }
+
+    public void retGame(){
+        this.seq = -1;
     }
 }
 

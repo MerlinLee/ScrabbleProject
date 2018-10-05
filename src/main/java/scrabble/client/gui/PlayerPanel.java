@@ -1,6 +1,7 @@
 package scrabble.client.gui;
 
 import scrabble.Models.Player;
+import scrabble.client.Gui;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -60,9 +61,9 @@ public class PlayerPanel extends JPanel {
         String score = Integer.toString(player.getPoints());
         playerTableModel.addRow(new Object[]{strId, name, score});
         //logic error
-        if (player.getPoints() != 0) {
-            GameWindow.get().showDialog("The vote is successful!");
-        }
+//        if (player.getPoints() != 0) {
+//            GameWindow.get().showDialog("The vote is successful!");
+//        }
     }
 
     public class NonEditableModel extends DefaultTableModel {
@@ -81,12 +82,13 @@ public class PlayerPanel extends JPanel {
                 if (index != -1) {
                     int lastScore = Integer.parseInt(playerList.getValueAt(index, 2).toString());
                     if (player.getPoints() != lastScore) {
-                        GameWindow.get().showDialog("The vote is successful!");
+//                        GameWindow.get().showDialog("The vote is successful!");
+                        GuiController.gameWindow.showDialog("The vote is successful!");
                     }
                     playerList.setValueAt(Integer.toString(player.getPoints()), index, 2);
                 }
                 else {
-//                    addToPlayerList(player);
+                    addToPlayerList(player);
                 }
             }
         }

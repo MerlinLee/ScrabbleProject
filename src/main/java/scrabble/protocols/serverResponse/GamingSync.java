@@ -48,13 +48,6 @@ public class GamingSync extends ScrabbleProtocol {
     public void setBoard(char[][] board) {
         this.board = board;
     }
-//    public int getUserID() {
-//        return userID;
-//    }
-//
-//    public void setUserID(int userID) {
-//        this.userID = userID;
-//    }
 
     public String getFLAG() {
         return FLAG;
@@ -68,17 +61,9 @@ public class GamingSync extends ScrabbleProtocol {
         return voteSuccess;
     }
 
-    public void setVoteSuccess(boolean[] isSuccess) {
+    public void setVoteSuccess(boolean voteSuccess) {
         this.voteSuccess = voteSuccess;
     }
-
-//    public Users[] getCurrentUsersList() {
-//        return CurrentUsersList;
-//    }
-//
-//    public void setCurrentUsersList(Users[] currentUsersList) {
-//        CurrentUsersList = currentUsersList;
-//    }
 
     //first cell is about successful packet transmission
     //Second cell is about vote result.
@@ -90,7 +75,7 @@ public class GamingSync extends ScrabbleProtocol {
     private Player[] playerList;  //previously be Users[] currentUserList
 
     // new add  -- 9.28
-    private char[][] board = new char[20][20];
+    private char[][] board;
 
 
 
