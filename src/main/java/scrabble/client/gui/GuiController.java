@@ -290,7 +290,7 @@ public class GuiController {
         }
     }
 
-    public void retGame(){
+    public void resetGame(){
         this.seq = -1;
     }
 }

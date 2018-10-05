@@ -82,8 +82,7 @@ public class PlayerPanel extends JPanel {
                 if (index != -1) {
                     int lastScore = Integer.parseInt(playerList.getValueAt(index, 2).toString());
                     if (player.getPoints() != lastScore) {
-//                        GameWindow.get().showDialog("The vote is successful!");
-                        GuiController.gameWindow.showDialog("The vote is successful!");
+                        GameWindow.get().showDialog("The vote is successful!");
                     }
                     playerList.setValueAt(Integer.toString(player.getPoints()), index, 2);
                 }

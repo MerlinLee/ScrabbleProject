@@ -102,6 +102,7 @@ public class GameProcess {
                     gamingOperation(currentUserID, JSON.parseObject(msg, GamingOperationProtocol.class));
                     break;
                 default:
+                    userListToClient();
                     break;
             }
         }
@@ -418,14 +419,16 @@ public class GameProcess {
             } catch (Exception e) {
 
             }
-            teamStatusUpdate(team, "in-game");
+
             //playerID assigned here
             if (addPlayers(team)){
+                teamStatusUpdate(team, "in-game");
                 gameStart = true;
                 whoseTurn = 1;
                 boardUpdate(playersID);
             }else{
                 error(currentUserID, "Start Failed! Active team members should be no less than 2");
+                userListToClient();
             }
 
             //broadcast to all online users to update status
@@ -499,6 +502,7 @@ public class GameProcess {
         } else {
             //error, no access error
             error(currentUserID, "No Access to invite others");
+            userListToClient();
         }
     }
 
