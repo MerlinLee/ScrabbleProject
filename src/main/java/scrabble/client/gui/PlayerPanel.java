@@ -11,14 +11,31 @@ public class PlayerPanel extends JPanel {
 
     private static final long serialVersionUID = 1L;
     private JTable playerList;
-
     private NonEditableModel playerTableModel = new NonEditableModel();
 
+    /*
     public static class PlayerPanelHolder {
         private static final PlayerPanel INSTANCE = new PlayerPanel();
     }
 
+    public static final PlayerPanel get() {
+        return PlayerPanelHolder.INSTANCE;
+    }
+    */
+
+    private volatile static PlayerPanel instance = null;
+
+    public static synchronized PlayerPanel get() {
+        if (instance == null) {
+            synchronized (PlayerPanel.class) {
+                instance = new PlayerPanel();
+            }
+        }
+        return instance;
+    }
+
     private PlayerPanel() {
+
         this.setSize(190, 300);
         setLayout(null);
 
@@ -36,8 +53,8 @@ public class PlayerPanel extends JPanel {
         add(spPlayerList);
     }
 
-    public static final PlayerPanel get() {
-        return PlayerPanelHolder.INSTANCE;
+    void setToNull() {
+        instance = null;
     }
 
     private int getIndexInPlayerList(int id) {
@@ -70,6 +87,13 @@ public class PlayerPanel extends JPanel {
         @Override
         public boolean isCellEditable(int row, int column) {
             return false;
+        }
+    }
+
+    void clearPlayerList() {
+        int rowCount = playerTableModel.getRowCount();
+        for (int i = rowCount - 1; i >= 0; i--) {
+            playerTableModel.removeRow(i);
         }
     }
 

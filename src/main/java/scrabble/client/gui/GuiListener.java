@@ -40,7 +40,7 @@ public class GuiListener {
     }
 
     public synchronized void addMessage(String str) {
-        //System.out.println(str);
+        //System.err.println("MSG FROM S" + str);
         ScrabbleProtocol scrabbleProtocol = JSON.parseObject(str, ScrabbleProtocol.class);
         String tag = scrabbleProtocol.getTAG();
         switch (tag) {
@@ -105,7 +105,6 @@ public class GuiListener {
                     i++;
                 }
                 GuiController.get().updatePlayerListInLobby(users);
-                //
                 GuiController.get().runGameWindow();
                 break;
             default:

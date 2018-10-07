@@ -20,14 +20,10 @@ import java.util.ArrayList;
 public class GameWindow implements Runnable {
 
     private JFrame frame;
-    private GameGridPanel gridPanel = GameGridPanel.get();
-    private GameAlphabet alphabetPanel = GameAlphabet.get();
-    private PlayerPanel playerPanel = PlayerPanel.get();
+    private GameGridPanel gridPanel;
+    private GameAlphabet alphabetPanel;
+    private PlayerPanel playerPanel;
     private JButton passBtn, voteBtn;
-
-    public Player[] getPlayers() {
-        return players;
-    }
 
     public void setPlayers(Player[] players) {
         this.players = players;
@@ -35,21 +31,40 @@ public class GameWindow implements Runnable {
 
     private Player[] players;
 
+    /*
     public static class GameWindowHolder {
         private static final GameWindow INSTANCE = new GameWindow();
-    }
-
-    private GameWindow() {
-
     }
 
     public static final GameWindow get() {
         return GameWindowHolder.INSTANCE;
     }
+    */
+
+    private GameWindow() {
+        gridPanel = GameGridPanel.get();
+        alphabetPanel = GameAlphabet.get();
+        playerPanel = PlayerPanel.get();
+        initialize();
+    }
+
+    private volatile static GameWindow instance = null;
+
+    public static synchronized GameWindow get() {
+        if (instance == null) {
+            synchronized (GameWindow.class) {
+                instance = new GameWindow();
+            }
+        }
+        return instance;
+    }
+
+    private void setToNull() {
+        instance = null;
+    }
 
     @Override
     public void run() {
-        initialize();
         this.frame.setVisible(true);
     }
 
@@ -96,7 +111,7 @@ public class GameWindow implements Runnable {
                 int[] lastMove = gridPanel.getLastMove();
                 if (lastMove[0] != -1 && lastMove[1] != -1) {
                     // Placing but pass
-                    System.err.println("sendPass: " + gridPanel.getCharacter(lastMove[0], lastMove[1]));
+                    //System.err.println("sendPass: " + gridPanel.getCharacter(lastMove[0], lastMove[1]));
                     GuiController.get().sendPass(lastMove, gridPanel.getCharacter(lastMove[0], lastMove[1]));
                     gridPanel.drawUneditable(lastMove[0], lastMove[1]);
                     gridPanel.delLastMoveValue();
@@ -106,42 +121,42 @@ public class GameWindow implements Runnable {
                     GuiController.get().sendPass(lastMove, '0');
                 }
                 gridPanel.setAllowDrag(false);
-                System.err.println("set to false 3");
+                //System.err.println("set to false 3");
             }
         });
 
         voteBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
+                //System.out.println("Click Vote!!!!");
                 int[] lastMove = gridPanel.getLastMove();
                 gridPanel.drawUneditable(lastMove[0], lastMove[1]);
                 gridPanel.getSelectArea();
 //                gridPanel.delLastMoveValue();
                 gridPanel.setAllowDrag(false);
-                System.err.println("set to false 2");
+                //System.err.println("set to false 2");
             }
         });
 
-        frame.addWindowListener(new WindowAdapter()
-        {
-            public void windowClosing(WindowEvent e)
-            {
-                super.windowClosing(e);
-                //GuiController.get().quitGame();
+        frame.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent windowEvent) {
                 frame.dispose();
+                clearGameWindow();
             }
         });
     }
+
+
+    void clearGameWindow() {
+        gridPanel.clearGrid();
+        playerPanel.clearPlayerList();
+    }
+
 
     void startOneTurn() {
-        System.err.println("set to true 1");
+        //System.err.println("set to true 1");
         gridPanel.setAllowDrag(true);
     }
-
-    /*
-    void placingChar(int[] lastMove, char c) {
-        clientManager.placingChar(lastMove, c);
-    }
-    */
 
     void sendSelect(int[] lastMove, int sx, int sy, int ex, int ey) {
         char c = gridPanel.getCharacter(lastMove[0], lastMove[1]);
@@ -161,8 +176,8 @@ public class GameWindow implements Runnable {
     }
 
     void showVoteRequest(int inviterId, int[] startPosition, int[] endPosition) {
-        String inviterName = PlayerPanel.get().getPlayerName(inviterId);
-        String word = GameGridPanel.get().getWord(startPosition, endPosition);
+        String inviterName = playerPanel.getPlayerName(inviterId);
+        String word = gridPanel.getWord(startPosition, endPosition);
         int confirmed = JOptionPane.showConfirmDialog(null, inviterName+"'s Vote:\n" + "Do you agree " + word + " is a word?"
                 ,"Vote", JOptionPane.YES_NO_OPTION);
         if (confirmed == JOptionPane.YES_OPTION) {
@@ -181,11 +196,13 @@ public class GameWindow implements Runnable {
         }
         showDialog(message);
         frame.dispose();
+        clearGameWindow();
     }
 
     public void setGameTurnTitle(int title){
         for (Player player : players){
             if(player.getInGameSequence()==title){
+                //System.err.println("frame: " + frame);
                 frame.setTitle("Current player: "+player.getUser().getUserName());
                 break;
             }

@@ -35,13 +35,29 @@ public class GameGridPanel extends JPanel{
     private boolean allowSelectHead = false;
     private int[] lastMove_bak = new int[2];
 
-    private char[][] bbb = new char[GRID_SIZE][GRID_SIZE];
-
+    /*
     public static class GameGridPanelHolder {
         private static final GameGridPanel INSTANCE = new GameGridPanel();
     }
 
+    public static final GameGridPanel get() {
+        return GameGridPanelHolder.INSTANCE;
+    }
+    */
+
+    private volatile static GameGridPanel instance = null;
+
+    public static synchronized GameGridPanel get() {
+        if (instance == null) {
+            synchronized (GameGridPanel.class) {
+                instance = new GameGridPanel();
+            }
+        }
+        return instance;
+    }
+
     private GameGridPanel() {
+
         this.setSize(600, 600);
         setLayout(new GridLayout(GRID_SIZE, GRID_SIZE));
 
@@ -49,13 +65,12 @@ public class GameGridPanel extends JPanel{
             for (int j = 0; j < GRID_SIZE; j++) {
                 grid[i][j] = new JButton(" ");
                 grid[i][j].setTransferHandler(new ReceiveTransferHandler(i, j));
-                //grid[i][j].addMouseListener(new RightClickListener(i, j));
                 add(grid[i][j]);
             }
     }
 
-    public static final GameGridPanel get() {
-        return GameGridPanelHolder.INSTANCE;
+    void setToNull() {
+        instance = null;
     }
 
     private boolean isInGrid(int i, int j) {
@@ -90,13 +105,27 @@ public class GameGridPanel extends JPanel{
             for (int j = startCol; j <= endCol; j++) {
                 grid[i][j].setBackground(color);
                 grid[i][j].setOpaque(true);
-                grid[i][j].setBorderPainted(false);
+                //grid[i][j].setBorderPainted(false);
             }
         }
     }
 
-    public void resetToDefault() {
-        get().delLastMoveValue();
+    public void clearGrid() {
+        for (int i = 0; i < GRID_SIZE; i++)
+            for (int j = 0; j < GRID_SIZE; j++) {
+                setButtonToDefault(grid[i][j]);
+            }
+    }
+
+    private void setButtonToDefault(JButton button) {
+        button.setText(" ");
+        button.setBackground(UIManager.getColor("Button.background"));
+        button.setOpaque(false);
+        button.setBorder(UIManager.getBorder("Button.border"));
+    }
+
+    private void resetToDefault() {
+        delLastMoveValue();
         for (int i = vHead; i <= vTail; i++) {
             grid[i][vJ].setBackground(UIManager.getColor("Button.background"));
             grid[i][vJ].setOpaque(false);
@@ -126,7 +155,6 @@ public class GameGridPanel extends JPanel{
                 } else {
                     grid[i][j].setBackground(new Color(224, 255, 255));
                 }
-                System.out.printf("Blink1: %d %d", i, j);
                 System.out.println();
             }
         });
@@ -143,7 +171,6 @@ public class GameGridPanel extends JPanel{
                 else {
                     grid[x][y].setBackground(new Color(240, 255, 240));
                 }
-                System.out.printf("Blink2: %d %d", x, y);
                 System.out.println();
             }
         });
@@ -274,13 +301,6 @@ public class GameGridPanel extends JPanel{
         headBlink(vHead, vJ, hI, hHead, vTail, hTail);
     }
 
-    /*
-    private void delOutline(int i, int j) {
-        JButton btn = grid[i][j];
-        btn.setBorder(UIManager.getBorder("Button.border"));
-    }
-    */
-
     public void drawUneditable(int i, int j) {
         JButton btn = grid[i][j];
 //        System.err.println(btn.getText()+"MMMMMerlin");
@@ -294,29 +314,6 @@ public class GameGridPanel extends JPanel{
         Border roundedBorder = new LineBorder(Color.PINK, 2, true);
         btn.setBorder(roundedBorder);
     }
-
-    /*
-    public class RightClickListener extends MouseAdapter {
-        private int rowIndex, colIndex;
-
-        public RightClickListener(int i, int j) {
-            rowIndex = i;
-            colIndex = j;
-        }
-
-        public void mouseClicked(MouseEvent e) {
-            if (SwingUtilities.isRightMouseButton(e)) {
-                if (rowIndex == lastMove[0] && colIndex == lastMove[1]) {
-                    JButton btn = (JButton) e.getSource();
-                    btn.setText(" ");
-                    delOutline(rowIndex, colIndex);
-                    //gameWindow.placingChar(lastMove, ' ');
-                    --num;
-                }
-            }
-        }
-    }
-    */
 
     public class ReceiveTransferHandler extends TransferHandler {
 
@@ -338,28 +335,15 @@ public class GameGridPanel extends JPanel{
         @Override
         public boolean canImport(TransferSupport support) {
             boolean flag = support.isDataFlavorSupported(DataFlavor.stringFlavor) && allowDrag;
-            System.err.print("Flag to allowDrag: ");
-            if (flag) {
-                System.err.println("True");
-            }
-            else
-                System.err.println("False");
             Component comp = support.getComponent();
             if (!((JButton) comp).getText().equals(" ")) {
                 flag = false;
-                System.err.println("Flag to false 1");
-                System.err.println("in grid" + (int)((JButton) comp).getText().charAt(0));
-                System.err.println("length" + ((JButton) comp).getText().length());
-                System.err.println("ppp" + (int)" ".charAt(0));
+                //System.err.println("Flag to false 1");
             }
             if (isEmpty(rowIndex-1, colIndex) && isEmpty(rowIndex, colIndex-1) && isEmpty(rowIndex+1, colIndex) && isEmpty(rowIndex, colIndex+1) && num!=0) {
                 flag = false;
-                System.err.println("Flag to false 2");
+                //System.err.println("Flag to false 2");
             }
-            if (flag == true)
-                System.err.println("can!");
-            else
-                System.err.println("cannot!");
             return flag;
         }
 
@@ -375,8 +359,7 @@ public class GameGridPanel extends JPanel{
                             lastMove[0] = rowIndex;
                             lastMove[1] = colIndex;
                             allowDrag = false;
-                            System.err.println("set to false");
-                            //GameWindow.get().placingChar(lastMove, str.toString().charAt(0));
+                            //System.err.println("set to false");
                             drawCurOutline(rowIndex, colIndex);
                             return true;
                         }
@@ -398,10 +381,16 @@ public class GameGridPanel extends JPanel{
     }
 
     void updateBoard(char[][] board) {
-        bbb = board;
+        num = 0;
         for (int i = 0; i < GRID_SIZE; i++) {
             for (int j = 0; j < GRID_SIZE; j++) {
                 grid[i][j].setText(Character.toString(board[i][j]));
+                if (!Character.toString(board[i][j]).equals(" ")) {
+                    ++num;
+                    Border roundedBorder = new LineBorder(Color.GRAY, 2, true);
+                    grid[i][j].setBorder(roundedBorder);
+                    grid[i][j].setForeground(Color.DARK_GRAY);
+                }
             }
         }
     }
