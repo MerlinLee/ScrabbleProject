@@ -27,7 +27,7 @@ public class GuiSender {
     public void sendToCenter(ScrabbleProtocol scrabbleProtocol) {
         try {
             String json = JSON.toJSONString(scrabbleProtocol);
-            System.out.println(json);
+            System.err.println("SEND TO S: " + json);
             //System.out.println("Trans before send");
             //NonGamingProtocol protocol = (NonGamingProtocol) scrabbleProtocol;
             //System.out.println(JSON.toJSONString(protocol));

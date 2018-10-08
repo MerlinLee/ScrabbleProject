@@ -19,13 +19,13 @@ public class GuiController {
     private int revievePack;
     private String username;
 
+    private GameWindow gameWindow;
+
 
     private String status;
     private int seq = -1;
     private String id = new String("None");
 
-    private GameWindow gameWindow;
-    private GameLobbyWindow gameLobbyWindow;
     private int currentHostID;
     private volatile static GuiController instance;
 
@@ -38,14 +38,6 @@ public class GuiController {
         return instance;
     }
 
-    /*
-    ClientController() {
-        loginWindow = LoginWindow.get();
-        loginWindow.setClient(this);
-        Thread loginThread = new Thread(loginWindow);
-        loginThread.start();
-    }
-    */
     public String getStatus() {
         return status;
     }
@@ -88,33 +80,25 @@ public class GuiController {
     }
 
     private void runGameLobbyWindow() {
-        gameLobbyWindow = GameLobbyWindow.get();
-        gameLobbyWindow.setModel();
-        Thread lobbyThread = new Thread(gameLobbyWindow);
+        gameWindow = GameWindow.get();
+        GameLobbyWindow.get().setModel();
+        Thread lobbyThread = new Thread(GameLobbyWindow.get());
         lobbyThread.start();
     }
 
     public void runGameWindow() {
-        gameWindow = GameWindow.get();
+        //gameWindow = new GameWindow();
+        //gameWindow.clearGameWindow();
         Thread gameThread = new Thread(gameWindow);
         gameThread.start();
     }
-
-    /*
-    void quitGame() {
-        String[] selfArray = new String[1];
-        selfArray[0] = username;
-        NonGamingProtocol nonGamingProtocol = new NonGamingProtocol("quit", selfArray);
-        GuiSender.get().sendToCenter(nonGamingProtocol);
-    }
-    */
 
     /*
         Show Server Response
      */
 
     void showInviteACK(int id) {
-        gameLobbyWindow.showRefuseInvite(id);
+        GameLobbyWindow.get().showRefuseInvite(id);
     }
 
     synchronized void updateUserList(Users[] userList) {
@@ -132,23 +116,23 @@ public class GuiController {
             revievePack++;
         }
 //        gameLobbyWindow.updateUserList(userList);
-        synchronized (gameLobbyWindow) {
+        synchronized (GameLobbyWindow.get()) {
             for (Users user : userList) {
                 if (user.getUserName().equals(this.username)) {
                     setStatus(user.getStatus());
                     break;
                 }
             }
-            gameLobbyWindow.updateUserList(userList);
+            GameLobbyWindow.get().updateUserList(userList);
         }
     }
 
     synchronized void updatePlayerListInLobby(Users[] users) {
-        gameLobbyWindow.updatePlayerList(users);
+        GameLobbyWindow.get().updatePlayerList(users);
     }
 
     synchronized void updatePlayerListInGame(Player[] playerList) {
-        GameWindow.get().setPlayers(playerList);
+        gameWindow.setPlayers(playerList);
         // Set user seq when first update playerList
         if (seq == -1) {
             for (Player player : playerList) {
@@ -159,21 +143,20 @@ public class GuiController {
             }
         }
 
-        synchronized (gameLobbyWindow) {
+        synchronized (GameLobbyWindow.get()) {
             gameWindow.updatePlayerList(playerList);
         }
     }
 
 
     void showInviteMessage(int inviterId, String inviterName) {
-        gameLobbyWindow.showInviteMessage(inviterId, inviterName);
+        GameLobbyWindow.get().showInviteMessage(inviterId, inviterName);
     }
 
     void checkIfStartATurn(int seq) {
-        System.err.println("this = " + this.seq + "    " + "The turn = " + seq);
-        GameWindow.get().setGameTurnTitle(seq);
+        //System.err.println("this = " + this.seq + "    " + "The turn = " + seq + "\n");
+        gameWindow.setGameTurnTitle(seq);
         if (this.seq == seq) {
-            System.err.println("My turn");
             gameWindow.startOneTurn();
         }
     }
@@ -270,7 +253,8 @@ public class GuiController {
             GuiSender.get().sendToCenter(gamingProtocol);
 
             // lock the board after sending vote
-            GameGridPanel.get().setAllowDrag(false);
+            ////////////////!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            /////GameGridPanel.get().setAllowDrag(false);
         }
     }
 
