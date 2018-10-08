@@ -423,9 +423,12 @@ public class GameProcess {
             //playerID assigned here
             if (addPlayers(team)){
                 teamStatusUpdate(team, "in-game");
+
                 gameStart = true;
                 whoseTurn = 1;
+
                 boardUpdate(playersID);
+                boardUpdate(currentUserID);
             }else{
                 error(currentUserID, "Start Failed! Active team members should be no less than 2");
                 userListToClient();
@@ -525,6 +528,8 @@ public class GameProcess {
             int size = teams.get(hostID).size();
             Users[] teamList = teams.get(hostID).toArray(new Users[size]);
             inviteACK(command, currentUserID, hostID, isAccept, teamList);
+
+            userListToClient();
         }
     }
 
@@ -646,9 +651,10 @@ public class GameProcess {
         String command = "win";
         Collections.sort(playerList);
         int hi = playerList.size() - 1;
-        int i = hi - 1;
-        if (playerList.get(hi).getPoints() == playerList.get(i).getPoints()) {
-            i--;
+        int i;
+        for (i = hi-1; i>=0; i--)
+        if (playerList.get(hi).getPoints() != playerList.get(i).getPoints()) {
+            break;
         }
         ArrayList<Player> winner = new ArrayList<>();
         for (int j = hi; j > i; j--) {

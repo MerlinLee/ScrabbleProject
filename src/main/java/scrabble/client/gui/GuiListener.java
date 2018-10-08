@@ -99,7 +99,7 @@ public class GuiListener {
                 // update team status
                 players = respond.getPlayerList();
                 Users[] users = new Users[players.length];
-                int i =0;
+                int i = 0;
                 for (Player user : players){
                     users[i] = user.getUser();
                     i++;
