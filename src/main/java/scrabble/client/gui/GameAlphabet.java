@@ -1,6 +1,6 @@
 package scrabble.client.gui;
 
-import java.awt.GridLayout;
+import java.awt.*;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.awt.dnd.DnDConstants;
@@ -31,6 +31,7 @@ public class GameAlphabet extends JPanel {
         for (int i = 0; i < ALPHABET_ROW; i++) {
             for (int j = 0; j < ALPHABET_COL; j++) {
                 alphabet[i][j] = new JButton(Character.toString(c));
+                alphabet[i][j].setFont(new Font("Arial", Font.PLAIN, 15));
                 add(alphabet[i][j]);
                 alphabet[i][j].addMouseMotionListener(new MouseAdapter() {
                     @Override
