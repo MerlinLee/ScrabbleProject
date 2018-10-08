@@ -9,16 +9,10 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-import javax.swing.JFrame;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTextArea;
+import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.JList;
-import javax.swing.JOptionPane;
-import javax.swing.JButton;
-import javax.swing.JLabel;
 
 public class GameLobbyWindow implements Runnable {
 
@@ -28,6 +22,7 @@ public class GameLobbyWindow implements Runnable {
 
     private JButton btnInvite;
     private JButton btnStart;
+    private JButton btnLeave;
 
     private NonEditableModel userTableModel = new NonEditableModel();
     private NonEditableModel playerTableModel = new NonEditableModel();
@@ -48,6 +43,7 @@ public class GameLobbyWindow implements Runnable {
         userTableModel.addColumn("Id");
         userTableModel.addColumn("Name");
         userTableModel.addColumn("Status");
+        userTableModel.addColumn("Win");
         playerTableModel.addColumn("Id");
         playerTableModel.addColumn("Name");
         playerTableModel.addColumn("Status");
@@ -74,9 +70,20 @@ public class GameLobbyWindow implements Runnable {
         frame.setBounds(100, 100, 460, 420);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.getContentPane().setLayout(null);
+        DefaultTableCellRenderer renderer  =  new  DefaultTableCellRenderer();   //set column align center
+        renderer.setHorizontalAlignment(JTextField.CENTER);
 
         userList = new JTable(userTableModel);
+        userList.getColumnModel().getColumn(0).setCellRenderer(renderer);
+        userList.getColumnModel().getColumn(1).setCellRenderer(renderer);
+        userList.getColumnModel().getColumn(2).setCellRenderer(renderer);
+        userList.getColumnModel().getColumn(3).setCellRenderer(renderer);
         userList.setBounds(20, 40, 200, 300);
+        userList.getColumnModel().getColumn(0).setPreferredWidth(28);
+        userList.getColumnModel().getColumn(1).setPreferredWidth(72);
+        userList.getColumnModel().getColumn(2).setPreferredWidth(60);
+        userList.getColumnModel().getColumn(3).setPreferredWidth(40);
+//        userList.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         frame.getContentPane().add(userList);
 
         JScrollPane spUserList = new JScrollPane(userList);
@@ -130,9 +137,20 @@ public class GameLobbyWindow implements Runnable {
         spPlayerList.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         frame.getContentPane().add(spPlayerList);
 
-        btnStart = new JButton("Start Game");
-        btnStart.setBounds(280, 200, 120, 29);
+        btnStart = new JButton("Start");
+        btnStart.setBounds(240, 200, 90, 29);
         frame.getContentPane().add(btnStart);
+
+        btnLeave = new JButton("Leave");
+        btnLeave.setBounds(350, 200, 90, 29);
+        frame.getContentPane().add(btnLeave);
+
+        btnLeave.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                GuiController.get().sendLeaveMsg();
+            }
+        });
 
         btnStart.addActionListener(new ActionListener() {
             @Override
@@ -152,8 +170,8 @@ public class GameLobbyWindow implements Runnable {
             }
         });
 
-        lblNewLabel1 = new JLabel("Current Players:");
-        lblNewLabel1.setBounds(240, 20, 103, 16);
+        lblNewLabel1 = new JLabel("Current Team Members:");
+        lblNewLabel1.setBounds(240, 20, 150, 16);
         frame.getContentPane().add(lblNewLabel1);
 
         frame.addWindowListener(new WindowAdapter()
@@ -166,6 +184,8 @@ public class GameLobbyWindow implements Runnable {
                 System.exit(0);
             }
         });
+
+        frame.setTitle(GuiController.get().getUsername());
     }
 
     public class NonEditableModel extends DefaultTableModel {
@@ -209,12 +229,13 @@ public class GameLobbyWindow implements Runnable {
     void updateUserList(Users[] userList) {
         clearUserList();
         for (Users user : userList)
-            addToUserList(user.getUserID(), user.getUserName(), user.getStatus());
+            addToUserList(user.getUserID(), user.getUserName(), user.getStatus(), user.getNumWin());
     }
 
-    void addToUserList(int id, String name, String status) {
+    void addToUserList(int id, String name, String status, int numWin) {
         String strId = Integer.toString(id);
-        userTableModel.addRow(new Object[]{strId, name, status});
+        String strNumWin = Integer.toString(numWin);
+        userTableModel.addRow(new Object[]{strId, name, status, strNumWin});
     }
 
     void clearPlayerList() {

@@ -11,7 +11,11 @@ public class ErrorProtocol extends ScrabbleProtocol {
     private int errorType; // 500 -- username already exists
 
 
+    public ErrorProtocol(){
+        super.setTAG("ErrorProtocol");
+    }
     public ErrorProtocol(String errorMsg, int errorType) {
+        super.setTAG("ErrorProtocol");
         this.errorMsg = errorMsg;
         this.errorType = errorType;
     }

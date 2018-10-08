@@ -1,6 +1,7 @@
 package scrabble.client.gui;
 
 import scrabble.Models.Player;
+import scrabble.client.Gui;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -10,14 +11,31 @@ public class PlayerPanel extends JPanel {
 
     private static final long serialVersionUID = 1L;
     private JTable playerList;
-
     private NonEditableModel playerTableModel = new NonEditableModel();
 
+    /*
     public static class PlayerPanelHolder {
         private static final PlayerPanel INSTANCE = new PlayerPanel();
     }
 
+    public static final PlayerPanel get() {
+        return PlayerPanelHolder.INSTANCE;
+    }
+    */
+
+    private volatile static PlayerPanel instance = null;
+
+    public static synchronized PlayerPanel get() {
+        if (instance == null) {
+            synchronized (PlayerPanel.class) {
+                instance = new PlayerPanel();
+            }
+        }
+        return instance;
+    }
+
     private PlayerPanel() {
+
         this.setSize(190, 300);
         setLayout(null);
 
@@ -35,8 +53,8 @@ public class PlayerPanel extends JPanel {
         add(spPlayerList);
     }
 
-    public static final PlayerPanel get() {
-        return PlayerPanelHolder.INSTANCE;
+    void setToNull() {
+        instance = null;
     }
 
     private int getIndexInPlayerList(int id) {
@@ -59,9 +77,10 @@ public class PlayerPanel extends JPanel {
         String name = player.getUser().getUserName();
         String score = Integer.toString(player.getPoints());
         playerTableModel.addRow(new Object[]{strId, name, score});
-        if (player.getPoints() != 0) {
-            GameWindow.get().showDialog("The vote is successful!");
-        }
+        //logic error
+//        if (player.getPoints() != 0) {
+//            GameWindow.get().showDialog("The vote is successful!");
+//        }
     }
 
     public class NonEditableModel extends DefaultTableModel {
@@ -71,20 +90,29 @@ public class PlayerPanel extends JPanel {
         }
     }
 
+    void clearPlayerList() {
+        int rowCount = playerTableModel.getRowCount();
+        for (int i = rowCount - 1; i >= 0; i--) {
+            playerTableModel.removeRow(i);
+        }
+    }
+
     synchronized void updatePlayerList(Player[] players) {
-        for (Player player : players) {
-            System.out.printf("name: %s seq: %d",player.getUser().getUserName(), player.getInGameSequence());
-            int id = player.getUser().getUserID();
-            int index = getIndexInPlayerList(id);
-            if (index != -1) {
-                int lastScore = Integer.parseInt(playerList.getValueAt(index, 2).toString());
-                if (player.getPoints() != lastScore) {
-                    GameWindow.get().showDialog("The vote is successful!");
+        synchronized (playerList){
+            for (Player player : players) {
+                System.out.printf("name: %s seq: %d",player.getUser().getUserName(), player.getInGameSequence());
+                int id = player.getUser().getUserID();
+                int index = getIndexInPlayerList(id);
+                if (index != -1) {
+                    int lastScore = Integer.parseInt(playerList.getValueAt(index, 2).toString());
+                    if (player.getPoints() != lastScore) {
+                        GameWindow.get().showDialog("The vote is successful!");
+                    }
+                    playerList.setValueAt(Integer.toString(player.getPoints()), index, 2);
                 }
-                playerList.setValueAt(Integer.toString(player.getPoints()), index, 2);
-            }
-            else {
-                addToPlayerList(player);
+                else {
+                    addToPlayerList(player);
+                }
             }
         }
     }

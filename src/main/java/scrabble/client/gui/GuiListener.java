@@ -28,18 +28,19 @@ public class GuiListener {
 
     public static synchronized GuiListener get() {
         if (instance == null) {
-            synchronized (GuiListener.class){
+            synchronized (GuiListener.class) {
                 instance = new GuiListener();
             }
         }
         return instance;
     }
-    public void addBlockingQueue(BlockingQueue queue){
+
+    public void addBlockingQueue(BlockingQueue queue) {
         this.queue = queue;
     }
 
     public synchronized void addMessage(String str) {
-        //System.out.println(str);
+        //System.err.println("MSG FROM S" + str);
         ScrabbleProtocol scrabbleProtocol = JSON.parseObject(str, ScrabbleProtocol.class);
         String tag = scrabbleProtocol.getTAG();
         switch (tag) {
@@ -54,6 +55,8 @@ public class GuiListener {
                 break;
             case "VoteRequest":
                 processVoteRequest(str);
+                break;
+            default:
                 break;
         }
     }
@@ -85,12 +88,27 @@ public class GuiListener {
                 GuiController.get().updateBoard(board);
                 players = respond.getPlayerList();
                 GuiController.get().showWinners(players);
+
+                //remove team
+                GameLobbyWindow.get().clearPlayerList();
+
+                //reset game parameters
+                GuiController.get().resetGame();
                 break;
             case "start":
+                // update team status
+                players = respond.getPlayerList();
+                Users[] users = new Users[players.length];
+                int i =0;
+                for (Player user : players){
+                    users[i] = user.getUser();
+                    i++;
+                }
+                GuiController.get().updatePlayerListInLobby(users);
                 GuiController.get().runGameWindow();
                 break;
-                default:
-                    break;
+            default:
+                break;
         }
     }
 
@@ -107,19 +125,26 @@ public class GuiListener {
 
                 GuiController.get().updatePlayerListInLobby(users);
                 break;
-            case "playerUpdate":
+            case "teamUpdate":
+                if (users != null){
                 GuiController.get().updatePlayerListInLobby(users);
+                }else{
+                    GameLobbyWindow.get().clearPlayerList();
+                }
                 break;
         }
     }
 
-    private void processNonGamingResonse(String str) {
+    private synchronized void processNonGamingResonse(String str) {
         NonGamingResponse respond = JSON.parseObject(str, NonGamingResponse.class);
         String command = respond.getCommand();
         switch (command) {
             case "userUpdate":
                 Users[] users = respond.getUsersList();
-                GuiController.get().updateUserList(users);
+                synchronized (GuiController.get()){
+                    GuiController.get().updateUserList(users);
+                }
+
                 break;
             case "invite":
                 int inviterId = respond.getUsersList()[0].getUserID();
