@@ -1,6 +1,6 @@
 # ScrabbleProject
 
-![GitHub](https://img.shields.io/github/license/mashape/apistatus.svg)
+Notice: This project is under the copyright, Therefore if you use this, I will call the police!
 
 Assignment Two of COMP90015
 
