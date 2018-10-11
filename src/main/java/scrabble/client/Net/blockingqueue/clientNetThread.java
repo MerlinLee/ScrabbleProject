@@ -2,9 +2,9 @@ package scrabble.client.Net.blockingqueue;
 
 import com.alibaba.fastjson.JSON;
 import scrabble.Models.Users;
-import scrabble.protocols.ErrorProtocol;
 import scrabble.protocols.NonGamingProtocol.NonGamingProtocol;
 import scrabble.protocols.Pack;
+import scrabble.protocols.serverResponse.NonGamingResponse;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -51,7 +51,7 @@ public class clientNetThread implements Runnable {
             }
 
         }catch (Exception e){
-            closeClient();
+            e.printStackTrace();
         }finally {
             if (!isClientClosed){
                 closeClient();
@@ -60,7 +60,7 @@ public class clientNetThread implements Runnable {
     }
     private void closeClient(){
         try {
-            toNetPutMsg.put(JSON.toJSONString(new ErrorProtocol("The server has been shutdown", "other")));
+            toNetPutMsg.put(JSON.toJSONString(new NonGamingResponse(new Users[1],"shutdown")));
             server.close();
         } catch (Exception e) {
             e.printStackTrace();
