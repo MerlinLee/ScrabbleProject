@@ -160,6 +160,7 @@ public class GameProcess {
 
     private void disconnect(int currentUserID) {
         if (gameStart == true) {
+            playerList.remove(playerIndexSearch(currentUserID));
             win(currentUserID);
             //remove disconnected users
 //            if (db.containsKey(currentUserID)) {
@@ -333,6 +334,7 @@ public class GameProcess {
                 break;
             case "quit":
                 if (gameStart == true) {
+                    playerList.remove(playerIndexSearch(currentUserID));
                     win(currentUserID);
                 }
             case "leave":
@@ -369,7 +371,10 @@ public class GameProcess {
                 teamUpdate(temp, hostID, false);
                 userListToClient();
             } else {
+                if (userList.get(userIndexSearch(currentUserID)).getStatus().equals("ready")){
                 error(currentUserID, "Unknown team", "lobby");
+                }
+                userListToClient();
             }
         }
     }
