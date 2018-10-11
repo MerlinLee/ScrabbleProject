@@ -34,15 +34,19 @@ public class LoginWindow implements Runnable {
     public LoginWindow() {
     }
 
-    public static class LoginWindowHolder {
-        private static final LoginWindow INSTANCE = new LoginWindow();
-    }
-
+//    public static class LoginWindowHolder {
+//        private static final LoginWindow INSTANCE = new LoginWindow();
+//    }
+    private static LoginWindow loginWindow;
 
 
 
     public static final LoginWindow get() {
-        return LoginWindowHolder.INSTANCE;
+        if(loginWindow==null){
+            return loginWindow=new LoginWindow();
+        }else {
+            return loginWindow;
+        }
     }
 
 
@@ -64,6 +68,10 @@ public class LoginWindow implements Runnable {
         frame.dispose();
     }
 
+    public void reInitial(){
+        initialize();
+        this.frame.setVisible(true);
+    }
     /**
      * Initialize the contents of the frame.
      */
@@ -129,6 +137,7 @@ public class LoginWindow implements Runnable {
                 try {
                     loginAction();
                 }catch (Exception e){
+                    e.printStackTrace();
                     JOptionPane.showMessageDialog(null, "IP or Port Number is wrong!");
                 }
             }
