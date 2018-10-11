@@ -513,8 +513,10 @@ public class GameProcess {
         String command = "inviteACK";
         if (isAccept) {
             Users temp = userList.get(userIndexSearch(db.get(currentUserID)));
-            teams.get(hostID).add(temp);
-            temp.setStatus("ready");
+            if(!teams.get(hostID).contains(temp)) {
+                teams.get(hostID).add(temp);
+                temp.setStatus("ready");
+            }
             int size = teams.get(hostID).size();
             Users[] teamList = teams.get(hostID).toArray(new Users[size]);
             inviteACK(command, currentUserID, hostID, isAccept, teamList); //ACK to inviteInitiator
