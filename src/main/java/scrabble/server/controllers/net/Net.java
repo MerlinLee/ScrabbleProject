@@ -18,6 +18,7 @@ public class Net implements Runnable{
     private static Logger logger = Logger.getLogger(Net.class);
     private final BlockingQueue<Pack> fromCenter;
     private final BlockingQueue<Pack> toCenter;
+    private int portNumber = 6666;
     private boolean flag = true;
     private ThreadFactory threadForSocket;
     private ExecutorService pool;
@@ -25,6 +26,12 @@ public class Net implements Runnable{
     public Net(BlockingQueue fromNet, BlockingQueue toNet) {
         this.toCenter = fromNet;
         this.fromCenter = toNet;
+    }
+
+    public Net(BlockingQueue fromNet, BlockingQueue toNet, int portNumber) {
+        this.toCenter = fromNet;
+        this.fromCenter = toNet;
+        this.portNumber=portNumber;
     }
 
     public Hashtable getClientDataHsh() {
@@ -66,6 +73,17 @@ public class Net implements Runnable{
         return net;
     }
 
+    public static Net getInstance (BlockingQueue fromNet, BlockingQueue toNet, int portNumber){
+        if (net == null){
+            synchronized (Net.class){
+                if (net == null){
+                    net = new Net(fromNet,toNet,portNumber);
+                }
+            }
+        }
+        return net;
+    }
+
     private void initialServer(int port, BlockingQueue toNetPutMsg){
         Socket client;
         int clientNumber = 1;
@@ -97,7 +115,7 @@ public class Net implements Runnable{
         BlockingQueue<Pack> toNetPutMsg = new LinkedBlockingQueue<>();
         pool.execute(new NetGetMsg(fromCenter,clientNameHash));
         pool.execute(new NetPutMsg(toCenter,toNetPutMsg));
-        initialServer(6666,toNetPutMsg);
+        initialServer(portNumber,toNetPutMsg);
 
     }
 }

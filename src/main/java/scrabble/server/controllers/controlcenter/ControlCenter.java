@@ -23,7 +23,7 @@ public class ControlCenter implements Runnable{
     private final BlockingQueue<Pack> fromEngine;
     private final BlockingQueue<Pack> toNet;
     private GameEngine gameEngine;
-    private Net net;
+    private int portNumber;
     private boolean flag = true;
     private ThreadFactory threadForSocket;
     private ExecutorService pool;
@@ -37,12 +37,26 @@ public class ControlCenter implements Runnable{
         logger.info(tag+" Initial ControlCenter Complete!");
     }
 
+    public ControlCenter(int port) {
+        this.fromNet = new LinkedBlockingQueue<>();
+        toEngine = new LinkedBlockingQueue<>();
+        fromEngine = new LinkedBlockingQueue<>();
+        toNet = new LinkedBlockingQueue<>();
+        portNumber=port;
+        initialServer();
+        logger.info(tag+" Initial ControlCenter Complete!");
+    }
+
     public void initialServer(){
         threadForSocket = new ThreadFactoryBuilder()
                 .setNameFormat("Server-ControlCenter-pool-%d").build();
         pool = new ThreadPoolExecutor(8,100,0L,TimeUnit.MILLISECONDS,
                 new LinkedBlockingQueue<Runnable>(1024),threadForSocket,new ThreadPoolExecutor.AbortPolicy());
-        pool.execute(Net.getInstance(fromNet,toNet));
+        if(portNumber==0){
+            pool.execute(Net.getInstance(fromNet,toNet));
+        }else {
+            pool.execute(Net.getInstance(fromNet,toNet,portNumber));
+        }
         pool.execute(GameEngine.getInstance(toEngine,fromEngine));
         logger.info(tag+" Initial Server Competed");
     }
