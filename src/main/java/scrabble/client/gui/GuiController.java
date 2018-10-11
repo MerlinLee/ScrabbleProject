@@ -181,7 +181,7 @@ public class GuiController {
         Send to Center
      */
 
-    void loginGame() {
+    public void loginGame() {
         String[] selfArray = new String[1];
         selfArray[0] = username;
         NonGamingProtocol nonGamingProtocol = new NonGamingProtocol("login", selfArray);

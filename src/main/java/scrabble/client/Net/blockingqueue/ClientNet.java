@@ -2,6 +2,7 @@ package scrabble.client.Net.blockingqueue;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.apache.log4j.Logger;
+import scrabble.client.gui.GuiController;
 import scrabble.client.gui.LoginWindow;
 import scrabble.protocols.Pack;
 import scrabble.server.controllers.net.NetThread;
@@ -89,6 +90,7 @@ public class ClientNet implements Runnable {
         Socket socket = null;
         try {
             socket = new Socket(ipAddr, portNum);
+            GuiController.get().loginGame();
             threadForSocket = new ThreadFactoryBuilder()
                     .setNameFormat("Net-pool-%d").build();
             pool = new ThreadPoolExecutor(3,50,0L,TimeUnit.MILLISECONDS,

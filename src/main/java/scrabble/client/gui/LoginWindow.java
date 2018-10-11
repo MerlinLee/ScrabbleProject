@@ -70,6 +70,7 @@ public class LoginWindow implements Runnable {
 
     public void reInitial(){
         initialize();
+        JOptionPane.showMessageDialog(null, "IP or Port Number is wrong!");
         this.frame.setVisible(true);
     }
     /**
@@ -151,7 +152,7 @@ public class LoginWindow implements Runnable {
             center.openNet(address, Integer.parseInt(portStr), userNameStr);
             //clientManager.openSocket(address, portStr, userNameStr);
             GuiController.get().setUserName(userNameStr);
-            GuiController.get().loginGame();
+
         }else{
             showDialog("Invalid username, please try again!");
             run();
