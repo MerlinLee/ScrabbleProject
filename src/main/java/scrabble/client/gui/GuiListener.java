@@ -12,6 +12,7 @@ import scrabble.protocols.serverResponse.InviteACK;
 import scrabble.protocols.serverResponse.NonGamingResponse;
 import scrabble.protocols.serverResponse.VoteRequest;
 
+import javax.swing.*;
 import java.io.BufferedReader;
 import java.net.Socket;
 import java.io.InputStreamReader;
@@ -151,6 +152,9 @@ public class GuiListener {
                     GuiController.get().updateUserList(users);
                 }
 
+                break;
+            case "shutdown":
+                GuiController.get().shutdown();
                 break;
             case "invite":
                 int inviterId = respond.getUsersList()[0].getUserID();
