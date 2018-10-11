@@ -38,6 +38,8 @@ public class GuiController {
         return instance;
     }
 
+    public void shutdown(){}
+
     public String getStatus() {
         return status;
     }
