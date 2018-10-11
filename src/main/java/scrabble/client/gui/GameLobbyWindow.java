@@ -35,6 +35,10 @@ public class GameLobbyWindow implements Runnable {
 
     }
 
+    public JFrame getFrame(){
+        return this.frame;
+    }
+
     public static final GameLobbyWindow get() {
         return LobbyWindowHolder.INSTANCE;
     }

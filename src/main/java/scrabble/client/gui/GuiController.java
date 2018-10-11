@@ -39,7 +39,8 @@ public class GuiController {
     }
 
     public void shutdown(){
-        GameLobbyWindow.get().showDialog("Server shut down!");
+        GameLobbyWindow.get().getFrame().dispose();
+        System.exit(0);
     }
 
     public String getStatus() {

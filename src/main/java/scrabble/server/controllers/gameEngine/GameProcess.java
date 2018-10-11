@@ -160,13 +160,17 @@ public class GameProcess {
 
     private void disconnect(int currentUserID) {
         if (gameStart == true) {
-            win(currentUserID);
+            if (playerList.get(playerIndexSearch(currentUserID)) != null) {
+                playerList.remove(playerIndexSearch(currentUserID));
+                win(currentUserID);
+            }
             //remove disconnected users
 //            if (db.containsKey(currentUserID)) {
 //                db.remove(currentUserID);
 //                userList.remove(userIndexSearch(currentUserID));
 //            }
             userRemove(userList.get(userIndexSearch(currentUserID)));
+            userListToClient();
 
             //reset gameEndCheck parameters
             numPass = 0;
@@ -333,7 +337,10 @@ public class GameProcess {
                 break;
             case "quit":
                 if (gameStart == true) {
-                    win(currentUserID);
+                    if (playerList.get(playerIndexSearch(currentUserID)) != null) {
+                        playerList.remove(playerIndexSearch(currentUserID));
+                        win(currentUserID);
+                    }
                 }
             case "leave":
                 leaveTeam(currentUserID, hostID);
@@ -346,30 +353,35 @@ public class GameProcess {
 
     private void leaveTeam(int currentUserID, int hostID) {
         int index = userIndexSearch(currentUserID);
-        if (currentUserID == hostID) {
-            //team host leaves
-            for (Users member : teams.get(currentUserID)) {
-                teamUpdate(member.getUserID());
-            }
-            teamStatusUpdate(teams.get(currentUserID), "available");
-            userListToClient();
-            teamsInWait.remove(teams.get(currentUserID));
-            teams.remove(currentUserID);
-        } else {
-            // other team members leave
-            if (teams.containsKey(hostID)) {
-                ArrayList<Users> team = teams.get(hostID);
-                if (team.contains(userList.get(index))) {
-                    team.remove(userList.get(index));
-                    userList.get(index).setStatus("available");
+        if (userList.get(userIndexSearch(currentUserID)).getStatus().equals("ready")) {
+            if (currentUserID == hostID) {
+                //team host leaves
+                for (Users member : teams.get(currentUserID)) {
+                    teamUpdate(member.getUserID());
                 }
-                Users[] temp = team.toArray(new Users[team.size()]);
-
-                teamUpdate(currentUserID);
-                teamUpdate(temp, hostID, false);
+                teamStatusUpdate(teams.get(currentUserID), "available");
                 userListToClient();
+                teamsInWait.remove(teams.get(currentUserID));
+                teams.remove(currentUserID);
             } else {
-                error(currentUserID, "Unknown team", "lobby");
+                // other team members leave
+                if (teams.containsKey(hostID)) {
+                    ArrayList<Users> team = teams.get(hostID);
+                    if (team.contains(userList.get(index))) {
+                        team.remove(userList.get(index));
+                        userList.get(index).setStatus("available");
+                    }
+                    Users[] temp = team.toArray(new Users[team.size()]);
+
+                    teamUpdate(currentUserID);
+                    teamUpdate(temp, hostID, false);
+                    userListToClient();
+                } else {
+                    if (userList.get(userIndexSearch(currentUserID)).getStatus().equals("ready")) {
+                        error(currentUserID, "Unknown team", "lobby");
+                    }
+                    userListToClient();
+                }
             }
         }
     }
@@ -421,7 +433,7 @@ public class GameProcess {
             }
 
             //playerID assigned here
-            if (addPlayers(team)){
+            if (addPlayers(team)) {
                 teamStatusUpdate(team, "in-game");
 
                 gameStart = true;
@@ -429,7 +441,7 @@ public class GameProcess {
 
                 boardUpdate(playersID);
                 boardUpdate(currentUserID);
-            }else{
+            } else {
                 error(currentUserID, "Start Failed! Active team members should be no less than 2", "lobby");
                 userListToClient();
             }
@@ -459,7 +471,7 @@ public class GameProcess {
             //send currentUserList back to client
             userListToClient();
         } else {
-            error(currentUserID, "User already Exists","login");
+            error(currentUserID, "User already Exists", "login");
         }
 
     }
@@ -469,8 +481,12 @@ public class GameProcess {
             if (gameStart) {
 //                userList.remove(userIndexSearch(currentUserID));
 //                db.remove(currentUserID);
+                if (playerList.get(playerIndexSearch(currentUserID)) != null) {
+                    playerList.remove(playerIndexSearch(currentUserID));
+                    win(currentUserID);
+                }
                 userRemove(userList.get(userIndexSearch(currentUserID)));
-                win(currentUserID);
+                userListToClient();
             } else {
 //                userList.remove(userIndexSearch(currentUserID));
 //                db.remove(currentUserID);
@@ -504,7 +520,7 @@ public class GameProcess {
             }
         } else {
             //error, no access error
-            error(currentUserID, "No Access to invite others","lobby");
+            error(currentUserID, "No Access to invite others", "lobby");
             userListToClient();
         }
     }
@@ -513,8 +529,10 @@ public class GameProcess {
         String command = "inviteACK";
         if (isAccept) {
             Users temp = userList.get(userIndexSearch(db.get(currentUserID)));
-            teams.get(hostID).add(temp);
-            temp.setStatus("ready");
+            if (!teams.get(hostID).contains(temp)) {
+                teams.get(hostID).add(temp);
+                temp.setStatus("ready");
+            }
             int size = teams.get(hostID).size();
             Users[] teamList = teams.get(hostID).toArray(new Users[size]);
             inviteACK(command, currentUserID, hostID, isAccept, teamList); //ACK to inviteInitiator
@@ -525,10 +543,11 @@ public class GameProcess {
             //broadcast to all users to update status
             userListToClient();
         } else {
-            int size = teams.get(hostID).size();
-            Users[] teamList = teams.get(hostID).toArray(new Users[size]);
-            inviteACK(command, currentUserID, hostID, isAccept, teamList);
-
+            if (teams.containsKey(hostID)) {
+                int size = teams.get(hostID).size();
+                Users[] teamList = teams.get(hostID).toArray(new Users[size]);
+                inviteACK(command, currentUserID, hostID, isAccept, teamList);
+            }
             userListToClient();
         }
     }
@@ -637,7 +656,7 @@ public class GameProcess {
         if (playerList != null) {
             int size = playerList.size();
             Player[] temp = playerList.toArray(new Player[size]);
-            Pack update = new Pack(ID_PLACEHOLDER, JSON.toJSONString(new GamingSync(command, temp, whoseTurn, board,voteSuccess)));
+            Pack update = new Pack(ID_PLACEHOLDER, JSON.toJSONString(new GamingSync(command, temp, whoseTurn, board, voteSuccess)));
             update.setRecipient(playersID);
             EnginePutMsg.getInstance().putMsgToCenter(update);
             boardUpdate(ID_PLACEHOLDER);
@@ -650,10 +669,10 @@ public class GameProcess {
         Collections.sort(playerList);
         int hi = playerList.size() - 1;
         int i;
-        for (i = hi-1; i>=0; i--)
-        if (playerList.get(hi).getPoints() != playerList.get(i).getPoints()) {
-            break;
-        }
+        for (i = hi - 1; i >= 0; i--)
+            if (playerList.get(hi).getPoints() != playerList.get(i).getPoints()) {
+                break;
+            }
         ArrayList<Player> winner = new ArrayList<>();
         for (int j = hi; j > i; j--) {
             int numWin = playerList.get(j).getUser().getNumWin();
@@ -675,7 +694,7 @@ public class GameProcess {
         whoseTurn = INITIAL_SEQ;
 
         boardInitiation();
-        if(teams.containsKey(gameHost)) {
+        if (teams.containsKey(gameHost)) {
             teamsInWait.remove(teams.get(gameHost));
             teams.remove(gameHost, teams.get(gameHost));
             gameHost = ID_PLACEHOLDER;
