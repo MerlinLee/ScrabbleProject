@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import scrabble.Models.Users;
 import scrabble.protocols.NonGamingProtocol.NonGamingProtocol;
 import scrabble.protocols.Pack;
+import scrabble.protocols.serverResponse.NonGamingResponse;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -59,7 +60,7 @@ public class clientNetThread implements Runnable {
     }
     private void closeClient(){
         try {
-            toNetPutMsg.put(JSON.toJSONString(new NonGamingProtocol("shutdown", new String[1])));
+            toNetPutMsg.put(JSON.toJSONString(new NonGamingResponse(new Users[1],"shutdown")));
             server.close();
         } catch (Exception e) {
             e.printStackTrace();

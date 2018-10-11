@@ -38,7 +38,10 @@ public class GuiController {
         return instance;
     }
 
-    public void shutdown(){}
+    public void shutdown(){
+        gameWindow.shutDown();
+
+    }
 
     public String getStatus() {
         return status;
