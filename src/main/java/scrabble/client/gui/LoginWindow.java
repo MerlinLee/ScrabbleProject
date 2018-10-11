@@ -125,7 +125,7 @@ public class LoginWindow implements Runnable {
 
             @Override
             public void keyReleased(KeyEvent e) {
-                if (e.getKeyChar() == KeyEvent.VK_ENTER){
+                if (e.getKeyChar() == KeyEvent.VK_ENTER) {
                     loginAction();
                 }
             }
@@ -136,7 +136,7 @@ public class LoginWindow implements Runnable {
             public void actionPerformed(ActionEvent arg0) {
                 try {
                     loginAction();
-                }catch (Exception e){
+                }catch (Exception e) {
                     e.printStackTrace();
                     JOptionPane.showMessageDialog(null, "IP or Port Number is wrong!");
                 }
@@ -144,14 +144,18 @@ public class LoginWindow implements Runnable {
         });
     }
 
-    void loginAction(){
+    void loginAction() {
         String address = ip.getText();
         String portStr = port.getText();
         String userNameStr = userName.getText();
-        center.openNet(address, Integer.parseInt(portStr), userNameStr);
-        showDialog(userNameStr);
-        //clientManager.openSocket(address, portStr, userNameStr);
-        GuiController.get().setUserName(userNameStr);
-        GuiController.get().loginGame();
+        if(!userNameStr.trim().isEmpty()) {
+            center.openNet(address, Integer.parseInt(portStr), userNameStr);
+            //clientManager.openSocket(address, portStr, userNameStr);
+            GuiController.get().setUserName(userNameStr);
+            GuiController.get().loginGame();
+        }else{
+            showDialog("Invalid username, please try again!");
+            run();
+        }
     }
 }

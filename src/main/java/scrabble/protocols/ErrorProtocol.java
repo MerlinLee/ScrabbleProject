@@ -8,13 +8,13 @@ package scrabble.protocols;
  */
 public class ErrorProtocol extends ScrabbleProtocol {
     private String errorMsg;
-    private int errorType; // 500 -- username already exists
+    private String errorType;
 
 
     public ErrorProtocol(){
         super.setTAG("ErrorProtocol");
     }
-    public ErrorProtocol(String errorMsg, int errorType) {
+    public ErrorProtocol(String errorMsg, String errorType) {
         super.setTAG("ErrorProtocol");
         this.errorMsg = errorMsg;
         this.errorType = errorType;
@@ -28,11 +28,11 @@ public class ErrorProtocol extends ScrabbleProtocol {
         this.errorMsg = errorMsg;
     }
 
-    public int getErrorType() {
+    public String getErrorType() {
         return errorType;
     }
 
-    public void setErrorType(int errorType) {
+    public void setErrorType(String errorType) {
         this.errorType = errorType;
     }
 }

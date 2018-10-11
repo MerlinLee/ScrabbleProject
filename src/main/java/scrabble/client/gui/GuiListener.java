@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import scrabble.Models.Player;
 import scrabble.Models.Users;
 import scrabble.client.Gui;
+import scrabble.protocols.ErrorProtocol;
 import scrabble.protocols.Pack;
 import scrabble.protocols.ScrabbleProtocol;
 import scrabble.protocols.serverResponse.GamingSync;
@@ -56,6 +57,9 @@ public class GuiListener {
             case "VoteRequest":
                 processVoteRequest(str);
                 break;
+            case "ErrorProtocol":
+                processError(str);
+                break;
             default:
                 break;
         }
@@ -100,7 +104,7 @@ public class GuiListener {
                 players = respond.getPlayerList();
                 Users[] users = new Users[players.length];
                 int i = 0;
-                for (Player user : players){
+                for (Player user : players) {
                     users[i] = user.getUser();
                     i++;
                 }
@@ -126,11 +130,13 @@ public class GuiListener {
                 GuiController.get().updatePlayerListInLobby(users);
                 break;
             case "teamUpdate":
-                if (users != null){
-                GuiController.get().updatePlayerListInLobby(users);
-                }else{
+                if (users != null) {
+                    GuiController.get().updatePlayerListInLobby(users);
+                } else {
                     GameLobbyWindow.get().clearPlayerList();
                 }
+                break;
+            default:
                 break;
         }
     }
@@ -141,7 +147,7 @@ public class GuiListener {
         switch (command) {
             case "userUpdate":
                 Users[] users = respond.getUsersList();
-                synchronized (GuiController.get()){
+                synchronized (GuiController.get()) {
                     GuiController.get().updateUserList(users);
                 }
 
@@ -151,9 +157,34 @@ public class GuiListener {
                 String inviterName = respond.getUsersList()[0].getUserName();
                 GuiController.get().showInviteMessage(inviterId, inviterName);
                 break;
+            default:
+                break;
         }
         //Users[] users = respond.getUsersList();
         //String status = respond.getStatus();
         //GuiController.get().showLoginRespond(users, "Free");
     }
+
+    private void processError(String str) {
+        ErrorProtocol respond = JSON.parseObject(str, ErrorProtocol.class);
+        String command = respond.getErrorType();
+        String errorMsg = respond.getErrorMsg();
+        switch (command) {
+            case "login":
+                LoginWindow.get().showDialog(errorMsg);
+                LoginWindow.get().run();
+                break;
+            case "lobby":
+                if (GameLobbyWindow.get()!= null){
+                    GameLobbyWindow.get().showDialog(errorMsg);
+                }else{
+                    LoginWindow.get().showDialog(errorMsg);
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+
 }

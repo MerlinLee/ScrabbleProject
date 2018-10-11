@@ -111,19 +111,22 @@ public class GuiController {
                 }
             }
         }
-        if (revievePack == -1) {
-            runGameLobbyWindow();
-            revievePack++;
-        }
-//        gameLobbyWindow.updateUserList(userList);
-        synchronized (GameLobbyWindow.get()) {
-            for (Users user : userList) {
-                if (user.getUserName().equals(this.username)) {
-                    setStatus(user.getStatus());
-                    break;
-                }
+        if (!id.equals("None")) {
+            if (revievePack == -1) {
+                LoginWindow.get().showDialog("Welcome!  "+ this.username);
+                runGameLobbyWindow();
+                revievePack++;
             }
-            GameLobbyWindow.get().updateUserList(userList);
+//        gameLobbyWindow.updateUserList(userList);
+            synchronized (GameLobbyWindow.get()) {
+                for (Users user : userList) {
+                    if (user.getUserName().equals(this.username)) {
+                        setStatus(user.getStatus());
+                        break;
+                    }
+                }
+                GameLobbyWindow.get().updateUserList(userList);
+            }
         }
     }
 
