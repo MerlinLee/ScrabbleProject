@@ -153,9 +153,9 @@ public class GuiListener {
                 }
 
                 break;
-            case "shutdown":
-                GuiController.get().shutdown();
-                break;
+//            case "shutdown":
+//                GuiController.get().shutdown();
+//                break;
             case "invite":
                 int inviterId = respond.getUsersList()[0].getUserID();
                 String inviterName = respond.getUsersList()[0].getUserName();
@@ -184,6 +184,14 @@ public class GuiListener {
                 }else{
                     LoginWindow.get().showDialog(errorMsg);
                 }
+                break;
+            case "other":
+                if (GameLobbyWindow.get()!= null){
+                    GameLobbyWindow.get().showDialog(errorMsg);
+                }else{
+                    LoginWindow.get().showDialog(errorMsg);
+                }
+                GuiController.get().shutdown();
                 break;
             default:
                 break;
