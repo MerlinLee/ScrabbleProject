@@ -10,8 +10,6 @@ import java.awt.event.KeyListener;
 
 public class ServerGui {
     private JFrame frame;
-    private JTextField userName;
-    private JTextField ip;
     private JTextField port;
 
     public ServerGui() {
@@ -74,9 +72,13 @@ public class ServerGui {
             String portStr = port.getText();
             if(portStr.equals("")){
                 new Thread(new ControlCenter()).start();
+                closeWindow();
+                new MonitorGui();
             }else {
                 int portNum = Integer.parseInt(port.getText());
                 new Thread(new ControlCenter(portNum)).start();
+                closeWindow();
+                new MonitorGui();
             }
         }catch (Exception e){
             JOptionPane.showMessageDialog(null, "Wrong Port Number!");
