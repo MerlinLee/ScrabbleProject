@@ -2,6 +2,7 @@ package scrabble.client.Net.blockingqueue;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.apache.log4j.Logger;
+import scrabble.client.gui.LoginWindow;
 import scrabble.protocols.Pack;
 import scrabble.server.controllers.net.NetThread;
 
@@ -88,18 +89,17 @@ public class ClientNet implements Runnable {
         Socket socket = null;
         try {
             socket = new Socket(ipAddr, portNum);
+            threadForSocket = new ThreadFactoryBuilder()
+                    .setNameFormat("Net-pool-%d").build();
+            pool = new ThreadPoolExecutor(3,50,0L,TimeUnit.MILLISECONDS,
+                    new LinkedBlockingQueue<Runnable>(1024),threadForSocket,new ThreadPoolExecutor.AbortPolicy());
+            pool.execute(new clientNetGetMsg(fromCenter,socket));
+            pool.execute(new clientNetPutMsg(toCenter,toNetPutMsg));
+            initialServer(socket,toNetPutMsg);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("I am ClientNet, Help me! Please re-input!");
+            net = null;
+            LoginWindow.get().reInitial();
         }
-        threadForSocket = new ThreadFactoryBuilder()
-                .setNameFormat("Net-pool-%d").build();
-        pool = new ThreadPoolExecutor(3,50,0L,TimeUnit.MILLISECONDS,
-                new LinkedBlockingQueue<Runnable>(1024),threadForSocket,new ThreadPoolExecutor.AbortPolicy());
-        pool.execute(new clientNetGetMsg(fromCenter,socket));
-        pool.execute(new clientNetPutMsg(toCenter,toNetPutMsg));
-
-
-        initialServer(socket,toNetPutMsg);
-
     }
 }

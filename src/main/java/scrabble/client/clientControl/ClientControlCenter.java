@@ -48,7 +48,11 @@ public class ClientControlCenter implements Runnable{
     }
 
     public void openNet(String ipAddr, int portNum,String username){
-        pool.execute(ClientNet.getInstance(fromNet,toNet,ipAddr,portNum,username));
+        try {
+            pool.execute(ClientNet.getInstance(fromNet,toNet,ipAddr,portNum,username));
+        }catch (Exception e){
+            pool.execute(LoginWindow.get());
+        }
     }
 
     @Override
