@@ -339,7 +339,7 @@ public class GameProcess {
                 leaveTeam(currentUserID, hostID);
                 break;
             default:
-                error(currentUserID, "Unknown Error");
+                error(currentUserID, "Unknown Error", "lobby");
                 break;
         }
     }
@@ -369,7 +369,7 @@ public class GameProcess {
                 teamUpdate(temp, hostID, false);
                 userListToClient();
             } else {
-                error(currentUserID, "Unknown team");
+                error(currentUserID, "Unknown team", "lobby");
             }
         }
     }
@@ -430,14 +430,14 @@ public class GameProcess {
                 boardUpdate(playersID);
                 boardUpdate(currentUserID);
             }else{
-                error(currentUserID, "Start Failed! Active team members should be no less than 2");
+                error(currentUserID, "Start Failed! Active team members should be no less than 2", "lobby");
                 userListToClient();
             }
 
             //broadcast to all online users to update status
             userListToClient();
         } else {
-            error(currentUserID, "Not authorized to start game");
+            error(currentUserID, "Not authorized to start game", "lobby");
         }
     }
 
@@ -459,7 +459,7 @@ public class GameProcess {
             //send currentUserList back to client
             userListToClient();
         } else {
-            error(currentUserID, "User already Exists");
+            error(currentUserID, "User already Exists","login");
         }
 
     }
@@ -478,7 +478,7 @@ public class GameProcess {
                 userListToClient();
             }
         } else {
-            error(currentUserID, "No such user");
+            error(currentUserID, "No such user", "lobby");
         }
     }
 
@@ -504,7 +504,7 @@ public class GameProcess {
             }
         } else {
             //error, no access error
-            error(currentUserID, "No Access to invite others");
+            error(currentUserID, "No Access to invite others","lobby");
             userListToClient();
         }
     }
@@ -553,10 +553,8 @@ public class GameProcess {
     }
 
 
-    private void error(int currentUserID, String msg) {
-        // switch error types
-        int errorType = 500; //switch -- (possibly more error types)
-        Pack errorMsg = new Pack(currentUserID, JSON.toJSONString(new ErrorProtocol(msg, errorType)));
+    private void error(int currentUserID, String msg, String type) {
+        Pack errorMsg = new Pack(currentUserID, JSON.toJSONString(new ErrorProtocol(msg, type)));
         EnginePutMsg.getInstance().putMsgToCenter(errorMsg);
     }
 

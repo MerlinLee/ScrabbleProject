@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import scrabble.Models.Player;
 import scrabble.Models.Users;
 import scrabble.client.Gui;
+import scrabble.protocols.ErrorProtocol;
 import scrabble.protocols.Pack;
 import scrabble.protocols.ScrabbleProtocol;
 import scrabble.protocols.serverResponse.GamingSync;
@@ -55,6 +56,9 @@ public class GuiListener {
                 break;
             case "VoteRequest":
                 processVoteRequest(str);
+                break;
+            case "ErrorProtocol":
+                processError(str);
                 break;
             default:
                 break;
@@ -161,6 +165,26 @@ public class GuiListener {
         //GuiController.get().showLoginRespond(users, "Free");
     }
 
+    private void processError(String str) {
+        ErrorProtocol respond = JSON.parseObject(str, ErrorProtocol.class);
+        String command = respond.getErrorType();
+        String errorMsg = respond.getErrorMsg();
+        switch (command) {
+            case "login":
+                LoginWindow.get().showDialog(errorMsg);
+                LoginWindow.get().run();
+                break;
+            case "lobby":
+                if (GameLobbyWindow.get()!= null){
+                    GameLobbyWindow.get().showDialog(errorMsg);
+                }else{
+                    LoginWindow.get().showDialog(errorMsg);
+                }
+                break;
+            default:
+                break;
+        }
+    }
 
 
 }
