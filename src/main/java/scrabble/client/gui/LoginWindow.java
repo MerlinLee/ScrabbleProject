@@ -151,7 +151,7 @@ public class LoginWindow implements Runnable {
             center.openNet(address, Integer.parseInt(portStr), userNameStr);
             //clientManager.openSocket(address, portStr, userNameStr);
             GuiController.get().setUserName(userNameStr);
-            GuiController.get().loginGame();
+
         }else{
             showDialog("Invalid username, please try again!");
             run();
