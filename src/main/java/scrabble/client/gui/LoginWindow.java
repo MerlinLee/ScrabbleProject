@@ -70,6 +70,7 @@ public class LoginWindow implements Runnable {
 
     public void reInitial(){
         initialize();
+        JOptionPane.showMessageDialog(null, "IP or Port Number is wrong!");
         this.frame.setVisible(true);
     }
     /**
