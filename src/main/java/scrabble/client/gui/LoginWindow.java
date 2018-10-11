@@ -126,7 +126,11 @@ public class LoginWindow implements Runnable {
         login.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
-                loginAction();
+                try {
+                    loginAction();
+                }catch (Exception e){
+                    JOptionPane.showMessageDialog(null, "IP or Port Number is wrong!");
+                }
             }
         });
     }
