@@ -203,7 +203,7 @@ public class GameWindow implements Runnable {
         for (Player player : players){
             if(player.getInGameSequence()==title){
                 //System.err.println("frame: " + frame);
-                frame.setTitle("I am "+GuiController.get().getUsername()+" Current player: "+player.getUser().getUserName());
+                frame.setTitle("I am "+GuiController.get().getUsername()+"    Current player: "+player.getUser().getUserName());
                 break;
             }
         }

@@ -135,10 +135,10 @@ public class LoginWindow implements Runnable {
         String address = ip.getText();
         String portStr = port.getText();
         String userNameStr = userName.getText();
-        center.openNet(address, Integer.parseInt(portStr), userNameStr);
-        showDialog(userNameStr);
-        //clientManager.openSocket(address, portStr, userNameStr);
-        GuiController.get().setUserName(userNameStr);
-        GuiController.get().loginGame();
-    }
+            center.openNet(address, Integer.parseInt(portStr), userNameStr);
+            showDialog(userNameStr);
+            //clientManager.openSocket(address, portStr, userNameStr);
+            GuiController.get().setUserName(userNameStr);
+            GuiController.get().loginGame();
+        }
 }
