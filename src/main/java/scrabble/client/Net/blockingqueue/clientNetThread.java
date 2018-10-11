@@ -2,6 +2,7 @@ package scrabble.client.Net.blockingqueue;
 
 import com.alibaba.fastjson.JSON;
 import scrabble.Models.Users;
+import scrabble.protocols.ErrorProtocol;
 import scrabble.protocols.NonGamingProtocol.NonGamingProtocol;
 import scrabble.protocols.Pack;
 
@@ -59,7 +60,7 @@ public class clientNetThread implements Runnable {
     }
     private void closeClient(){
         try {
-            toNetPutMsg.put(JSON.toJSONString(new NonGamingProtocol("shutdown", new String[1])));
+            toNetPutMsg.put(JSON.toJSONString(new ErrorProtocol("The server has been shutdown", "other")));
             server.close();
         } catch (Exception e) {
             e.printStackTrace();
