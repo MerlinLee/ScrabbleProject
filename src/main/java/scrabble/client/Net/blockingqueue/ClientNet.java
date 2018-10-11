@@ -96,9 +96,10 @@ public class ClientNet implements Runnable {
             pool.execute(new clientNetGetMsg(fromCenter,socket));
             pool.execute(new clientNetPutMsg(toCenter,toNetPutMsg));
             initialServer(socket,toNetPutMsg);
-        } catch (IOException e) {
+        } catch (Exception e) {
             System.out.println("I am ClientNet, Help me! Please re-input!");
             net = null;
+            LoginWindow.get().closeWindow();
             LoginWindow.get().reInitial();
         }
     }

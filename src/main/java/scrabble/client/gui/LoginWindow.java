@@ -137,7 +137,6 @@ public class LoginWindow implements Runnable {
                 try {
                     loginAction();
                 }catch (Exception e) {
-                    e.printStackTrace();
                     JOptionPane.showMessageDialog(null, "IP or Port Number is wrong!");
                 }
             }
