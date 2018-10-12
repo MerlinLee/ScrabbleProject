@@ -242,7 +242,7 @@ public class LoginWindow implements Runnable {
             public void actionPerformed(ActionEvent arg0) {
                 try {
                     //decryption
-                    JSONArray inviteURLText = JSON.parseArray(inviteURL.getText());
+                    JSONArray inviteURLText = JSON.parseArray(bouncyCastleBase64(inviteURL.getText()));
                     loginAction(userName.getText(),inviteURLText.getString(0),inviteURLText.getString(1));
                 }catch (Exception e) {
                     JOptionPane.showMessageDialog(null, "IP or Port Number is wrong!");
@@ -261,4 +261,11 @@ public class LoginWindow implements Runnable {
 
         this.frame.setVisible(true);
     }
+
+    private  String bouncyCastleBase64 (String cipher) {
+
+        byte[] decodeBytes = org.bouncycastle.util.encoders.Base64.decode(cipher);
+        return new String(decodeBytes);
+    }
+
 }

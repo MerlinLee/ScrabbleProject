@@ -109,8 +109,13 @@ public class MonitorGui {
     }
 
 
-    protected static void setClipboardText(Clipboard clip, String writeMe) {
-        Transferable tText = new StringSelection(writeMe);
+    private void setClipboardText(Clipboard clip, String writeMe) {
+        Transferable tText = new StringSelection(bouncyCastleBase64(writeMe));
         clip.setContents(tText, null);
+    }
+
+    private String bouncyCastleBase64 (String message) {
+        byte[] encodeBytes = org.bouncycastle.util.encoders.Base64.encode(message.getBytes()) ;
+        return new String (encodeBytes);
     }
 }
