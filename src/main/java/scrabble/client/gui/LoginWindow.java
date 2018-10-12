@@ -6,15 +6,11 @@ import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
+import javax.swing.*;
 
 import java.awt.BorderLayout;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import javax.swing.JTextField;
-import javax.swing.JButton;
 
 public class LoginWindow implements Runnable {
     public ClientControlCenter getCenter() {
@@ -30,6 +26,7 @@ public class LoginWindow implements Runnable {
     private JTextField userName;
     private JTextField ip;
     private JTextField port;
+    private JTextArea inviteURL;
 
     public LoginWindow() {
     }
@@ -78,7 +75,7 @@ public class LoginWindow implements Runnable {
      */
     private void initialize() {
         frame = new JFrame();
-        frame.setBounds(100, 100, 350, 200);
+        frame.setBounds(100, 100, 350, 220);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.getContentPane().setLayout(null);
 
@@ -110,8 +107,12 @@ public class LoginWindow implements Runnable {
         port.setColumns(10);
 
         JButton login = new JButton("Login");
-        login.setBounds(130, 135, 90, 30);
+        login.setBounds(90, 135, 80, 30);
         frame.getContentPane().add(login);
+
+        JButton other = new JButton("Other Login");
+        other.setBounds(190, 135, 105, 30);
+        frame.getContentPane().add(other);
 
         KeyListener keyListener = new KeyListener() {
             @Override
@@ -142,6 +143,18 @@ public class LoginWindow implements Runnable {
                 }
             }
         });
+
+        other.addKeyListener(keyListener);
+        other.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                try {
+                    changeView();
+                }catch (Exception e) {
+                    JOptionPane.showMessageDialog(null, "IP or Port Number is wrong!");
+                }
+            }
+        });
     }
 
     void loginAction() {
@@ -157,5 +170,17 @@ public class LoginWindow implements Runnable {
             showDialog("Invalid username, please try again!");
             run();
         }
+    }
+
+    public void changeView(){
+        closeWindow();
+        frame = new JFrame();
+        frame.setBounds(100, 100, 350, 220);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.getContentPane().setLayout(null);
+        JButton login = new JButton("Login");
+        login.setBounds(90, 135, 80, 30);
+        frame.getContentPane().add(login);
+        this.frame.setVisible(true);
     }
 }
