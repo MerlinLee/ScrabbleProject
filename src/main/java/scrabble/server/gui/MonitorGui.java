@@ -1,17 +1,28 @@
 package scrabble.server.gui;
 
+import scrabble.server.controllers.net.Net;
+
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 public class MonitorGui {
     private JFrame frame;
+    private int portNum;
+
     public MonitorGui() {
+        this.portNum = 6666;
         initialize();
     }
 
+    public MonitorGui(int port) {
+        this.portNum = port;
+        initialize();
+    }
     private void initialize() {
         frame = new JFrame();
         frame.setBounds(100, 100, 300, 180);
@@ -19,8 +30,21 @@ public class MonitorGui {
         frame.getContentPane().setLayout(null);
         frame.setTitle("Server Monitor");
         JLabel status = new JLabel("Server is running....");
-        status.setBounds(50, 50, 130, 16);
+        status.setBounds(50, 20, 130, 16);
         frame.getContentPane().add(status);
+
+        JLabel ipAddr = null;
+        try {
+            ipAddr = new JLabel("IP: "+ InetAddress.getLocalHost().getHostAddress());
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+        ipAddr.setBounds(50, 50, 130, 16);
+        JLabel port = new JLabel("Port: "+portNum);
+        port.setBounds(50, 65, 130, 16);
+
+        frame.getContentPane().add(ipAddr);
+        frame.getContentPane().add(port);
 
         JButton shutdown = new JButton("shutdown");
         shutdown.setBounds(100, 92, 100, 30);

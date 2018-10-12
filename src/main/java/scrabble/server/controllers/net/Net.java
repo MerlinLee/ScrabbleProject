@@ -44,6 +44,11 @@ public class Net implements Runnable{
 
     private Hashtable clientDataHsh = new Hashtable(50);
     private Hashtable clientNameHash = new Hashtable(50);
+
+    public ServerSocket getServer() {
+        return server;
+    }
+
     private ServerSocket server;
 
     private volatile static Net net;

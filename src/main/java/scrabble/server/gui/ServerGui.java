@@ -78,7 +78,7 @@ public class ServerGui {
                 int portNum = Integer.parseInt(port.getText());
                 new Thread(new ControlCenter(portNum)).start();
                 closeWindow();
-                new MonitorGui();
+                new MonitorGui(portNum);
             }
         }catch (Exception e){
             JOptionPane.showMessageDialog(null, "Wrong Port Number!");
