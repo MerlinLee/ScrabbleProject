@@ -154,7 +154,6 @@ public class GuiListener {
 
                 break;
             case "shutdown":
-                System.out.println("2342344");
                 GuiController.get().shutdown();
                 break;
             case "invite":
