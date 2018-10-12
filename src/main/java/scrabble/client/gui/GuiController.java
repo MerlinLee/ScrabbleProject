@@ -40,7 +40,8 @@ public class GuiController {
 
     public void shutdown(){
         gameWindow.shutDown();
-
+        GameLobbyWindow.get().getFrame().dispose();
+        System.exit(0);
     }
 
     public String getStatus() {
