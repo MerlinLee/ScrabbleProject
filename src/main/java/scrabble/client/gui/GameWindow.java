@@ -211,8 +211,6 @@ public class GameWindow implements Runnable {
     }
 
     void shutDown(){
-        String message = "The server shut down";
-        showDialog(message);
         frame.dispose();
         clearGameWindow();
     }

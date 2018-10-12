@@ -52,7 +52,7 @@ public class clientNetThread implements Runnable {
             }
 
         }catch (Exception e){
-            e.printStackTrace();
+            System.out.println("Connection Closed!");
         }finally {
             if (!isClientClosed){
                 closeClient();

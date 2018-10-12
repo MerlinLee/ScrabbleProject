@@ -1,5 +1,7 @@
 package scrabble.client.gui;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import scrabble.client.clientControl.ClientControlCenter;
 
 import java.awt.EventQueue;
@@ -172,15 +174,79 @@ public class LoginWindow implements Runnable {
         }
     }
 
+    void loginAction(String userName, String ipAddr, String portNum) {
+        if(!userName.isEmpty()) {
+            center.openNet(ipAddr, Integer.parseInt(portNum), userName);
+            //clientManager.openSocket(address, portStr, userNameStr);
+            GuiController.get().setUserName(userName);
+        }else{
+            showDialog("Invalid username, please try again!");
+            run();
+        }
+    }
+
     public void changeView(){
         closeWindow();
         frame = new JFrame();
         frame.setBounds(100, 100, 350, 220);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.getContentPane().setLayout(null);
+
+        JLabel lblUsername = new JLabel("Username:");
+        lblUsername.setBounds(47, 23, 66, 16);
+        frame.getContentPane().add(lblUsername);
+
+        JLabel lblURL = new JLabel("Invite Link:");
+        lblURL.setBounds(47, 50, 66, 16);
+        frame.getContentPane().add(lblURL);
+
+        userName = new JTextField();
+        userName.setBounds(125, 18, 160, 26);
+        frame.getContentPane().add(userName);
+        userName.setColumns(10);
+
+        inviteURL = new JTextArea();
+        inviteURL.setBounds(125,50,160,80);
+        frame.getContentPane().add(inviteURL);
+
         JButton login = new JButton("Login");
-        login.setBounds(90, 135, 80, 30);
+        login.setBounds(125, 138, 80, 30);
         frame.getContentPane().add(login);
+
+        KeyListener keyListener = new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+                if (e.getKeyChar() == KeyEvent.VK_ENTER) {
+                    loginAction();
+                }
+            }
+        };
+        login.addKeyListener(keyListener);
+        login.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                try {
+                    //decryption
+                    JSONArray inviteURLText = JSON.parseArray(inviteURL.getText());
+                    loginAction(userName.getText(),inviteURLText.getString(0),inviteURLText.getString(1));
+                }catch (Exception e) {
+                    JOptionPane.showMessageDialog(null, "IP or Port Number is wrong!");
+                }
+            }
+        });
+
+
+
         this.frame.setVisible(true);
     }
 }

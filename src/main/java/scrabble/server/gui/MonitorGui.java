@@ -1,8 +1,13 @@
 package scrabble.server.gui;
 
+import com.alibaba.fastjson.JSON;
 import scrabble.server.controllers.net.Net;
 
 import javax.swing.*;
+import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -47,8 +52,12 @@ public class MonitorGui {
         frame.getContentPane().add(port);
 
         JButton shutdown = new JButton("shutdown");
-        shutdown.setBounds(100, 92, 100, 30);
+        shutdown.setBounds(50, 92, 95, 30);
         frame.getContentPane().add(shutdown);
+
+        JButton invite = new JButton("invite");
+        invite.setBounds(150, 92, 95, 30);
+        frame.getContentPane().add(invite);
 
         KeyListener keyListener = new KeyListener() {
             @Override
@@ -69,6 +78,7 @@ public class MonitorGui {
             }
         };
         shutdown.addKeyListener(keyListener);
+        invite.addKeyListener(keyListener);
         shutdown.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
@@ -79,10 +89,28 @@ public class MonitorGui {
                 }
             }
         });
+
+        invite.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                try {
+                    setClipboardText(Toolkit.getDefaultToolkit().getSystemClipboard(), JSON.toJSONString(new String[]{
+                            InetAddress.getLocalHost().getHostAddress(),String.valueOf(portNum)}, true));
+                } catch (UnknownHostException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
         this.frame.setVisible(true);
     }
 
     public void shutdown(){
         System.exit(0);
+    }
+
+
+    protected static void setClipboardText(Clipboard clip, String writeMe) {
+        Transferable tText = new StringSelection(writeMe);
+        clip.setContents(tText, null);
     }
 }
