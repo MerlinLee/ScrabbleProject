@@ -55,7 +55,6 @@ public class LoginWindow implements Runnable {
     @Override
     public void run() {
         initialize();
-        this.frame.setVisible(true);
     }
 
     public void showDialog(String res) {
@@ -157,6 +156,7 @@ public class LoginWindow implements Runnable {
                 }
             }
         });
+        this.frame.setVisible(true);
     }
 
     void loginAction() {
@@ -213,6 +213,10 @@ public class LoginWindow implements Runnable {
         login.setBounds(125, 138, 80, 30);
         frame.getContentPane().add(login);
 
+        JButton back = new JButton("Back");
+        back.setBounds(210, 138, 80, 30);
+        frame.getContentPane().add(back);
+
         KeyListener keyListener = new KeyListener() {
             @Override
             public void keyTyped(KeyEvent e) {
@@ -232,6 +236,7 @@ public class LoginWindow implements Runnable {
             }
         };
         login.addKeyListener(keyListener);
+        back.addKeyListener(keyListener);
         login.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
@@ -245,6 +250,13 @@ public class LoginWindow implements Runnable {
             }
         });
 
+        back.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                closeWindow();
+                initialize();
+            }
+        });
 
 
         this.frame.setVisible(true);
