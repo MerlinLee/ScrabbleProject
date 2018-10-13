@@ -281,6 +281,6 @@ public class GameLobbyWindow implements Runnable {
 
     void showRefuseInvite(int id) {
         int index = getIndexInUserList(id);
-        showDialog(userList.getValueAt(index, 1) + "has refused you.");
+        showDialog(userList.getValueAt(index, 1) + " has refused you.");
     }
 }

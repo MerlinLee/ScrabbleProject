@@ -196,7 +196,7 @@ public class LoginWindow implements Runnable {
         lblUsername.setBounds(47, 23, 66, 16);
         frame.getContentPane().add(lblUsername);
 
-        JLabel lblURL = new JLabel("Invite Link:");
+        JLabel lblURL = new JLabel("Link:");
         lblURL.setBounds(47, 50, 66, 16);
         frame.getContentPane().add(lblURL);
 
@@ -207,6 +207,7 @@ public class LoginWindow implements Runnable {
 
         inviteURL = new JTextArea();
         inviteURL.setBounds(125,50,160,80);
+        inviteURL.setLineWrap(true);
         frame.getContentPane().add(inviteURL);
 
         JButton login = new JButton("Login");
