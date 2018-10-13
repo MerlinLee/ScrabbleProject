@@ -45,7 +45,6 @@ public class GameProcess {
     private ArrayList<ArrayList<Users>> teamsInWait;
     private ArrayList<Player> playerList;
     private int[] playersID;
-    private ArrayList<Users> viewer;
 //    private int teamNum;
 
     private ConcurrentHashMap<Integer, String> db;
@@ -59,7 +58,6 @@ public class GameProcess {
     public GameProcess() {
         teamsInWait = new ArrayList<>();
         userList = new ArrayList<>();
-        viewer = new ArrayList<>();
         db = new ConcurrentHashMap<>();
         teams = new ConcurrentHashMap<>();
     }
@@ -527,7 +525,7 @@ public class GameProcess {
         String command = "inviteACK";
         if (isAccept) {
             Users temp = userList.get(userIndexSearch(db.get(currentUserID)));
-            if (!teams.get(hostID).contains(temp)) {
+            if (!teams.get(hostID).contains(temp) && temp.getStatus().equals("available")) {
                 teams.get(hostID).add(temp);
                 temp.setStatus("ready");
             }
@@ -692,6 +690,7 @@ public class GameProcess {
         whoseTurn = INITIAL_SEQ;
 
         boardInitiation();
+
         if (teams.containsKey(gameHost)) {
             teamsInWait.remove(teams.get(gameHost));
             teams.remove(gameHost, teams.get(gameHost));
