@@ -1,4 +1,6 @@
-package scrabble.protocols;
+package scrabble.protocols.serverResponse;
+
+import scrabble.protocols.ScrabbleProtocol;
 
 /**
  * NonGamingProtocols

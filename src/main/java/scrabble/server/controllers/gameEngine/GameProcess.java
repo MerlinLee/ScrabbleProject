@@ -3,7 +3,7 @@ package scrabble.server.controllers.gameEngine;
 import com.alibaba.fastjson.JSON;
 import scrabble.Models.Player;
 import scrabble.Models.Users;
-import scrabble.protocols.ErrorProtocol;
+import scrabble.protocols.serverResponse.ErrorProtocol;
 import scrabble.protocols.GamingProtocol.BrickPlacing;
 import scrabble.protocols.GamingProtocol.GamingOperationProtocol;
 import scrabble.protocols.NonGamingProtocol.NonGamingProtocol;
@@ -16,11 +16,9 @@ import scrabble.protocols.serverResponse.VoteRequest;
 import scrabble.server.controllers.gameEngine.blockingqueque.EnginePutMsg;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.LinkedBlockingQueue;
 
 public class GameProcess {
     private final int ID_PLACEHOLDER = -1;
@@ -47,7 +45,6 @@ public class GameProcess {
     private ArrayList<ArrayList<Users>> teamsInWait;
     private ArrayList<Player> playerList;
     private int[] playersID;
-    private ArrayList<Users> viewer;
 //    private int teamNum;
 
     private ConcurrentHashMap<Integer, String> db;
@@ -61,7 +58,6 @@ public class GameProcess {
     public GameProcess() {
         teamsInWait = new ArrayList<>();
         userList = new ArrayList<>();
-        viewer = new ArrayList<>();
         db = new ConcurrentHashMap<>();
         teams = new ConcurrentHashMap<>();
     }
@@ -525,11 +521,11 @@ public class GameProcess {
         }
     }
 
-    private void inviteResponse(int currentUserID, int hostID, boolean isAccept) {
+    private synchronized void inviteResponse(int currentUserID, int hostID, boolean isAccept) {
         String command = "inviteACK";
         if (isAccept) {
             Users temp = userList.get(userIndexSearch(db.get(currentUserID)));
-            if (!teams.get(hostID).contains(temp)) {
+            if (!teams.get(hostID).contains(temp) && temp.getStatus().equals("available")) {
                 teams.get(hostID).add(temp);
                 temp.setStatus("ready");
             }
@@ -694,6 +690,7 @@ public class GameProcess {
         whoseTurn = INITIAL_SEQ;
 
         boardInitiation();
+
         if (teams.containsKey(gameHost)) {
             teamsInWait.remove(teams.get(gameHost));
             teams.remove(gameHost, teams.get(gameHost));

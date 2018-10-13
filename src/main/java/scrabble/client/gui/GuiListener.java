@@ -3,20 +3,13 @@ package scrabble.client.gui;
 import com.alibaba.fastjson.JSON;
 import scrabble.Models.Player;
 import scrabble.Models.Users;
-import scrabble.client.Gui;
-import scrabble.protocols.ErrorProtocol;
-import scrabble.protocols.Pack;
+import scrabble.protocols.serverResponse.ErrorProtocol;
 import scrabble.protocols.ScrabbleProtocol;
 import scrabble.protocols.serverResponse.GamingSync;
 import scrabble.protocols.serverResponse.InviteACK;
 import scrabble.protocols.serverResponse.NonGamingResponse;
 import scrabble.protocols.serverResponse.VoteRequest;
 
-import javax.swing.*;
-import java.io.BufferedReader;
-import java.net.Socket;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.concurrent.BlockingQueue;
 
 public class GuiListener {
