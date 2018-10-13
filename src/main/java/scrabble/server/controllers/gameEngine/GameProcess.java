@@ -523,7 +523,7 @@ public class GameProcess {
         }
     }
 
-    private void inviteResponse(int currentUserID, int hostID, boolean isAccept) {
+    private synchronized void inviteResponse(int currentUserID, int hostID, boolean isAccept) {
         String command = "inviteACK";
         if (isAccept) {
             Users temp = userList.get(userIndexSearch(db.get(currentUserID)));
