@@ -9,6 +9,7 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
+import java.util.Base64;
 import java.util.Hashtable;
 import java.util.concurrent.BlockingQueue;
 
@@ -43,7 +44,7 @@ public class NetThread implements Runnable {
                 if(client.isClosed()==false&&client.isConnected()==true){
                     String message = inputStream.readLine();
                     if(message!=null||!message.equals("")){
-                        toNetPutMsg.put(new Pack(clientID,message));
+                        toNetPutMsg.put(new Pack(clientID,bouncyCastleBase64(message)));
                     }else {
                         flag=false;
                     }
@@ -76,4 +77,9 @@ public class NetThread implements Runnable {
         }
     }
 
+    private  String bouncyCastleBase64 (String cipher) {
+
+        byte[] decodeBytes = Base64.getDecoder().decode(cipher);
+        return new String(decodeBytes);
+    }
 }

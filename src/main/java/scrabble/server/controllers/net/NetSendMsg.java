@@ -4,6 +4,7 @@ import scrabble.protocols.Pack;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.Base64;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
@@ -50,10 +51,15 @@ public class NetSendMsg implements Runnable {
     private void sendMsgOperation(String msg){
         try {
             PrintWriter printWriter = new PrintWriter(new DataOutputStream(client.getOutputStream()));
-            printWriter.println(msg);
+            printWriter.println(bouncyCastleBase64(msg));
             printWriter.flush();
         } catch (Exception e) {
             System.out.println("Welcome back!");
         }
+    }
+
+    private String bouncyCastleBase64 (String message) {
+        byte[] encodeBytes = Base64.getEncoder().encode(message.getBytes());
+        return new String (encodeBytes);
     }
 }

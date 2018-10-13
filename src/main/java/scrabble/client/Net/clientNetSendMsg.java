@@ -6,6 +6,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.Base64;
 
 public class clientNetSendMsg implements Runnable{
 
@@ -31,10 +32,15 @@ public class clientNetSendMsg implements Runnable{
         try {
 
             PrintWriter out=new PrintWriter(socket.getOutputStream());
-            out.println(msg);
+            out.println(bouncyCastleBase64(msg));
             out.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private String bouncyCastleBase64 (String message) {
+        byte[] encodeBytes = Base64.getEncoder().encode(message.getBytes());
+        return new String (encodeBytes);
     }
 }

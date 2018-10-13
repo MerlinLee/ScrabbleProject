@@ -9,7 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.*;
-
+import java.util.Base64;
 import java.awt.BorderLayout;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -196,7 +196,7 @@ public class LoginWindow implements Runnable {
         lblUsername.setBounds(47, 23, 66, 16);
         frame.getContentPane().add(lblUsername);
 
-        JLabel lblURL = new JLabel("Invite Link:");
+        JLabel lblURL = new JLabel("Link:");
         lblURL.setBounds(47, 50, 66, 16);
         frame.getContentPane().add(lblURL);
 
@@ -207,6 +207,7 @@ public class LoginWindow implements Runnable {
 
         inviteURL = new JTextArea();
         inviteURL.setBounds(125,50,160,80);
+        inviteURL.setLineWrap(true);
         frame.getContentPane().add(inviteURL);
 
         JButton login = new JButton("Login");
@@ -264,7 +265,7 @@ public class LoginWindow implements Runnable {
 
     private  String bouncyCastleBase64 (String cipher) {
 
-        byte[] decodeBytes = org.bouncycastle.util.encoders.Base64.decode(cipher);
+        byte[] decodeBytes = Base64.getDecoder().decode(cipher);
         return new String(decodeBytes);
     }
 

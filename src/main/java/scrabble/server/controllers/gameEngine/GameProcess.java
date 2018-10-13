@@ -688,7 +688,7 @@ public class GameProcess {
         //terminate game, reset parameters
         gameStart = false;
         playersID = null;
-        playerList = null;
+        playerList.clear();
         whoseTurn = INITIAL_SEQ;
 
         boardInitiation();

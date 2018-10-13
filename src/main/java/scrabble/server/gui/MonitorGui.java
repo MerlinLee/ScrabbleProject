@@ -14,6 +14,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Base64;
 
 public class MonitorGui {
     private JFrame frame;
@@ -115,7 +116,7 @@ public class MonitorGui {
     }
 
     private String bouncyCastleBase64 (String message) {
-        byte[] encodeBytes = org.bouncycastle.util.encoders.Base64.encode(message.getBytes()) ;
+        byte[] encodeBytes = Base64.getEncoder().encode(message.getBytes());
         return new String (encodeBytes);
     }
 }
