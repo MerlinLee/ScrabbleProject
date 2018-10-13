@@ -1,19 +1,13 @@
 package scrabble.client.Net.blockingqueue;
 
 import com.alibaba.fastjson.JSON;
-import scrabble.Models.Users;
-import scrabble.protocols.ErrorProtocol;
-import scrabble.protocols.NonGamingProtocol.NonGamingProtocol;
-import scrabble.protocols.Pack;
-import scrabble.protocols.serverResponse.NonGamingResponse;
+import scrabble.protocols.serverResponse.ErrorProtocol;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 import java.util.Hashtable;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 
 public class clientNetThread implements Runnable {
     private Socket server;

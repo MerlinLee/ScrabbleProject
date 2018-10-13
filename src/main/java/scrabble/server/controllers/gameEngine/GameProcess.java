@@ -3,7 +3,7 @@ package scrabble.server.controllers.gameEngine;
 import com.alibaba.fastjson.JSON;
 import scrabble.Models.Player;
 import scrabble.Models.Users;
-import scrabble.protocols.ErrorProtocol;
+import scrabble.protocols.serverResponse.ErrorProtocol;
 import scrabble.protocols.GamingProtocol.BrickPlacing;
 import scrabble.protocols.GamingProtocol.GamingOperationProtocol;
 import scrabble.protocols.NonGamingProtocol.NonGamingProtocol;
@@ -16,11 +16,9 @@ import scrabble.protocols.serverResponse.VoteRequest;
 import scrabble.server.controllers.gameEngine.blockingqueque.EnginePutMsg;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.LinkedBlockingQueue;
 
 public class GameProcess {
     private final int ID_PLACEHOLDER = -1;
