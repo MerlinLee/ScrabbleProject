@@ -9,7 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.*;
-
+import java.util.Base64;
 import java.awt.BorderLayout;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -264,7 +264,7 @@ public class LoginWindow implements Runnable {
 
     private  String bouncyCastleBase64 (String cipher) {
 
-        byte[] decodeBytes = org.bouncycastle.util.encoders.Base64.decode(cipher);
+        byte[] decodeBytes = Base64.getDecoder().decode(cipher);
         return new String(decodeBytes);
     }
 

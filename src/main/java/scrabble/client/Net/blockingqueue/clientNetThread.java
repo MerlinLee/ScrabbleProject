@@ -11,6 +11,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
+import java.util.Base64;
 import java.util.Hashtable;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -41,7 +42,7 @@ public class clientNetThread implements Runnable {
                     if(message==null){
                         flag=false;
                     }else {
-                        toNetPutMsg.put(message);
+                        toNetPutMsg.put(bouncyCastleBase64(message));
                     }
 //                Pack msg = new Pack(-1,message);
                     //System.out.println(message);
@@ -67,5 +68,11 @@ public class clientNetThread implements Runnable {
             e.printStackTrace();
         }
         System.out.println("System shutdown!");
+    }
+
+    private  String bouncyCastleBase64 (String cipher) {
+
+        byte[] decodeBytes = Base64.getDecoder().decode(cipher);
+        return new String(decodeBytes);
     }
 }
